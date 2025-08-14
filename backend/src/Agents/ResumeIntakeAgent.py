@@ -1,17 +1,16 @@
 import os
 from typing import List
 import fitz
+from backend.src.LLM.Groq import GroqLLM 
+from backend.src.Prompts.PromptBuilder import PromptBuilder
 
-from langchain.schema.messages import HumanMessage, SystemMessage
-from LLM.Groq import GroqLLM  # your LLM config loader
-get_llm = GroqLLM.get_model()
-from Prompts.PromptBuilder import PromptBuilder  # your prompt builder
-
+groq = GroqLLM()
+get_llm = groq.get_model()
 
 class ResumeIntakeAgent:
-    def __init__(self, system_prompt: str, human_prompt: str):
-        self.prompt_builder = PromptBuilder(system_prompt, human_prompt)
-        self.llm = get_llm()  # returns your configured LLM
+    def __init__(self):
+        self.prompt_builder = PromptBuilder()
+        self.llm = groq.get_model()
 
     def extract_text_from_pdf(self, file_path: str) -> str:
         text = ""
@@ -20,23 +19,48 @@ class ResumeIntakeAgent:
                 text += page.get_text()
         return text.strip()
 
-    def process_resumes(self, pdf_files: List[str]) -> dict:
+    def process_resumes(self, pdf_files: List[str], keywords: List[str]) -> dict:
         shortlisted = []
         not_shortlisted = []
 
-        for pdf_path in pdf_files:
-            resume_text = self.extract_text_from_pdf(pdf_path)
+        system_prompt = """
+        You are an intelligent Resume Screening Agent.  
+        You will receive:
+        1. The job role and required skills (keywords).
+        2. A candidate's resume text.
 
-            # Build prompt messages
-            messages = self.prompt_builder.build(
-                resume_text=resume_text
+        Your task:
+        - Assess how well the candidate fits the role, even if skill names or job titles are worded differently.
+        - Recognize synonyms, related tools, frameworks, and transferable skills.
+        - Give more weight to core role-specific skills and relevant work experience than to exact keyword matches.
+        - Account for abbreviations, alternative names, and related technologies.
+        - Consider potential to learn quickly if experience is similar but not exact.
+        - Check that the resume includes at least 2 projects. Projects may be listed under headings like "Projects", "Personal Projects", "Academic Projects", or similar.
+
+        Scoring:
+        1. Assign a match score between 0 and 100 based on overall fit.
+        2. Only output "yes" if:
+        - The score is 75 or above, AND
+        - The resume contains at least 2 distinct projects.
+        3. Otherwise, output "no".
+
+        Important: Do not include any explanation or additional text — only output "yes" or "no".
+        """
+
+
+        for pdf_path in pdf_files:
+            resume_content = self.extract_text_from_pdf(pdf_path)
+
+            human_prompt = (
+                f"Here is the candidate's resume content: {resume_content}. "
+                f"The required keywords/role requirements are: {keywords}. "
+                "Based on this information, determine if the candidate is a suitable match."
             )
 
-            # Call LLM
+            messages = self.prompt_builder.build(system_prompt, human_prompt)
             response = self.llm.invoke(messages)
             result = response.content.strip().lower()
 
-            # Classify
             if "yes" in result:
                 shortlisted.append(pdf_path)
             else:
@@ -46,3 +70,21 @@ class ResumeIntakeAgent:
             "shortlisted": shortlisted,
             "not_shortlisted": not_shortlisted
         }
+
+
+
+# testing purpose
+if __name__ == "__main__":
+    pdfs = [
+        r"D:\2025\PROJECTS\HireMate\Resumes\MCA\244CA024_-_Resume_1d492eaf5-d6e1-445c-b5d6-8ac47f78bcd5 - Kushagra Singh.pdf",
+        r"D:\2025\PROJECTS\HireMate\Resumes\MCA\244ca029_Monika_patidar - Monika Patidar..pdf",
+        r"D:\2025\PROJECTS\HireMate\Resumes\MCA\Abhishek    _244CA002 - ABHISHEK SISODIYA.pdf",
+        r"D:\2025\PROJECTS\HireMate\Resumes\MCA\Amit_244CA004 - Amit Patidar.pdf"
+    ]
+    keywords = ["Software Developer Role", "MERN", "C++", "HTML", "CSS", "JavaScript"]
+
+    agent = ResumeIntakeAgent()
+    results = agent.process_resumes(pdf_files=pdfs, keywords=keywords)
+
+    print("Shortlisted:", results["shortlisted"])
+    print("Not Shortlisted:", results["not_shortlisted"])
