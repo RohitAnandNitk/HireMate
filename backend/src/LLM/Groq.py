@@ -7,7 +7,7 @@ from langchain_groq import ChatGroq  # Assuming langchain-groq is installed
 load_dotenv()
 
 class GroqLLM(BaseLLM):
-    def __init__(self, model_name: str = "llama-3.3-70b-versatile"):
+    def __init__(self, model_name: str = "llama-3.3-70b-versatile"): # llama3-70b-8192 ,  llama3-70b-4096 , llama-3.3-70b-versatile
         api_key = os.getenv("GROQ_API_KEY")
         if not api_key:
             raise ValueError("GROQ_API_KEY not found in environment variables")

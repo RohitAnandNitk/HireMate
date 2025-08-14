@@ -1,39 +1,45 @@
-## Resume Intake Agent
+# 📄 Resume Intake Agent
 
-The Resume Intake Agent is an AI-powered tool designed to automatically evaluate candidate resumes against a specific job role and skill requirements. It leverages natural language understanding to go beyond simple keyword matching, recognizing synonyms, related technologies, and transferable skills.
+The **Resume Intake Agent** is an AI-powered resume screening tool that automatically evaluates candidate resumes for a given job role.  
+It uses natural language understanding to detect relevant skills, experience, and projects — going beyond simple keyword matching.
 
-### 🔍 How It Works
+---
 
-#### 1. Input:
+## 🚀 Features
+- **Semantic Skill Matching** – Recognizes synonyms, abbreviations, related tools, and frameworks.
+- **Weighted Scoring** – Prioritizes core skills and real-world experience over simple keyword hits.
+- **Project Validation** – Ensures at least **2 distinct projects** are present in the resume.
+- **Contact Extraction** – Retrieves candidate's **name** and **email** for notification purposes.
+- **Structured Output** – Provides results in strict JSON format for easy integration.
 
-    Job Role & Required Skills (keywords)
+---
 
-    Candidate’s Resume Text
+## 🔍 How It Works
 
-#### 2. Evaluation Criteria:
+### 1️⃣ Input
+- **Job Role & Required Skills** – Keywords or skill list for the position.
+- **Candidate Resume Text** – Extracted from uploaded PDF files.
 
-    Matches core role-specific skills and relevant work experience (even if worded differently).
+### 2️⃣ Evaluation Process
+- Match **role-specific skills** and relevant experience (semantic understanding).
+- Detect synonyms, abbreviations, and alternative terminology.
+- Give more weight to core skills and practical experience.
+- Consider similar experience for transferable skills.
+- Verify that **at least 2 distinct projects** are listed (Projects, Academic Projects, or Personal Projects).
 
-    Recognizes abbreviations, alternative names, and related frameworks/tools.
+### 3️⃣ Scoring & Decision
+- **Score Range:** `0–100` based on skill and experience match.
+- **Shortlist Criteria:**
+  - Score ≥ **75**
+  - At least **2 projects**
+- If both criteria are met → **Shortlisted ("yes")**
+- Otherwise → **Not Shortlisted ("no")**
 
-    Gives more weight to core skills and practical experience over exact keyword matches.
-
-    Considers potential to learn if experience is similar but not exact.
-
-    Checks that the resume contains at least 2 distinct projects (e.g., under headings like Projects, Academic Projects, or Personal Projects).
-
-#### 3. Scoring & Decision:
-
-    Assigns a match score between 0 and 100.
-
-    Outputs "yes" if:
-
-    The score is 75 or above, and
-
-    At least 2 projects are listed.
-
-    Otherwise, outputs "no".
-
-#### Output:
-
-    Only "yes" or "no" — no explanations, no extra text.
+### 4️⃣ Output Format
+Strict JSON output:
+```json
+{
+  "shortlisted": "yes" | "no",
+  "name": "<Candidate Name>",
+  "email": "<Candidate Email>"
+}

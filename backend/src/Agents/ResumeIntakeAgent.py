@@ -1,5 +1,6 @@
 import os
 import json
+import unicodedata
 from typing import List
 import fitz
 from backend.src.LLM.Groq import GroqLLM 
@@ -19,6 +20,7 @@ class ResumeIntakeAgent:
             for page in pdf:
                 text += page.get_text()
         return text.strip()
+    
 
     def process_resumes(self, pdf_files: List[str], keywords: List[str]) -> dict:
         shortlisted = []
@@ -45,12 +47,17 @@ class ResumeIntakeAgent:
         - The resume contains at least 2 distinct projects.
         3. Otherwise, mark them as not shortlisted.
 
-        Extraction:
-        - Extract the candidate's full name from the resume.
-        - Extract the candidate's primary email address.
+        Must do proper Extraction of Name and Gmail/Email:
+        - Extract the **full name** exactly as it appears in the resume (remove extra spaces, punctuation, or artifacts).
+        - Extract the **email address** in **standard email format** (`local@domain`), without any spaces, extra characters, or prefixes.
+        - If multiple emails are found, pick the one most likely to be the candidate's primary personal email.
+        - Remove any extra characters before or after the email.
+        - Validate the email against standard rules (must contain '@' and a valid domain).
+        - There will be a character before the email address so don't include it(R username@gmail.com -> username@gmail.com).
 
         Output format:
-        Return ONLY a valid JSON object in the following format (no extra text, no explanation):
+        **Must** return ONLY a valid JSON object in the following format (no extra text, no explanation, no markdown):
+        Do not wrap the JSON in ```json or any other formatting.
         {
         "name": "<Candidate Name>",
         "email": "<Candidate Email>",
@@ -62,6 +69,7 @@ class ResumeIntakeAgent:
 
         for pdf_path in pdf_files:
             resume_content = self.extract_text_from_pdf(pdf_path)
+            # print("Resume Content :", resume_content)
 
             human_prompt = (
                 f"Here is the candidate's resume content: {resume_content}. "
@@ -75,6 +83,7 @@ class ResumeIntakeAgent:
 
             try:
                 llm_output = json.loads(response.content.strip())
+                print("Resume Agent : ", llm_output)
             except json.JSONDecodeError:
                 print(f"Invalid JSON from LLM for {pdf_path}:\n", response.content)
                 continue
@@ -102,15 +111,17 @@ class ResumeIntakeAgent:
 # testing purpose
 if __name__ == "__main__":
     pdfs = [
+        r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\RahulKumar.pdf",
         r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\244CA024_-_Resume_1d492eaf5-d6e1-445c-b5d6-8ac47f78bcd5 - Kushagra Singh.pdf",
         r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\244ca029_Monika_patidar - Monika Patidar..pdf",
         r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\Abhishek    _244CA002 - ABHISHEK SISODIYA.pdf",
-        r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\Amit_244CA004 - Amit Patidar.pdf"
+        r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\Amit_244CA004 - Amit Patidar.pdf",
+        r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\anand.pdf"
     ]
     keywords = ["Software Developer Role", "MERN", "C++", "HTML", "CSS", "JavaScript"]
 
     agent = ResumeIntakeAgent()
     results = agent.process_resumes(pdf_files=pdfs, keywords=keywords)
 
-    print("Shortlisted:", results["shortlisted"])
-    print("Not Shortlisted:", results["not_shortlisted"])
+    # print("Shortlisted:", results["shortlisted"])
+    # print("Not Shortlisted:", results["not_shortlisted"])
