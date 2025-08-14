@@ -1,4 +1,5 @@
 import os
+import json
 from typing import List
 import fitz
 from backend.src.LLM.Groq import GroqLLM 
@@ -24,7 +25,7 @@ class ResumeIntakeAgent:
         not_shortlisted = []
 
         system_prompt = """
-        You are an intelligent Resume Screening Agent.  
+        You are an intelligent Resume Screening Agent.
         You will receive:
         1. The job role and required skills (keywords).
         2. A candidate's resume text.
@@ -39,13 +40,24 @@ class ResumeIntakeAgent:
 
         Scoring:
         1. Assign a match score between 0 and 100 based on overall fit.
-        2. Only output "yes" if:
+        2. Shortlist a candidate only if:
         - The score is 75 or above, AND
         - The resume contains at least 2 distinct projects.
-        3. Otherwise, output "no".
+        3. Otherwise, mark them as not shortlisted.
 
-        Important: Do not include any explanation or additional text — only output "yes" or "no".
+        Extraction:
+        - Extract the candidate's full name from the resume.
+        - Extract the candidate's primary email address.
+
+        Output format:
+        Return ONLY a valid JSON object in the following format (no extra text, no explanation):
+        {
+        "name": "<Candidate Name>",
+        "email": "<Candidate Email>",
+        "shortlisted": "yes" or "no"
+        }
         """
+
 
 
         for pdf_path in pdf_files:
@@ -59,12 +71,26 @@ class ResumeIntakeAgent:
 
             messages = self.prompt_builder.build(system_prompt, human_prompt)
             response = self.llm.invoke(messages)
-            result = response.content.strip().lower()
 
-            if "yes" in result:
-                shortlisted.append(pdf_path)
+
+            try:
+                llm_output = json.loads(response.content.strip())
+            except json.JSONDecodeError:
+                print(f"Invalid JSON from LLM for {pdf_path}:\n", response.content)
+                continue
+
+            if llm_output["shortlisted"].lower() == "yes":
+                shortlisted.append({
+                    "resume": pdf_path,
+                    "name": llm_output["name"],
+                    "email": llm_output["email"]
+                })
             else:
-                not_shortlisted.append(pdf_path)
+                not_shortlisted.append({
+                    "resume": pdf_path,
+                    "name": llm_output["name"],
+                    "email": llm_output["email"]
+                })
 
         return {
             "shortlisted": shortlisted,
@@ -76,10 +102,10 @@ class ResumeIntakeAgent:
 # testing purpose
 if __name__ == "__main__":
     pdfs = [
-        r"D:\2025\PROJECTS\HireMate\Resumes\MCA\244CA024_-_Resume_1d492eaf5-d6e1-445c-b5d6-8ac47f78bcd5 - Kushagra Singh.pdf",
-        r"D:\2025\PROJECTS\HireMate\Resumes\MCA\244ca029_Monika_patidar - Monika Patidar..pdf",
-        r"D:\2025\PROJECTS\HireMate\Resumes\MCA\Abhishek    _244CA002 - ABHISHEK SISODIYA.pdf",
-        r"D:\2025\PROJECTS\HireMate\Resumes\MCA\Amit_244CA004 - Amit Patidar.pdf"
+        r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\244CA024_-_Resume_1d492eaf5-d6e1-445c-b5d6-8ac47f78bcd5 - Kushagra Singh.pdf",
+        r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\244ca029_Monika_patidar - Monika Patidar..pdf",
+        r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\Abhishek    _244CA002 - ABHISHEK SISODIYA.pdf",
+        r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\Amit_244CA004 - Amit Patidar.pdf"
     ]
     keywords = ["Software Developer Role", "MERN", "C++", "HTML", "CSS", "JavaScript"]
 
