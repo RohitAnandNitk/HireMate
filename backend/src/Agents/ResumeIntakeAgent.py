@@ -6,6 +6,14 @@ import fitz
 from backend.src.LLM.Groq import GroqLLM 
 from backend.src.Prompts.PromptBuilder import PromptBuilder
 
+
+from dotenv import load_dotenv
+from backend.src.Utils.EmailService import EmailService
+from backend.src.Agents.EmailingAgent import EmailingAgent
+# Load environment variables
+load_dotenv()
+
+
 groq = GroqLLM()
 get_llm = groq.get_model()
 
@@ -112,16 +120,38 @@ class ResumeIntakeAgent:
 if __name__ == "__main__":
     pdfs = [
         r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\RahulKumar.pdf",
-        r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\244CA024_-_Resume_1d492eaf5-d6e1-445c-b5d6-8ac47f78bcd5 - Kushagra Singh.pdf",
-        r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\244ca029_Monika_patidar - Monika Patidar..pdf",
-        r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\Abhishek    _244CA002 - ABHISHEK SISODIYA.pdf",
-        r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\Amit_244CA004 - Amit Patidar.pdf",
-        r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\anand.pdf"
+        # r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\UditJain_234CA060.pdf",
+        # r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\244CA024_-_Resume_1d492eaf5-d6e1-445c-b5d6-8ac47f78bcd5 - Kushagra Singh.pdf",
+        # r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\244ca029_Monika_patidar - Monika Patidar..pdf",
+        # r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\Abhishek    _244CA002 - ABHISHEK SISODIYA.pdf",
+        # r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\Amit_244CA004 - Amit Patidar.pdf",
+        # r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\anand.pdf"
     ]
     keywords = ["Software Developer Role", "MERN", "C++", "HTML", "CSS", "JavaScript"]
 
     agent = ResumeIntakeAgent()
     results = agent.process_resumes(pdf_files=pdfs, keywords=keywords)
 
-    # print("Shortlisted:", results["shortlisted"])
-    # print("Not Shortlisted:", results["not_shortlisted"])
+    print("Shortlisted:", results["shortlisted"])
+    print("Not Shortlisted:", results["not_shortlisted"])
+
+
+    SMTP_SERVER = os.getenv("SMTP_SERVER")
+    SMTP_PORT = int(os.getenv("SMTP_PORT"))
+    EMAIL_USER = os.getenv("EMAIL_USER")
+    EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+
+    # Create EmailService instance
+    email_service = EmailService(SMTP_SERVER, SMTP_PORT, EMAIL_USER, EMAIL_PASSWORD)
+
+    # Create EmailingAgent instance
+    agent = EmailingAgent(email_service)
+
+    # Send example
+    shortlisted = results["shortlisted"]
+    not_shortlisted = results["not_shortlisted"]
+
+    agent.process_and_send(shortlisted, not_shortlisted)
+
+
+

@@ -43,3 +43,49 @@ Strict JSON output:
   "name": "<Candidate Name>",
   "email": "<Candidate Email>"
 }
+```
+
+# 📧 Emailing Agent
+
+The **Emailing Agent** is an automated email notification system that sends personalized updates to candidates based on their shortlisting status.  
+It integrates seamlessly with the **Resume Intake Agent** to inform applicants whether they have been shortlisted for the next stage.
+
+---
+
+## 🚀 Features
+- **Automated Email Sending** – Sends notifications without manual intervention.
+- **Dynamic Personalization** – Inserts candidate names and company details into email templates.
+- **Separate Templates** – Maintains distinct professional messages for shortlisted and not shortlisted candidates.
+- **Secure Credentials** – Uses environment variables to store SMTP server details and passwords.
+- **Integration Ready** – Works directly with Resume Intake Agent’s JSON output.
+
+---
+
+## 🔍 How It Works
+
+### 1️⃣ Input
+- **Shortlisted List** – Array of candidate objects with `name` and `email`.
+- **Not Shortlisted List** – Array of candidate objects with `name` and `email`.
+- **Email Templates** – Predefined messages with placeholders for personalization.
+
+### 2️⃣ Email Sending Process
+- Reads SMTP configuration from environment variables (`SMTP_SERVER`, `SMTP_PORT`, `EMAIL_USER`, `EMAIL_PASSWORD`).
+- Selects the appropriate template (`shortlisted` or `not_shortlisted`).
+- Replaces placeholders like `{name}` and `{company_name}` with real data.
+- Sends the email using **TLS-secured SMTP connection**.
+
+### 3️⃣ Example Flow
+1. **Resume Intake Agent** produces two lists: `shortlisted` and `not_shortlisted`.
+2. **Emailing Agent** loops through each list:
+   - Sends a **congratulatory email** to shortlisted candidates.
+   - Sends a **polite rejection email** to not shortlisted candidates.
+
+---
+
+## 🛠 Environment Variables
+
+```env
+SMTP_SERVER=smtp.gmail.com
+SMTP_PORT=587
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASSWORD=your_generated_app_password
