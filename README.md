@@ -39,7 +39,7 @@ It uses natural language understanding to detect relevant skills, experience, an
 Strict JSON output:
 ```json
 {
-  "shortlisted": "yes" | "no",
+  "shortlisted": "yes/no",
   "name": "<Candidate Name>",
   "email": "<Candidate Email>"
 }
@@ -89,3 +89,63 @@ SMTP_SERVER=smtp.gmail.com
 SMTP_PORT=587
 EMAIL_USER=your_email@gmail.com
 EMAIL_PASSWORD=your_generated_app_password
+```
+
+# 📅 Interview Scheduling Agent  
+
+The **Interview Scheduling Agent** is an automated system that schedules interviews for shortlisted candidates and sends them professional, personalized interview invitations via email.  
+It integrates seamlessly with the **Emailing Agent** to deliver the interview details (date, time, and meeting link) to candidates.  
+
+---
+
+## 🚀 Features  
+- **Automated Interview Scheduling** – No manual coordination required.  
+- **Default Scheduling** – If no time is specified, it auto-schedules interviews for **tomorrow at 10 AM**.  
+- **Dynamic Personalization** – Inserts candidate names, dates, and meeting links into email templates.  
+- **Configurable Links** – Supports Google Meet, Zoom, or any custom meeting platform.  
+- **Seamless Integration** – Works directly with candidate lists provided by the Resume Intake Agent.  
+
+---
+
+## 🔍 How It Works  
+
+### 1️⃣ Input  
+- **Shortlisted Candidates** – Array of candidate objects with `name` and `email`.  
+- **Interview Date & Time** – (Optional) A `datetime` object for scheduling interviews.  
+- **Meeting Link** – (Optional) A link to the online interview platform.  
+
+### 2️⃣ Scheduling Process  
+- If no date/time is provided → Defaults to **tomorrow at 10:00 AM**.  
+- If no meeting link is provided → Uses a **default Google Meet link**.  
+- Loops through shortlisted candidates and prepares a personalized email.  
+- Sends interview invitations via the integrated **Emailing Agent**.  
+
+### 3️⃣ Example Flow  
+1. **Shortlisted candidate list** is passed to the Interview Scheduling Agent.  
+2. For each candidate:  
+   - A **personalized email** is generated with date, time, and meeting link.  
+   - The **Emailing Agent** sends the invitation.  
+3. ✅ Candidates receive interview invitations in their inbox.  
+
+---
+
+## 📧 Email Template  
+
+Dear {name},
+
+Congratulations! You have been shortlisted for the next stage of our recruitment process.
+
+We would like to invite you to an interview scheduled as follows:
+
+📅 Date: {date}
+⏰ Time: {time}
+🔗 Interview Link: {meeting_link}
+
+Please be available at the scheduled time.
+Wishing you the best of luck!
+
+Best regards,
+HR Team
+
+
+

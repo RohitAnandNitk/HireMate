@@ -14,6 +14,11 @@ from backend.src.Agents.EmailingAgent import EmailingAgent
 load_dotenv()
 
 
+# interview scheduling Agent
+from backend.src.Agents.InterviewSchedulingAgent import InterviewSchedulingAgent
+
+
+
 groq = GroqLLM()
 get_llm = groq.get_model()
 
@@ -119,13 +124,13 @@ class ResumeIntakeAgent:
 # testing purpose
 if __name__ == "__main__":
     pdfs = [
-        r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\RahulKumar.pdf",
+        # r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\RahulKumar.pdf",
         # r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\UditJain_234CA060.pdf",
         # r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\244CA024_-_Resume_1d492eaf5-d6e1-445c-b5d6-8ac47f78bcd5 - Kushagra Singh.pdf",
         # r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\244ca029_Monika_patidar - Monika Patidar..pdf",
         # r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\Abhishek    _244CA002 - ABHISHEK SISODIYA.pdf",
         # r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\Amit_244CA004 - Amit Patidar.pdf",
-        # r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\anand.pdf"
+        r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\anand.pdf"
     ]
     keywords = ["Software Developer Role", "MERN", "C++", "HTML", "CSS", "JavaScript"]
 
@@ -153,5 +158,8 @@ if __name__ == "__main__":
 
     agent.process_and_send(shortlisted, not_shortlisted)
 
+    # Create InterviewSchedulingAgent instance
+    interview_agent = InterviewSchedulingAgent(email_service)
 
-
+    # Schedule interviews for shortlisted candidates
+    interview_agent.schedule_interviews(shortlisted)

@@ -49,3 +49,4 @@ class EmailingAgent:
             body = templates["not_shortlisted"].format(name=person["name"], company_name=company_name)
             self.email_service.send_email(person["email"], "Application Status", body)
 
+        print("✅ Email notifications sent.")
