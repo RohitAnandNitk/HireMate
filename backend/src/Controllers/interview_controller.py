@@ -1,8 +1,11 @@
 import asyncio
-import io
+import io, json
 from flask import jsonify, request
 from src.Utils.VapiService import upload_resume, mock_interview
 import pdfplumber
+
+from src.Agents.MockInterviewAgent import MockInterviewAgent
+mock_interview_agent = MockInterviewAgent()
 
 def extract_resume_text(file):
     """Extract text from uploaded resume (PDF)."""
@@ -41,14 +44,17 @@ def upload_resume_controller(file):
         return jsonify({"error": str(e)}), 500
 
 
-
-async def start_interview_controller(session_id, user_message):
-    """
-    Start or continue a mock interview session.
-    """
-
+def evaluate_interview_controller(resume_text, transcript):
+    print("Evaluating interview Controller ...")
+    print("Resume Text:", resume_text)
+    print("\n")
+    print("Transcript:", transcript)
     try:
-        reply = await mock_interview(session_id, user_message)
-        return jsonify({"response": reply})
+        # Call your MockInterviewAgent directly
+        result = mock_interview_agent.evaluate_interview(resume_text, transcript)
+
+        return jsonify(result)
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+

@@ -1,13 +1,18 @@
 import React from "react";
 import Dashboard from "./components/Dashboard";
 import InterviewPage from "./Pages/InterviewPage";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import AllResume from "./components/AllResume";
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* <Dashboard /> */}
+    <BrowserRouter>
       <InterviewPage />
-    </div>
+      <Routes>
+        {/* <Route path="/" element={<Dashboard />} />
+        <Route path="/all_resume" element={<AllResume />} /> */}
+      </Routes>
+    </BrowserRouter>
   );
 }
 

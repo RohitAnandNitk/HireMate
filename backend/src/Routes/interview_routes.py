@@ -11,6 +11,13 @@ def upload_resume():
     file = request.files["resume"]
     return interview_controller.upload_resume_controller(file)
 
-@interview_bp.route("/start", methods=["POST"])
-def start_interview():
-    return interview_controller.start_interview()
+@interview_bp.route("/evaluate", methods=["POST"])
+def evaluate_interview():
+    print("Route call for evaluation......")
+    data = request.get_json()
+    if not data or "resumeText" not in data or "transcript" not in data:
+        return {"error": "Missing resumeText or transcript"}, 400
+    return interview_controller.evaluate_interview_controller(
+        data["resumeText"], data["transcript"]
+    )
+
