@@ -46,12 +46,26 @@ def upload_resume_controller(file):
 
 def evaluate_interview_controller(resume_text, transcript):
     print("Evaluating interview Controller ...")
-    print("Resume Text:", resume_text)
-    print("\n")
-    print("Transcript:", transcript)
+    # print("Resume Text:", resume_text)
+    # print("\n")
+    # print("Transcript:", transcript)
+    
     try:
-        # Call your MockInterviewAgent directly
-        result = mock_interview_agent.evaluate_interview(resume_text, transcript)
+        # Extract only role and content from transcript with error handling
+        conversation_only = []
+        for msg in transcript:
+            if 'role' in msg and 'content' in msg:
+                conversation_only.append({
+                    'role': msg['role'], 
+                    'content': msg['content']
+                })
+            else:
+                print(f"Warning: Skipping malformed message: {msg}")
+        
+        # print("Processed conversation:", conversation_only)
+        
+        # Call your MockInterviewAgent with cleaned data
+        result = mock_interview_agent.evaluate_interview(resume_text, conversation_only)
 
         return jsonify(result)
 
