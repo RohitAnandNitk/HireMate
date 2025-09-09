@@ -14,7 +14,7 @@ import {
 import { useNavigate } from "react-router-dom";
 
 const items = [
-  { label: "Dashboard", icon: LayoutDashboard, path: "/" },
+  { label: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
   { label: "All Resumes", icon: FileText, path: "/resumes" },
   { label: "Shortlisted", icon: Star, path: "/shortlisted" },
   { label: "Analytics", icon: BarChart3, path: "/analytics" },
