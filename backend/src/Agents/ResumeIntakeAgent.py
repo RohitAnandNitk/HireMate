@@ -1,7 +1,7 @@
 import fitz
 import json
-from backend.src.LLM.Groq import GroqLLM
-from backend.src.Prompts.PromptBuilder import PromptBuilder
+from src.LLM.Groq import GroqLLM
+from src.Prompts.PromptBuilder import PromptBuilder
 
 groq = GroqLLM()
 
@@ -20,7 +20,7 @@ class ResumeIntakeAgent:
 
     def process_resumes(self, pdf_files):
         """
-        Extracts name, email, and resume content using LLM.
+        Extracts name, email, and resume content using LLM for all resumes.
         Returns a list of candidate dictionaries.
         """
         candidates = []
@@ -38,7 +38,10 @@ class ResumeIntakeAgent:
         - Keep the **full resume content** as a plain text string (no formatting).
         
         Output format:
-        Return ONLY valid JSON without extra text:
+        Return ONLY valid JSON without any extra characters, text, explanation, or formatting.
+        Do NOT include markdown, code blocks, or annotations like ```json```.
+        Just output the JSON object, nothing else.
+        Example : 
         {
           "name": "<Candidate Name>",
           "email": "<Candidate Email>",
@@ -60,52 +63,12 @@ class ResumeIntakeAgent:
 
             try:
                 llm_output = json.loads(response.content.strip())
-                llm_output["resume"] = pdf_path  # keep file reference
+                llm_output["resume"] = pdf_path  # attach file reference if needed
                 candidates.append(llm_output)
                 print(f"Extracted Info ({pdf_path}):", llm_output)
 
             except json.JSONDecodeError:
-                print(f"❌ Invalid JSON from LLM for {pdf_path}:\n", response.content)
+                print(f"Invalid JSON from LLM for {pdf_path}:\n", response.content)
                 continue
 
-<<<<<<< HEAD
-            if llm_output["shortlisted"].lower() == "yes":
-                shortlisted.append({
-                    "resume": pdf_path,
-                    "name": llm_output["name"],
-                    "email": llm_output["email"]
-                })
-            else:
-                not_shortlisted.append({
-                    "resume": pdf_path,
-                    "name": llm_output["name"],
-                    "email": llm_output["email"]
-                })
-
-        return {
-            "shortlisted": shortlisted,
-            "not_shortlisted": not_shortlisted
-        }
-
-
-
-# testing purpose
-if __name__ == "__main__":
-    pdfs = [
-        r"D:\New folder (3)\HireMate\Resumes\MCA\244CA024_-_Resume_1d492eaf5-d6e1-445c-b5d6-8ac47f78bcd5 - Kushagra Singh.pdf",
-        r"D:\New folder (3)\HireMate\Resumes\MCA\244CA024_-_Resume_1d492eaf5-d6e1-445c-b5d6-8ac47f78bcd5 - Kushagra Singh.pdf",
-        r"D:\New folder (3)\HireMate\Resumes\MCA\244ca029_Monika_patidar - Monika Patidar.pdf",
-        r"D:\New folder (3)\HireMate\Resumes\MCA\Abhishek    _244CA002 - ABHISHEK SISODIYA.pdf",
-        r"D:\New folder (3)\HireMate\Resumes\MCA\Amit_244CA004 - Amit Patidar.pdf",
-        r"D:\New folder (3)\HireMate\Resumes\MCA\anand.pdf"
-    ]
-    keywords = ["Software Developer Role", "MERN", "C++", "HTML", "CSS", "JavaScript"]
-
-    agent = ResumeIntakeAgent()
-    results = agent.process_resumes(pdf_files=pdfs, keywords=keywords)
-
-    # print("Shortlisted:", results["shortlisted"])
-    # print("Not Shortlisted:", results["not_shortlisted"])
-=======
         return candidates
->>>>>>> a75263be9ef9f499d356169ce7cc5ae910f44511
