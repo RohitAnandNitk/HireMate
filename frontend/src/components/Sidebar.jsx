@@ -1,22 +1,3 @@
-<<<<<<< HEAD
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Menu, X, ChevronLeft, ChevronRight, LayoutDashboard, FileText, Star, BarChart3, Settings, Code } from 'lucide-react';
-
-const items = [
-  { label: 'Dashboard', icon: LayoutDashboard, path: '/' },
-  { label: 'All Resumes', icon: FileText, path: '/resumes' },
-  { label: 'Shortlisted', icon: Star, path: '/shortlisted' },
-  { label: 'Analytics', icon: BarChart3, path: '/analytics' },
-  { label: 'Settings', icon: Settings, path: '/settings' },
-  { label: 'Interview', icon: Code, path: '/interview' }
-];
-
-const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(true);
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const navigate = useNavigate();
-=======
 import React, { useState } from "react";
 import {
   Menu,
@@ -28,23 +9,22 @@ import {
   Star,
   BarChart3,
   Settings,
+  Code,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const items = [
-  { label: "Dashboard", icon: LayoutDashboard },
-  { label: "All Resumes", icon: FileText },
-  { label: "Shortlisted", icon: Star },
-  { label: "Analytics", icon: BarChart3 },
-  { label: "Settings", icon: Settings },
+  { label: "Dashboard", icon: LayoutDashboard, path: "/" },
+  { label: "All Resumes", icon: FileText, path: "/resumes" },
+  { label: "Shortlisted", icon: Star, path: "/shortlisted" },
+  { label: "Analytics", icon: BarChart3, path: "/analytics" },
+  { label: "Settings", icon: Settings, path: "/settings" },
 ];
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(true);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
->>>>>>> a75263be9ef9f499d356169ce7cc5ae910f44511
-
   return (
     <>
       {/* Mobile toggle button */}
@@ -69,13 +49,9 @@ const Sidebar = () => {
       {/* Sidebar */}
       <aside
         className={`fixed md:static top-0 left-0 h-full md:h-auto border-r border-gray-200 bg-white/80 backdrop-blur-sm transform transition-all duration-300 ease-in-out z-50
-<<<<<<< HEAD
-        ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-        ${isOpen ? 'w-56' : 'w-16 md:w-16'}`}
-=======
+
 				${isMobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
 				${isOpen ? "w-56" : "w-16 md:w-16"}`}
->>>>>>> a75263be9ef9f499d356169ce7cc5ae910f44511
       >
         {/* Desktop toggle button */}
         <div className="hidden md:flex justify-between items-center px-4 py-4">
@@ -102,22 +78,7 @@ const Sidebar = () => {
             const IconComponent = item.icon;
             return (
               <button
-<<<<<<< HEAD
-                key={item.label}
-                onClick={() => {
-                  navigate(item.path);
-                  setIsMobileOpen(false); // close sidebar on mobile after click
-                }}
-                className={`w-full text-left px-4 py-3 text-sm hover:bg-gray-50 transition-all duration-200 flex items-center gap-3
-                ${window.location.pathname === item.path
-                  ? 'text-gray-900 font-medium bg-gray-50'
-                  : 'text-gray-600'
-                }`}
-                title={!isOpen ? item.label : ''}
-=======
-                onClick={navigate(
-                  item.label === "Dashboard" ? "/" : "/all_resume"
-                )}
+                onClick={() => navigate(item.path)}
                 key={item.label}
                 className={`w-full text-left px-4 py-3 text-sm hover:bg-gray-50 transition-all duration-200 flex items-center gap-3
 								${
@@ -126,19 +87,13 @@ const Sidebar = () => {
                     : "text-gray-600"
                 }`}
                 title={!isOpen ? item.label : ""}
->>>>>>> a75263be9ef9f499d356169ce7cc5ae910f44511
               >
                 <IconComponent size={20} className="flex-shrink-0" />
                 <span
                   className={`transition-all duration-200 overflow-hidden ${
                     isOpen
-<<<<<<< HEAD
-                      ? 'opacity-100 w-auto'
-                      : 'opacity-0 w-0 md:opacity-0 md:w-0'
-=======
                       ? "opacity-100 w-auto"
                       : "opacity-0 w-0 md:opacity-0 md:w-0"
->>>>>>> a75263be9ef9f499d356169ce7cc5ae910f44511
                   }`}
                 >
                   {item.label}
