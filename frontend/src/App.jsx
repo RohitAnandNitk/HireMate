@@ -6,6 +6,7 @@ import Layout from "./components/Layout";
 import ResumeLibrary from "./pages/ResumeLibrary";
 import Shortlisted from "./pages/Shortlisted";
 import Analytics from "./pages/Analytics";
+import Home from "./pages/Home";
 
 function App() {
   return (
@@ -13,6 +14,12 @@ function App() {
       <Routes>
         <Route
           path="/"
+          element={
+            <Home />
+          }
+        />
+        <Route
+          path="/dashboard"
           element={
             <Layout>
               <Dashboard />
