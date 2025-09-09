@@ -1,42 +1,75 @@
 # 📄 Resume Intake Agent
 
-The **Resume Intake Agent** is an AI-powered resume screening tool that automatically evaluates candidate resumes for a given job role.  
-It uses natural language understanding to detect relevant skills, experience, and projects — going beyond simple keyword matching.
+The **Resume Intake Agent** is responsible for extracting structured information from candidate resumes.  
+It focuses on **resume parsing**, ensuring that **name, email, and raw content** are captured for downstream processing.  
 
 ---
 
 ## 🚀 Features
-- **Semantic Skill Matching** – Recognizes synonyms, abbreviations, related tools, and frameworks.
-- **Weighted Scoring** – Prioritizes core skills and real-world experience over simple keyword hits.
-- **Project Validation** – Ensures at least **2 distinct projects** are present in the resume.
-- **Contact Extraction** – Retrieves candidate's **name** and **email** for notification purposes.
-- **Structured Output** – Provides results in strict JSON format for easy integration.
+- **PDF Parsing** – Reads resumes directly from uploaded PDF files.  
+- **Candidate Name Extraction** – Heuristically identifies the candidate's name.  
+- **Email Extraction** – Uses regex-based pattern matching to find valid emails.  
+- **Resume Content Extraction** – Retrieves complete resume text for AI evaluation.  
+- **LLM Integration (Optional)** – If details are written in different formats, an LLM can infer and normalize candidate details.  
 
 ---
 
 ## 🔍 How It Works
 
 ### 1️⃣ Input
-- **Job Role & Required Skills** – Keywords or skill list for the position.
-- **Candidate Resume Text** – Extracted from uploaded PDF files.
+- Candidate resumes in **PDF format**.  
+
+### 2️⃣ Processing Steps
+- Extract raw text from the PDF.  
+- Identify candidate name (heuristics / LLM-based parsing).  
+- Extract first valid email.  
+- Return all details in structured form.  
+
+### 3️⃣ Output Format
+```json
+{
+  "resume": "path/to/resume.pdf",
+  "name": "Candidate Name",
+  "email": "candidate@email.com",
+  "resume_content": "Full extracted text..."
+}
+```
+
+
+
+# ✅ Resume Shortlisting Agent
+
+The **Resume Shortlisting Agent** evaluates parsed resumes (from the Intake Agent) against job role requirements.  
+It applies **semantic skill matching**, **experience checks**, and **project validation** to decide shortlisting.  
+
+
+## 🚀 Features
+- **Semantic Skill Matching** – Detects synonyms, abbreviations, and related tools.  
+- **Weighted Scoring** – Prioritizes **core skills** and **practical experience**.  
+- **Project Validation** – Confirms that resumes include at least **2 distinct projects**.  
+- **Role-Specific Matching** – Evaluates candidates for the provided job role.  
+- **Structured JSON Output** – Standardized results for integration with other agents.  
+
+
+## 🔍 How It Works
+
+### 1️⃣ Input
+- **Job Role & Required Skills** (keywords).  
+- **Candidate Resume Text** (from Resume Intake Agent).  
 
 ### 2️⃣ Evaluation Process
-- Match **role-specific skills** and relevant experience (semantic understanding).
-- Detect synonyms, abbreviations, and alternative terminology.
-- Give more weight to core skills and practical experience.
-- Consider similar experience for transferable skills.
-- Verify that **at least 2 distinct projects** are listed (Projects, Academic Projects, or Personal Projects).
+- Match skills and relevant experiences.  
+- Check for synonyms and transferable skills.  
+- Assign weighted scores (`0–100`).  
+- Validate **minimum 2 projects** in the resume.  
 
-### 3️⃣ Scoring & Decision
-- **Score Range:** `0–100` based on skill and experience match.
-- **Shortlist Criteria:**
-  - Score ≥ **75**
-  - At least **2 projects**
-- If both criteria are met → **Shortlisted ("yes")**
-- Otherwise → **Not Shortlisted ("no")**
+### 3️⃣ Decision Criteria
+- **Shortlist if:**  
+  - Score ≥ **75**  
+  - At least **2 projects** listed.  
+- Otherwise → Not Shortlisted.  
 
 ### 4️⃣ Output Format
-Strict JSON output:
 ```json
 {
   "shortlisted": "yes/no",
@@ -147,5 +180,47 @@ Wishing you the best of luck!
 Best regards,
 HR Team
 
+
+# 🎤 Mock Interview Agent  
+
+The **Mock Interview Agent** is an AI-powered evaluator that simulates HR-style mock interviews and provides structured feedback on candidate performance.  
+It analyzes the candidate’s **resume** along with the **interview transcript** and generates an **evaluation report** in JSON format.  
+
+---
+
+## 🚀 Features  
+- **Resume + Transcript Analysis** – Considers both the candidate’s resume and their spoken answers.  
+- **Automated Evaluation** – Produces a decision (**SELECT / REJECT**) based on performance.  
+- **Strengths & Weaknesses Detection** – Highlights key positive and negative points.  
+- **Constructive Feedback** – Provides detailed, professional feedback to help candidates improve.  
+- **Structured Output** – Always returns valid JSON for easy integration with other agents or dashboards.  
+
+---
+
+## 🔍 How It Works  
+
+### 1️⃣ Input  
+- **Resume Text** – Extracted plain text from the candidate’s resume.  
+- **Interview Transcript** – Array of messages containing the conversation between the candidate and the interviewer.  
+
+### 2️⃣ Evaluation Process  
+1. Combines the **resume** and **transcript** into a structured evaluation prompt.  
+2. Sends it to the underlying **LLM (Groq / OpenAI)** for analysis.  
+3. Parses the LLM response to ensure **valid JSON output**.  
+4. Returns the evaluation object with decision, strengths, weaknesses, and feedback.  
+
+### 3️⃣ Example Flow  
+1. Candidate finishes a mock interview.  
+2. Transcript and resume are sent to the **Mock Interview Agent**.  
+3. The agent evaluates and produces JSON:  
+
+```json
+{
+  "decision": "SELECT",
+  "strengths": ["Good communication", "Strong technical background", "Confident problem-solving"],
+  "weaknesses": ["Needs improvement in behavioral responses"],
+  "feedback": "The candidate demonstrates strong technical knowledge and clear communication but should work on providing more structured answers to behavioral questions."
+}
+```
 
 

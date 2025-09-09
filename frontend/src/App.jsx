@@ -7,10 +7,10 @@ import AllResume from "./components/AllResume";
 function App() {
   return (
     <BrowserRouter>
-      <InterviewPage />
+      {/* <InterviewPage /> */}
       <Routes>
-        {/* <Route path="/" element={<Dashboard />} />
-        <Route path="/all_resume" element={<AllResume />} /> */}
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/all_resume" element={<AllResume />} />
       </Routes>
     </BrowserRouter>
   );
