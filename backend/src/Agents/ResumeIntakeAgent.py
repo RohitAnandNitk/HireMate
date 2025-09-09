@@ -111,12 +111,12 @@ class ResumeIntakeAgent:
 # testing purpose
 if __name__ == "__main__":
     pdfs = [
-        r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\RahulKumar.pdf",
-        r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\244CA024_-_Resume_1d492eaf5-d6e1-445c-b5d6-8ac47f78bcd5 - Kushagra Singh.pdf",
-        r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\244ca029_Monika_patidar - Monika Patidar..pdf",
-        r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\Abhishek    _244CA002 - ABHISHEK SISODIYA.pdf",
-        r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\Amit_244CA004 - Amit Patidar.pdf",
-        r"D:\2025\PROJECTS\HireMate\SampleData\Resumes\MCA\anand.pdf"
+        r"D:\New folder (3)\HireMate\Resumes\MCA\244CA024_-_Resume_1d492eaf5-d6e1-445c-b5d6-8ac47f78bcd5 - Kushagra Singh.pdf",
+        r"D:\New folder (3)\HireMate\Resumes\MCA\244CA024_-_Resume_1d492eaf5-d6e1-445c-b5d6-8ac47f78bcd5 - Kushagra Singh.pdf",
+        r"D:\New folder (3)\HireMate\Resumes\MCA\244ca029_Monika_patidar - Monika Patidar.pdf",
+        r"D:\New folder (3)\HireMate\Resumes\MCA\Abhishek    _244CA002 - ABHISHEK SISODIYA.pdf",
+        r"D:\New folder (3)\HireMate\Resumes\MCA\Amit_244CA004 - Amit Patidar.pdf",
+        r"D:\New folder (3)\HireMate\Resumes\MCA\anand.pdf"
     ]
     keywords = ["Software Developer Role", "MERN", "C++", "HTML", "CSS", "JavaScript"]
 
