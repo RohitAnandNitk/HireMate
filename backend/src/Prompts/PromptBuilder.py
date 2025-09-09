@@ -4,7 +4,9 @@ from langchain.schema.messages import SystemMessage, HumanMessage
 from langchain.schema.messages import HumanMessage, SystemMessage
 
 class PromptBuilder:
-    def build(self, system_message: str, human_message: str):
+    @staticmethod
+    def build(system_message: str, human_message: str):
+        print("Building prompt...")
         system_message = SystemMessage(content=system_message)
         human_message = HumanMessage(content=human_message)
         return [system_message, human_message]

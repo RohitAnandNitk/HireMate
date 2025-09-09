@@ -11,11 +11,16 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.11",
+    "@vapi-ai/web": "^2.3.8",
     "framer-motion": "^12.23.12",
     "lucide-react": "^0.539.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router-dom": "^7.8.2",
+<<<<<<< HEAD
+=======
+    "socket.io-client": "^4.8.1",
+>>>>>>> a75263be9ef9f499d356169ce7cc5ae910f44511
     "tailwindcss": "^4.1.11"
   },
   "devDependencies": {
