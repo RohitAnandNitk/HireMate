@@ -1,4 +1,4 @@
-from backend.src.Utils.EmailService import EmailService
+from src.Utils.EmailService import EmailService
 
 # email_service = EmailService()
 # send_email = email_service.send_email

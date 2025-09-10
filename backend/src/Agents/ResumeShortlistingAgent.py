@@ -1,6 +1,8 @@
 import json
-from backend.src.LLM.Groq import GroqLLM
-from backend.src.Prompts.PromptBuilder import PromptBuilder
+from datetime import datetime
+from src.LLM.Groq import GroqLLM
+from src.Prompts.PromptBuilder import PromptBuilder
+from src.Utils.Database import db  # Import the database
 
 groq = GroqLLM()
 
@@ -9,22 +11,27 @@ class ResumeShortlistingAgent:
         self.prompt_builder = PromptBuilder()
         self.llm = groq.get_model()
 
-    def shortlist_candidates(self, candidates, keywords):
+    def shortlist_candidates(self, candidates, keywords, job_role):
         """
-        Takes extracted candidate info + keywords.
+        Takes extracted candidate info, keywords list, and job role.
         Returns shortlisted and not_shortlisted lists.
+        Also updates the shortlist status in the database.
         """
+        print("ShortlistingAgent called")
         shortlisted = []
         not_shortlisted = []
 
-        system_prompt = """
+        system_prompt = f"""
         You are an intelligent Resume Screening Agent.
+
+        Job Role: {job_role}
+        Required Skills/Keywords: {keywords}
+
         You will receive:
-        1. The job role and required skills (keywords).
-        2. A candidate's resume text.
+        1. The candidate's resume text.
 
         Your task:
-        - Assess how well the candidate fits the role, even if skill names or job titles are worded differently.
+        - Assess how well the candidate fits the {job_role} role, even if skill names or job titles are worded differently.
         - Recognize synonyms, related tools, frameworks, and transferable skills.
         - Give more weight to core role-specific skills and relevant work experience than to exact keyword matches.
         - Account for abbreviations, alternative names, and related technologies.
@@ -39,17 +46,18 @@ class ResumeShortlistingAgent:
         3. Otherwise, mark them as not shortlisted.
 
         Output format:
+        Do not return any explanations or additional text.
         **Must** return ONLY a valid JSON object:
-        {
+        {{
             "shortlisted": "yes" or "no"
-        }
+        }}
+
         """
 
         for candidate in candidates:
             human_prompt = (
-                f"Here is the candidate's resume content: {candidate['resume_content']}. "
-                f"The required keywords/role requirements are: {keywords}. "
-                "Based on this information, determine if the candidate is a suitable match."
+                f"Here is the candidate's resume content:\n{candidate['resume_content']}\n\n"
+                "Based on this resume, determine if the candidate is a suitable match for the job role and required skills."
             )
 
             messages = self.prompt_builder.build(system_prompt, human_prompt)
@@ -57,20 +65,36 @@ class ResumeShortlistingAgent:
 
             try:
                 llm_output = json.loads(response.content.strip())
-                print("Shortlisting Agent:", llm_output)
+                # print("Shortlisting Agent:", llm_output)
             except json.JSONDecodeError:
-                print(f"Invalid JSON for {candidate['resume']}:\n", response.content)
+                print(f"Invalid JSON for {candidate.get('resume', 'unknown')}:\n", response.content)
                 continue
 
+            shortlist_status = llm_output.get("shortlisted", "").lower()
             result = {
-                "resume": candidate["resume"],
-                "name": candidate["name"],
-                "email": candidate["email"]
+                "resume": candidate.get("resume", ""),
+                "name": candidate.get("name", ""),
+                "email": candidate.get("email", "")
             }
 
-            if llm_output.get("shortlisted", "").lower() == "yes":
+            # Update the shortlist status in the database
+            db.candidates.update_one(
+                {"email": candidate.get("email")},
+                {"$set": {
+                    "resume_shortlisted": "yes" if shortlist_status == "yes" else "no",
+                    "updated_at": datetime.utcnow()
+                }}
+            )
+
+            if shortlist_status == "yes":
                 shortlisted.append(result)
             else:
                 not_shortlisted.append(result)
 
-        return {"shortlisted": shortlisted, "not_shortlisted": not_shortlisted}
+        print("shortlisted", len(shortlisted))
+        print("not_shortlisted", len(not_shortlisted))
+
+        return {
+            "shortlisted": shortlisted,
+            "not_shortlisted": not_shortlisted
+        }

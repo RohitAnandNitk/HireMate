@@ -1,7 +1,9 @@
 import fitz
 import json
+from datetime import datetime
 from src.LLM.Groq import GroqLLM
 from src.Prompts.PromptBuilder import PromptBuilder
+from src.Utils.Database import db
 
 groq = GroqLLM()
 
@@ -20,7 +22,8 @@ class ResumeIntakeAgent:
 
     def process_resumes(self, pdf_files):
         """
-        Extracts name, email, and resume content using LLM for all resumes.
+        Extracts name, email, and resume content using LLM for all resumes,
+        enriches with timestamps, and saves/upserts into the database.
         Returns a list of candidate dictionaries.
         """
         candidates = []
@@ -36,7 +39,7 @@ class ResumeIntakeAgent:
           * Ignore prefixes/symbols around emails (like 'R username@gmail.com' -> 'username@gmail.com').
           * If multiple emails, choose the personal Gmail/Outlook one.
         - Keep the **full resume content** as a plain text string (no formatting).
-        
+
         Output format:
         Return ONLY valid JSON without any extra characters, text, explanation, or formatting.
         Do NOT include markdown, code blocks, or annotations like ```json```.
@@ -63,9 +66,29 @@ class ResumeIntakeAgent:
 
             try:
                 llm_output = json.loads(response.content.strip())
-                llm_output["resume"] = pdf_path  # attach file reference if needed
-                candidates.append(llm_output)
-                print(f"Extracted Info ({pdf_path}):", llm_output)
+                candidate_data = {
+                    "name": llm_output["name"],
+                    "email": llm_output["email"],
+                    "resume_content": llm_output["resume_content"],
+                    "resume_shortlisted": "no",
+                    "selected": "no",
+                    "updated_at": datetime.utcnow()
+                }
+
+                existing_candidate = db.candidates.find_one({"email": candidate_data["email"]})
+                if existing_candidate:
+                    candidate_data["created_at"] = existing_candidate["created_at"]
+                else:
+                    candidate_data["created_at"] = datetime.utcnow()
+
+                db.candidates.update_one(
+                    {"email": candidate_data["email"]},
+                    {"$set": candidate_data},
+                    upsert=True
+                )
+
+                candidates.append(candidate_data)
+                # print(f"Processed Candidate ({pdf_path}):", candidate_data)
 
             except json.JSONDecodeError:
                 print(f"Invalid JSON from LLM for {pdf_path}:\n", response.content)
