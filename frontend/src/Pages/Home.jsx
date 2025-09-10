@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import Testimonials from '../components/Testimonials';
 
 const Home = () => {
     const navigate = useNavigate();
@@ -346,6 +347,15 @@ const Home = () => {
                     </div>
                 </div>
             </div>
+            {/* Testimonials Section 10 cards with infinite scrolling from right to left  */}
+            <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16 relative z-10">
+                <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">What Our Users Say</h2>
+                <div className="overflow-hidden">
+                    <Testimonials />
+                </div>
+            </div>
+
+            {/* Footer */}  
 
             <Footer />
         </div>

@@ -3,6 +3,7 @@ from flask_cors import CORS
 import os
 from src.Routes.interview_routes import interview_bp
 from src.Routes.resume_routes import resume_bp
+from src.Controllers.allresumes_controller import get_allresumes_controller
 # from src.Utils.VapiService import vapiServices  # ensure vapi initializes at startup
 
 # Import the database to initialize connection
@@ -22,4 +23,8 @@ CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
 
 if __name__ == "__main__":
     print("Flask server started on http://localhost:5000")
+    # this is just to test if the database connection is working and to print all resumes
+    with app.app_context():
+        response, status = get_allresumes_controller()
+        print(response.get_json())
     app.run(host="0.0.0.0", port=5000, debug=True)

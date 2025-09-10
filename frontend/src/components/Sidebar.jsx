@@ -9,9 +9,8 @@ import {
   Star,
   BarChart3,
   Settings,
-  Code,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const items = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
@@ -23,8 +22,10 @@ const items = [
 
 const Sidebar = () => {
   const navigate = useNavigate();
+  const location = useLocation(); // 👈 for active route detection
   const [isOpen, setIsOpen] = useState(true);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+
   return (
     <>
       {/* Mobile toggle button */}
@@ -49,9 +50,8 @@ const Sidebar = () => {
       {/* Sidebar */}
       <aside
         className={`fixed md:static top-0 left-0 h-full md:h-auto border-r border-gray-200 bg-white/80 backdrop-blur-sm transform transition-all duration-300 ease-in-out z-50
-
-				${isMobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
-				${isOpen ? "w-56" : "w-16 md:w-16"}`}
+        ${isMobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+        ${isOpen ? "w-56" : "w-16 md:w-16"}`}
       >
         {/* Desktop toggle button */}
         <div className="hidden md:flex justify-between items-center px-4 py-4">
@@ -76,16 +76,17 @@ const Sidebar = () => {
         <nav className="mt-2">
           {items.map((item) => {
             const IconComponent = item.icon;
+            const isActive = location.pathname === item.path; // 👈 check current route
             return (
               <button
                 onClick={() => navigate(item.path)}
                 key={item.label}
-                className={`w-full text-left px-4 py-3 text-sm hover:bg-gray-50 transition-all duration-200 flex items-center gap-3
-								${
-                  item.label === "Dashboard"
-                    ? "text-gray-900 font-medium bg-gray-50"
-                    : "text-gray-600"
-                }`}
+                className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-all duration-200
+                  ${
+                    isActive
+                      ? "text-gray-900 font-medium bg-gray-100 border-r-4 border-blue-500"
+                      : "text-gray-600 hover:bg-gray-50"
+                  }`}
                 title={!isOpen ? item.label : ""}
               >
                 <IconComponent size={20} className="flex-shrink-0" />
