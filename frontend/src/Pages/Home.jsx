@@ -19,6 +19,8 @@ import {
     Database,
     Zap
 } from 'lucide-react';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 const Home = () => {
     const navigate = useNavigate();
@@ -154,52 +156,7 @@ const Home = () => {
             </div>
 
             {/* Navigation */}
-            <nav className="bg-white/80 backdrop-blur-md border-b border-blue-100 sticky top-0 z-50">
-                <div className="max-w-7xl mx-auto px-6 lg:px-8">
-                    <div className="flex justify-between items-center py-4">
-                        {/* Logo */}
-                        <div className="flex items-center space-x-2">
-                            <img
-                                src={logo}
-                                alt="HireMate Logo"
-                                className="w-12 h-12 object-contain"
-                            />
-                            <span className="text-xl font-bold text-gray-900">HireMate</span>
-                        </div>
-
-
-                        {/* Desktop Navigation */}
-                        <div className="hidden md:flex items-center space-x-6">
-                            <a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition-colors text-sm">Home</a>
-                            <a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition-colors text-sm">About</a>
-                            <a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition-colors text-sm">Services</a>
-                            <a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition-colors text-sm">Clients</a>
-                            <a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition-colors text-sm">Contact</a>
-                        </div>
-
-                        {/* Mobile menu button */}
-                        <button
-                            onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            className="md:hidden p-2 text-gray-700 hover:text-blue-600"
-                        >
-                            {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
-                        </button>
-                    </div>
-
-                    {/* Mobile Navigation */}
-                    {isMenuOpen && (
-                        <div className="md:hidden border-t border-blue-100 py-4">
-                            <div className="flex flex-col space-y-4">
-                                <a href="#" className="text-gray-700 hover:text-blue-600 font-medium text-sm">Home</a>
-                                <a href="#" className="text-gray-700 hover:text-blue-600 font-medium text-sm">About</a>
-                                <a href="#" className="text-gray-700 hover:text-blue-600 font-medium text-sm">Services</a>
-                                <a href="#" className="text-gray-700 hover:text-blue-600 font-medium text-sm">Clients</a>
-                                <a href="#" className="text-gray-700 hover:text-blue-600 font-medium text-sm">Contact</a>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            </nav>
+            <Navbar />
 
             {/* Hero Section */}
             <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16 relative z-10">
@@ -389,6 +346,8 @@ const Home = () => {
                     </div>
                 </div>
             </div>
+
+            <Footer />
         </div>
     );
 };

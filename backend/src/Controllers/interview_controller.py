@@ -1,7 +1,7 @@
 import asyncio
 import io, json
 from flask import jsonify, request
-from src.Utils.VapiService import upload_resume, mock_interview
+from src.Utils.VapiService import upload_resume
 import pdfplumber
 
 from src.Agents.MockInterviewAgent import MockInterviewAgent
