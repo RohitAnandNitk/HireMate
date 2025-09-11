@@ -84,7 +84,7 @@ const Sidebar = () => {
                 className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-all duration-200
                   ${
                     isActive
-                      ? "text-gray-900 font-medium bg-gray-100 border-r-4 border-blue-500"
+                      ? "text-gray-900 font-medium bg-gray-100 border-r-4 border-black"
                       : "text-gray-600 hover:bg-gray-50"
                   }`}
                 title={!isOpen ? item.label : ""}
