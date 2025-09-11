@@ -23,8 +23,4 @@ CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
 
 if __name__ == "__main__":
     print("Flask server started on http://localhost:5000")
-    # this is just to test if the database connection is working and to print all resumes
-    with app.app_context():
-        response, status = get_allresumes_controller()
-        print(response.get_json())
     app.run(host="0.0.0.0", port=5000, debug=True)
