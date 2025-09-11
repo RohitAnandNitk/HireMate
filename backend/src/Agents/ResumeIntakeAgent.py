@@ -29,27 +29,32 @@ class ResumeIntakeAgent:
         candidates = []
 
         system_prompt = """
-        You are a Resume Information Extraction Agent.
-        Your task is to carefully extract structured candidate details
-        from raw resume text.
+            You are a Resume Information Extraction Agent.
+            Your task is to carefully extract structured candidate details
+            from raw resume text.
 
-        Extraction Rules:
-        - Extract the **full candidate name** exactly as written in the resume header or first lines.
-        - Extract the **primary email address** in valid format (local@domain).
-          * Ignore prefixes/symbols around emails (like 'R username@gmail.com' -> 'username@gmail.com').
-          * If multiple emails, choose the personal Gmail/Outlook one.
-        - Keep the **full resume content** as a plain text string (no formatting).
+            Extraction Rules:
+            - Extract the **full candidate name** exactly as written in the resume header or first lines.
+            - Extract the **primary email address** in valid format (local@domain).
+            * Ignore prefixes/symbols around emails (like 'R username@gmail.com' -> 'username@gmail.com').
+            * If multiple emails, choose the personal Gmail/Outlook one.
+            - Keep the **full resume content** as a plain text string with the following processing:
+            * Remove any special or non-printable characters such as unusual symbols (for example: '↕', 'ï') that can cause issues in JSON encoding.
+            * Keep standard punctuation, letters, numbers, and common formatting like newlines.
+            * Ensure the text is clean and free from characters that can break JSON parsing.
+            * Preserve the information but remove decorative or corrupted characters.
 
-        Output format:
-        Return ONLY valid JSON without any extra characters, text, explanation, or formatting.
-        Do NOT include markdown, code blocks, or annotations like ```json```.
-        Just output the JSON object, nothing else.
-        Example : 
-        {
-          "name": "<Candidate Name>",
-          "email": "<Candidate Email>",
-          "resume_content": "<Full Resume Content>"
-        }
+            Output format:
+            Return ONLY valid JSON without any extra characters, text, explanation, or formatting.
+            Do NOT include markdown, code blocks, or annotations like ```json```.
+            Just output the JSON object, nothing else.
+
+            Example : 
+            {
+            "name": "<Candidate Name>",
+            "email": "<Candidate Email>",
+            "resume_content": "<Cleaned Resume Content>"
+            }
         """
 
         for pdf_path in pdf_files:
