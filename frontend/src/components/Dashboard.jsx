@@ -9,6 +9,7 @@ const Dashboard = () => {
   const [files, setFiles] = useState([]);
   const [skills, setSkills] = useState([]);
   const [role, setRole] = useState("");
+  const [processing, setProcessing] = useState(false);
 
   const onAddFiles = useCallback(
     (newFiles) => {
@@ -28,25 +29,19 @@ const Dashboard = () => {
   }, []);
 
   const handleProcessResumes = async () => {
-    if (files.length === 0) {
-      alert("Please upload some files first!");
-      return;
-    }
-    if (!role.trim()) {
-      alert("Please enter the role you are hiring for!");
-      return;
-    }
+    if (!role.trim() || files.length === 0 || skills.length === 0) return;
 
-    const formData = new FormData();
-    files.forEach((file) => {
-      formData.append("resumes", file);
-    });
-
-    // Add skills and role to formData
-    formData.append("role", role);
-    formData.append("skills", JSON.stringify(skills));
-
+    setProcessing(true);
     try {
+      const formData = new FormData();
+      files.forEach((file) => {
+        formData.append("resumes", file);
+      });
+
+      // Add skills and role to formData
+      formData.append("role", role);
+      formData.append("skills", JSON.stringify(skills));
+
       const response = await fetch(
         "http://localhost:5000/api/resume/upload-resumes",
         {
@@ -54,6 +49,7 @@ const Dashboard = () => {
           body: formData,
         }
       );
+
       const result = await response.json();
       if (response.ok) {
         alert("Resumes processed successfully!");
@@ -65,19 +61,26 @@ const Dashboard = () => {
     } catch (error) {
       console.error("Error uploading resumes:", error);
       alert("Error uploading resumes");
+    } finally {
+      setProcessing(false); // re-enable button
     }
   };
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <main className="max-w-6xl mx-auto px-6 py-6">
+      <main className="flex-1 w-full px-6 py-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-xl font-semibold text-gray-900">Dashboard</h1>
           <button
             onClick={handleProcessResumes}
-            className="px-4 py-2 text-sm rounded-md bg-gray-900 text-white hover:bg-black"
+            disabled={!role.trim() || files.length === 0 || skills.length === 0 || processing}
+            className={`px-4 py-2 text-sm rounded-md ${
+              !role.trim() || files.length === 0 || skills.length === 0 || processing
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                : "bg-gray-900 text-white hover:bg-black"
+            }`}
           >
-            Process Resumes
+            {processing ? "Processing..." : "Process Resumes"}
           </button>
         </div>
 
