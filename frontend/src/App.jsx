@@ -1,24 +1,18 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
-import InterviewPage from "./pages/InterviewPage";
+import InterviewPage from "./Pages/InterviewPage";
 import Layout from "./components/Layout";
-import ResumeLibrary from "./pages/ResumeLibrary";
-import Shortlisted from "./pages/Shortlisted";
-import Analytics from "./pages/Analytics";
-import Home from "./pages/Home";
+import ResumeLibrary from "./Pages/ResumeLibrary";
+import Shortlisted from "./Pages/Shortlisted";
+import Analytics from "./Pages/Analytics";
+import Home from "./Pages/Home";
 
 function App() {
   return (
     <Router>
       <Routes>
-        
-        <Route
-          path="/"
-          element={
-            <Home />
-          }
-        />
+        <Route path="/" element={<Home />} />
         <Route
           path="/dashboard"
           element={

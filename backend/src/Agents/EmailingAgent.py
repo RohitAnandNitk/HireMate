@@ -4,7 +4,7 @@ from src.Utils.EmailService import EmailService
 # send_email = email_service.send_email
 
 
-class EmailingAgent:
+class EmailingAgent:    
     def __init__(self, email_service: EmailService):
         self.email_service = email_service
 
