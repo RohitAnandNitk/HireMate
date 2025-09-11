@@ -1,12 +1,12 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
-import InterviewPage from "./Pages/InterviewPage";
+import InterviewPage from "./pages/InterviewPage";
 import Layout from "./components/Layout";
-import ResumeLibrary from "./Pages/ResumeLibrary";
-import Shortlisted from "./Pages/Shortlisted";
-import Analytics from "./Pages/Analytics";
-import Home from "./Pages/Home";
+import ResumeLibrary from "./pages/ResumeLibrary";
+import Shortlisted from "./pages/Shortlisted";
+import Analytics from "./pages/Analytics";
+import Home from "./pages/Home";
 
 function App() {
   return (
