@@ -11,13 +11,12 @@ import {
   Settings,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-
+import logo from "../assets/hiremate.png";
 const items = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
   { label: "All Resumes", icon: FileText, path: "/resumes" },
   { label: "Shortlisted", icon: Star, path: "/shortlisted" },
   { label: "Analytics", icon: BarChart3, path: "/analytics" },
-  { label: "Settings", icon: Settings, path: "/settings" },
 ];
 
 const Sidebar = () => {
@@ -30,7 +29,7 @@ const Sidebar = () => {
     <>
       {/* Mobile toggle button */}
       <div className="md:hidden p-2 border-b border-gray-200 bg-white/80 backdrop-blur-sm flex justify-between items-center">
-        <div className="text-sm font-semibold text-gray-800">HireMate</div>
+        <img src={logo} alt="HireMate" className="h-8" />
         <button
           onClick={() => setIsMobileOpen(!isMobileOpen)}
           className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -56,9 +55,7 @@ const Sidebar = () => {
         {/* Desktop toggle button */}
         <div className="hidden md:flex justify-between items-center px-4 py-4">
           {isOpen && (
-            <div className="text-sm font-semibold text-gray-800 transition-opacity duration-200">
-              HireMate
-            </div>
+              <img src={logo} alt="HireMate" className="h-[50px]" />
           )}
           <button
             onClick={() => setIsOpen(!isOpen)}
