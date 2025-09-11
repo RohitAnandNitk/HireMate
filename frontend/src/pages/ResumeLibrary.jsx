@@ -4,27 +4,28 @@ import { Search, FileText } from "lucide-react";
 const ResumeLibrary = () => {
   const [resumes, setResumes] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(true); // optional, for loading state
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const resumesPerPage = 5;
 
   // Fetch resumes from API
   useEffect(() => {
     const fetchResumes = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/resume/all"); // replace with your actual endpoint
-        
+        const response = await fetch("http://localhost:5000/api/resume/all");
         if (!response.ok) {
           throw new Error("Failed to fetch resumes");
         }
         const data = await response.json();
-        setResumes(data.data); // assuming your API returns { success, count, data }
+        setResumes(data.data);
       } catch (err) {
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
-
     fetchResumes();
   }, []);
 
@@ -37,6 +38,14 @@ const ResumeLibrary = () => {
         (r.id && r.id.toString().includes(searchTerm))
     );
   }, [resumes, searchTerm]);
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredResumes.length / resumesPerPage);
+  const startIndex = (currentPage - 1) * resumesPerPage;
+  const currentResumes = filteredResumes.slice(
+    startIndex,
+    startIndex + resumesPerPage
+  );
 
   const getInitials = (name) =>
     name
@@ -81,7 +90,10 @@ const ResumeLibrary = () => {
             type="text"
             placeholder="Search by name, email, or ID..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1); // reset to first page on search
+            }}
             className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 bg-white focus:ring-1 focus:ring-gray-400 focus:border-gray-400 text-sm transition-colors"
           />
         </div>
@@ -90,7 +102,7 @@ const ResumeLibrary = () => {
       {/* Resume Cards */}
       <div className="max-w-6xl mx-auto px-6 pb-12">
         <div className="grid gap-4">
-          {filteredResumes.map((resume, idx) => (
+          {currentResumes.map((resume, idx) => (
             <div
               key={idx}
               className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-sm transition-shadow"
@@ -108,7 +120,9 @@ const ResumeLibrary = () => {
                   </h3>
                   <p className="text-gray-600 text-sm">{resume.email}</p>
                   {resume.id && (
-                    <p className="text-xs text-gray-500 mt-1">ID: {resume.id}</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      ID: {resume.id}
+                    </p>
                   )}
                 </div>
               </div>
@@ -124,6 +138,39 @@ const ResumeLibrary = () => {
               No resumes found
             </h3>
             <p className="text-gray-500">Try adjusting your search criteria.</p>
+          </div>
+        )}
+
+        {/* Pagination */}
+        {filteredResumes.length > 0 && (
+          <div className="flex justify-center items-center gap-2 mt-8">
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((p) => p - 1)}
+              className="px-3 py-1 border rounded disabled:opacity-50"
+            >
+              Prev
+            </button>
+
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentPage(i + 1)}
+                className={`px-3 py-1 border rounded ${
+                  currentPage === i + 1 ? "bg-gray-200 font-medium" : ""
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((p) => p + 1)}
+              className="px-3 py-1 border rounded disabled:opacity-50"
+            >
+              Next
+            </button>
           </div>
         )}
       </div>
