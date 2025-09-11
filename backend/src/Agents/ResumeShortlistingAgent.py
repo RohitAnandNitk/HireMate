@@ -52,6 +52,13 @@ class ResumeShortlistingAgent:
             "shortlisted": "yes" or "no"
         }}
 
+        even do not return like this :
+         ```json
+            {{
+                "shortlisted": "yes" or "not"
+            }}
+        ```
+
         """
 
         for candidate in candidates:

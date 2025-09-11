@@ -1,5 +1,6 @@
 from src.LLM.Groq import GroqLLM 
 from src.Prompts.PromptBuilder import PromptBuilder
+from src.Utils.Database import db
 import json
 
 groq = GroqLLM()
