@@ -1,0 +1,604 @@
+import React, { useState } from "react";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Clock,
+  MessageCircle,
+  Send,
+  CheckCircle,
+  Users,
+  Headphones,
+  Globe,
+} from "lucide-react";
+
+const Contact = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    company: "",
+    phone: "",
+    inquiryType: "general",
+    message: "",
+  });
+
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Simulate form submission
+    setIsSubmitted(true);
+    setTimeout(() => setIsSubmitted(false), 3000);
+  };
+
+  const contactInfo = [
+    {
+      icon: Mail,
+      title: "Email Us",
+      details: "hello@hiremate.ai",
+      description: "Send us an email anytime",
+    },
+    {
+      icon: Phone,
+      title: "Call Us",
+      details: "+1 (555) 123-4567",
+      description: "Mon-Fri from 9am to 6pm EST",
+    },
+    {
+      icon: MapPin,
+      title: "Visit Us",
+      details: "123 Innovation Drive, Tech Hub, CA 94105",
+      description: "Our headquarters in Silicon Valley",
+    },
+    {
+      icon: Clock,
+      title: "Business Hours",
+      details: "9:00 AM - 6:00 PM EST",
+      description: "Monday through Friday",
+    },
+  ];
+
+  const supportOptions = [
+    {
+      icon: MessageCircle,
+      title: "Live Chat",
+      description: "Get instant help from our support team",
+      availability: "Available 24/7",
+    },
+    {
+      icon: Headphones,
+      title: "Phone Support",
+      description: "Speak directly with our experts",
+      availability: "Mon-Fri, 9am-6pm EST",
+    },
+    {
+      icon: Globe,
+      title: "Help Center",
+      description: "Browse our comprehensive documentation",
+      availability: "Available anytime",
+    },
+  ];
+
+  const officeLocations = [
+    {
+      city: "San Francisco",
+      address: "123 Innovation Drive, CA 94105",
+      phone: "+1 (555) 123-4567",
+      type: "Headquarters",
+    },
+    {
+      city: "New York",
+      address: "456 Business Ave, NY 10001",
+      phone: "+1 (555) 234-5678",
+      type: "East Coast Office",
+    },
+    {
+      city: "London",
+      address: "789 Tech Street, London EC1A 1BB",
+      phone: "+44 20 7946 0958",
+      type: "European Office",
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
+      {/* Navigation */}
+      <nav className="bg-white shadow-sm px-6 py-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
+              <span className="text-white font-bold text-sm">HM</span>
+            </div>
+            <span className="text-xl font-bold text-gray-800">HireMate</span>
+          </div>
+          <div className="flex space-x-8">
+            <a
+              href="#"
+              className="text-gray-600 hover:text-blue-600 transition-colors"
+            >
+              Home
+            </a>
+            <a
+              href="#"
+              className="text-gray-600 hover:text-blue-600 transition-colors"
+            >
+              About
+            </a>
+            <a
+              href="#"
+              className="text-gray-600 hover:text-blue-600 transition-colors"
+            >
+              Services
+            </a>
+            <a
+              href="#"
+              className="text-gray-600 hover:text-blue-600 transition-colors"
+            >
+              Clients
+            </a>
+            <a href="#" className="text-blue-600 font-medium">
+              Contact
+            </a>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="py-20 px-6">
+        <div className="max-w-6xl mx-auto text-center">
+          <h1 className="text-5xl font-bold text-gray-800 mb-6">
+            Get in{" "}
+            <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+              Touch
+            </span>
+          </h1>
+          <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto">
+            Ready to transform your hiring process? We're here to help you get
+            started with HireMate. Reach out to us and discover how AI can
+            revolutionize your recruitment.
+          </p>
+        </div>
+      </section>
+
+      {/* Contact Form & Info */}
+      <section className="py-16 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12">
+            {/* Contact Form */}
+            <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+              <h2 className="text-3xl font-bold text-gray-800 mb-6">
+                Send us a Message
+              </h2>
+
+              {isSubmitted ? (
+                <div className="text-center py-12">
+                  <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                  <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                    Message Sent!
+                  </h3>
+                  <p className="text-gray-600">
+                    We'll get back to you within 24 hours.
+                  </p>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Full Name *
+                      </label>
+                      <input
+                        type="text"
+                        name="name"
+                        required
+                        value={formData.name}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Your full name"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Email Address *
+                      </label>
+                      <input
+                        type="email"
+                        name="email"
+                        required
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="your.email@company.com"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Company
+                      </label>
+                      <input
+                        type="text"
+                        name="company"
+                        value={formData.company}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="Your company name"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Phone Number
+                      </label>
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        placeholder="+1 (555) 123-4567"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Inquiry Type
+                    </label>
+                    <select
+                      name="inquiryType"
+                      value={formData.inquiryType}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="general">General Inquiry</option>
+                      <option value="demo">Request Demo</option>
+                      <option value="pricing">Pricing Information</option>
+                      <option value="support">Technical Support</option>
+                      <option value="partnership">Partnership</option>
+                      <option value="enterprise">Enterprise Solutions</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Message *
+                    </label>
+                    <textarea
+                      name="message"
+                      required
+                      rows={5}
+                      value={formData.message}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Tell us about your needs and how we can help..."
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-blue-700 hover:to-cyan-700 transition-colors flex items-center justify-center"
+                  >
+                    <Send className="w-4 h-4 mr-2" />
+                    Send Message
+                  </button>
+                </form>
+              )}
+            </div>
+
+            {/* Contact Information */}
+            <div className="space-y-8">
+              <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                <h2 className="text-3xl font-bold text-gray-800 mb-6">
+                  Contact Information
+                </h2>
+                <div className="space-y-6">
+                  {contactInfo.map((info, index) => (
+                    <div key={index} className="flex items-start">
+                      <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
+                        <info.icon className="w-6 h-6 text-blue-600" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-gray-800">
+                          {info.title}
+                        </h3>
+                        <p className="text-blue-600 font-medium">
+                          {info.details}
+                        </p>
+                        <p className="text-gray-600 text-sm">
+                          {info.description}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Support Options */}
+              <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-8 rounded-2xl border border-blue-100">
+                <h3 className="text-2xl font-bold text-gray-800 mb-6">
+                  Support Options
+                </h3>
+                <div className="space-y-4">
+                  {supportOptions.map((option, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center p-4 bg-white rounded-lg"
+                    >
+                      <option.icon className="w-8 h-8 text-blue-600 mr-4" />
+                      <div>
+                        <h4 className="font-semibold text-gray-800">
+                          {option.title}
+                        </h4>
+                        <p className="text-gray-600 text-sm">
+                          {option.description}
+                        </p>
+                        <p className="text-blue-600 text-xs">
+                          {option.availability}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Office Locations */}
+      <section className="py-16 px-6 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-4xl font-bold text-center text-gray-800 mb-16">
+            Our Offices
+          </h2>
+          <div className="grid lg:grid-cols-3 gap-8">
+            {officeLocations.map((office, index) => (
+              <div
+                key={index}
+                className="bg-gray-50 p-8 rounded-2xl border border-gray-100"
+              >
+                <div className="mb-4">
+                  <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
+                    {office.type}
+                  </span>
+                </div>
+                <h3 className="text-2xl font-bold text-gray-800 mb-4">
+                  {office.city}
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex items-start">
+                    <MapPin className="w-5 h-5 text-gray-500 mr-3 mt-0.5 flex-shrink-0" />
+                    <p className="text-gray-600">{office.address}</p>
+                  </div>
+                  <div className="flex items-center">
+                    <Phone className="w-5 h-5 text-gray-500 mr-3 flex-shrink-0" />
+                    <p className="text-blue-600 font-medium">{office.phone}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-16 px-6 bg-gray-50">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-4xl font-bold text-center text-gray-800 mb-16">
+            Frequently Asked Questions
+          </h2>
+          <div className="space-y-6">
+            <div className="bg-white p-6 rounded-xl border border-gray-100">
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                How quickly can I get started with HireMate?
+              </h3>
+              <p className="text-gray-600">
+                You can get started immediately after signing up. Our onboarding
+                process takes less than 15 minutes, and you can begin uploading
+                resumes right away.
+              </p>
+            </div>
+
+            <div className="bg-white p-6 rounded-xl border border-gray-100">
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                What file formats does HireMate support?
+              </h3>
+              <p className="text-gray-600">
+                HireMate supports all major resume formats including PDF, DOCX,
+                DOC, TXT, and RTF. Our AI can extract information from any
+                structured document format.
+              </p>
+            </div>
+
+            <div className="bg-white p-6 rounded-xl border border-gray-100">
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                Is my candidate data secure?
+              </h3>
+              <p className="text-gray-600">
+                Absolutely. We process all data locally and follow strict
+                security protocols. We're GDPR compliant and use
+                enterprise-grade encryption for all data handling.
+              </p>
+            </div>
+
+            <div className="bg-white p-6 rounded-xl border border-gray-100">
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                Can HireMate integrate with our existing HR tools?
+              </h3>
+              <p className="text-gray-600">
+                Yes, HireMate offers seamless integrations with popular HR
+                platforms like Workday, BambooHR, Greenhouse, and many others.
+                We also provide API access for custom integrations.
+              </p>
+            </div>
+
+            <div className="bg-white p-6 rounded-xl border border-gray-100">
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                What kind of support do you offer?
+              </h3>
+              <p className="text-gray-600">
+                We provide 24/7 live chat support, phone support during business
+                hours, comprehensive documentation, and dedicated account
+                managers for enterprise clients.
+              </p>
+            </div>
+
+            <div className="bg-white p-6 rounded-xl border border-gray-100">
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                Do you offer custom pricing for large organizations?
+              </h3>
+              <p className="text-gray-600">
+                Yes, we offer flexible enterprise pricing based on your volume
+                and specific needs. Contact our sales team to discuss a custom
+                solution for your organization.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-16 px-6 bg-gradient-to-r from-blue-600 to-cyan-600">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl font-bold text-white mb-6">
+            Ready to Get Started?
+          </h2>
+          <p className="text-xl text-blue-100 mb-8">
+            Join thousands of companies who have transformed their hiring
+            process with HireMate.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button className="bg-white text-blue-600 px-8 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-colors">
+              Start Free Trial
+            </button>
+            <button className="border-2 border-white text-white px-8 py-3 rounded-xl font-semibold hover:bg-white hover:text-blue-600 transition-colors">
+              Schedule Demo
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-800 text-white py-12 px-6">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-4 gap-8 mb-8">
+            <div className="lg:col-span-2">
+              <div className="flex items-center space-x-2 mb-6">
+                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">HM</span>
+                </div>
+                <span className="text-xl font-bold">HireMate</span>
+              </div>
+              <p className="text-gray-400 mb-6 max-w-md">
+                Transform your hiring process with AI-powered recruitment
+                solutions. Make better hiring decisions faster and more
+                efficiently.
+              </p>
+              <div className="flex space-x-4">
+                <div className="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-gray-600 transition-colors cursor-pointer">
+                  <span className="text-sm font-bold">f</span>
+                </div>
+                <div className="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-gray-600 transition-colors cursor-pointer">
+                  <span className="text-sm font-bold">t</span>
+                </div>
+                <div className="w-10 h-10 bg-gray-700 rounded-lg flex items-center justify-center hover:bg-gray-600 transition-colors cursor-pointer">
+                  <span className="text-sm font-bold">in</span>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
+              <div className="space-y-3">
+                <a
+                  href="#"
+                  className="block text-gray-400 hover:text-white transition-colors"
+                >
+                  Home
+                </a>
+                <a
+                  href="#"
+                  className="block text-gray-400 hover:text-white transition-colors"
+                >
+                  About
+                </a>
+                <a
+                  href="#"
+                  className="block text-gray-400 hover:text-white transition-colors"
+                >
+                  Services
+                </a>
+                <a
+                  href="#"
+                  className="block text-gray-400 hover:text-white transition-colors"
+                >
+                  Clients
+                </a>
+                <a
+                  href="#"
+                  className="block text-gray-400 hover:text-white transition-colors"
+                >
+                  Contact
+                </a>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Support</h3>
+              <div className="space-y-3">
+                <a
+                  href="#"
+                  className="block text-gray-400 hover:text-white transition-colors"
+                >
+                  Help Center
+                </a>
+                <a
+                  href="#"
+                  className="block text-gray-400 hover:text-white transition-colors"
+                >
+                  Documentation
+                </a>
+                <a
+                  href="#"
+                  className="block text-gray-400 hover:text-white transition-colors"
+                >
+                  API Reference
+                </a>
+                <a
+                  href="#"
+                  className="block text-gray-400 hover:text-white transition-colors"
+                >
+                  Privacy Policy
+                </a>
+                <a
+                  href="#"
+                  className="block text-gray-400 hover:text-white transition-colors"
+                >
+                  Terms of Service
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-700 pt-8 text-center">
+            <p className="text-gray-400">
+              © 2025 HireMate. All rights reserved. Made with ❤️ for better
+              hiring.
+            </p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default Contact;

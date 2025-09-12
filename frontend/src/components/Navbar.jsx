@@ -1,7 +1,8 @@
-import React from 'react'
-import logo from '../assets/hiremate.png';
-import { Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import React from "react";
+import logo from "../assets/hiremate.png";
+import { Menu, X } from "lucide-react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,33 +19,30 @@ const Navbar = () => {
                 alt="HireMate Logo"
                 className="w-10 h-10 object-contain"
               />
-              <span className="text-lg font-semibold text-gray-900">HireMate</span>
+              <span className="text-lg font-semibold text-gray-900">
+                HireMate
+              </span>
             </div>
-            
+
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#" className="text-gray-600 hover:text-blue-600 font-medium transition-colors text-sm relative group">
+              <Link to="/" className="...">
                 Home
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
-              </a>
-              <a href="#" className="text-gray-600 hover:text-blue-600 font-medium transition-colors text-sm relative group">
+              </Link>
+              <Link to="/about" className="...">
                 About
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
-              </a>
-              <a href="#" className="text-gray-600 hover:text-blue-600 font-medium transition-colors text-sm relative group">
+              </Link>
+              <Link to="/services" className="...">
                 Services
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
-              </a>
-              <a href="#" className="text-gray-600 hover:text-blue-600 font-medium transition-colors text-sm relative group">
+              </Link>
+              <Link to="/clients" className="...">
                 Clients
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
-              </a>
-              <a href="#" className="text-gray-600 hover:text-blue-600 font-medium transition-colors text-sm relative group">
+              </Link>
+              <Link to="/contact" className="...">
                 Contact
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-300 group-hover:w-full"></span>
-              </a>
+              </Link>
             </div>
-            
+
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -53,23 +51,48 @@ const Navbar = () => {
               {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
-          
+
           {/* Mobile Navigation */}
           {isMenuOpen && (
             <div className="md:hidden border-t border-gray-200/60 pt-4 pb-2">
               <div className="flex flex-col space-y-3">
-                <a href="#" className="text-gray-600 hover:text-blue-600 font-medium text-sm py-2 px-3 rounded-lg hover:bg-blue-50 transition-all duration-200">Home</a>
-                <a href="#" className="text-gray-600 hover:text-blue-600 font-medium text-sm py-2 px-3 rounded-lg hover:bg-blue-50 transition-all duration-200">About</a>
-                <a href="#" className="text-gray-600 hover:text-blue-600 font-medium text-sm py-2 px-3 rounded-lg hover:bg-blue-50 transition-all duration-200">Services</a>
-                <a href="#" className="text-gray-600 hover:text-blue-600 font-medium text-sm py-2 px-3 rounded-lg hover:bg-blue-50 transition-all duration-200">Clients</a>
-                <a href="#" className="text-gray-600 hover:text-blue-600 font-medium text-sm py-2 px-3 rounded-lg hover:bg-blue-50 transition-all duration-200">Contact</a>
+                <a
+                  href="#"
+                  className="text-gray-600 hover:text-blue-600 font-medium text-sm py-2 px-3 rounded-lg hover:bg-blue-50 transition-all duration-200"
+                >
+                  Home
+                </a>
+                <a
+                  href="#"
+                  className="text-gray-600 hover:text-blue-600 font-medium text-sm py-2 px-3 rounded-lg hover:bg-blue-50 transition-all duration-200"
+                >
+                  About
+                </a>
+                <a
+                  href="#"
+                  className="text-gray-600 hover:text-blue-600 font-medium text-sm py-2 px-3 rounded-lg hover:bg-blue-50 transition-all duration-200"
+                >
+                  Services
+                </a>
+                <a
+                  href="#"
+                  className="text-gray-600 hover:text-blue-600 font-medium text-sm py-2 px-3 rounded-lg hover:bg-blue-50 transition-all duration-200"
+                >
+                  Clients
+                </a>
+                <a
+                  href="#"
+                  className="text-gray-600 hover:text-blue-600 font-medium text-sm py-2 px-3 rounded-lg hover:bg-blue-50 transition-all duration-200"
+                >
+                  Contact
+                </a>
               </div>
             </div>
           )}
         </div>
       </nav>
     </div>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;
