@@ -1,7 +1,5 @@
+import os
 from src.Utils.EmailService import EmailService
-
-# email_service = EmailService()
-# send_email = email_service.send_email
 
 
 class EmailingAgent:    
@@ -49,36 +47,33 @@ class EmailingAgent:
             body = templates["not_shortlisted"].format(name=person["name"], company_name=company_name)
             self.email_service.send_email(person["email"], "Application Status", body)
 
-        print("✅ Email notifications sent.")
+        print("Email notifications sent.")
 
     # we will have a method to send the emails to final selected candidates
-    def send_final_selection_emails(self, selected_candidates):
-        templates = {
-            "final_selection": (
-                "Subject: Job Offer from {company_name}\n\n"
-                "Dear {name},\n\n"
-                "We are excited to extend to you an offer to join {company_name} as a valued member of our team. "
-                "Congratulations on successfully completing the interview process!\n\n"
-                "We believe your skills and experience will be a great fit for our organization, "
-                "and we look forward to the contributions you will make.\n\n"
-                "Please find attached the formal offer letter with details about your role, compensation, "
-                "and other relevant information. We kindly ask you to review it and respond by {response_deadline}.\n\n"
-                "If you have any questions or need further clarification, feel free to reach out to us.\n\n"
-                "Once again, congratulations! We are eager to welcome you aboard.\n\n"
-                "Best regards,\n"
-                "{company_name} Recruitment Team"
-            )
-        }
-
+    def send_final_decision_email(self,candidate, decision, feedback):
         company_name = "HireMate"
-        response_deadline = "MM/DD/YYYY"  # Placeholder for actual deadline
-
-        for candidate in selected_candidates:
-            body = templates["final_selection"].format(
-                name=candidate["name"],
-                company_name=company_name,
-                response_deadline=response_deadline
+        job_role = "Software Engineer"
+        if decision == "SELECT":
+            subject = f"Congratulations! Job Offer from {company_name}"
+            body = (
+                f"Dear {candidate['name']},\n\n"
+                f"Congratulations! You have been selected for the {job_role} position at {company_name}. "
+                f"We are excited to have you on board and believe your skills will be a great asset to our team.\n\n"
+                "Please check the attached offer letter for details about your role and next steps.\n\n"
+                "Feel free to reach out with any questions.\n\n"
+                f"Best regards,\n{company_name} Recruitment Team"
             )
-            self.email_service.send_email(candidate["email"], "Job Offer", body)
+        else:
+            subject = f"Interview Outcome from {company_name}"
+            body = (
+                f"Dear {candidate['name']},\n\n"
+                f"Thank you for participating in the interview process for the {job_role} role at {company_name}. "
+                "After careful consideration, we regret to inform you that we will not be moving forward with your application at this time.\n\n"
+                f"Feedback from the interview:\n{feedback}\n\n"
+                "We appreciate the time and effort you invested in applying and encourage you to apply for future opportunities.\n\n"
+                f"Best regards,\n{company_name} Recruitment Team"
+            )
 
-        print("✅ Final selection emails sent.")
+        # Send the email using the email service
+        self.email_service.send_email(candidate["email"], subject, body)
+        print(f"Decision email sent to {candidate['email']}")
