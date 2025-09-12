@@ -19,8 +19,6 @@ import {
     Database,
     Zap
 } from 'lucide-react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
 import Testimonials from '../components/Testimonials';
 
 const Home = () => {
@@ -156,8 +154,6 @@ const Home = () => {
                 </div>
             </div>
 
-            {/* Navigation */}
-            <Navbar />
 
             {/* Hero Section */}
             <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16 relative z-10">
@@ -355,9 +351,6 @@ const Home = () => {
                 </div>
             </div>
 
-            {/* Footer */}  
-
-            <Footer />
         </div>
     );
 };

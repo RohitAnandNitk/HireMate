@@ -146,47 +146,7 @@ const Clients = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
-      {/* Navigation */}
-      <nav className="bg-white shadow-sm px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">HM</span>
-            </div>
-            <span className="text-xl font-bold text-gray-800">HireMate</span>
-          </div>
-          <div className="flex space-x-8">
-            <a
-              href="#"
-              className="text-gray-600 hover:text-blue-600 transition-colors"
-            >
-              Home
-            </a>
-            <a
-              href="#"
-              className="text-gray-600 hover:text-blue-600 transition-colors"
-            >
-              About
-            </a>
-            <a
-              href="#"
-              className="text-gray-600 hover:text-blue-600 transition-colors"
-            >
-              Services
-            </a>
-            <a href="#" className="text-blue-600 font-medium">
-              Clients
-            </a>
-            <a
-              href="#"
-              className="text-gray-600 hover:text-blue-600 transition-colors"
-            >
-              Contact
-            </a>
-          </div>
-        </div>
-      </nav>
-
+      
       {/* Hero Section */}
       <section className="py-20 px-6">
         <div className="max-w-6xl mx-auto text-center">
@@ -408,39 +368,7 @@ const Clients = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-800 text-white py-12 px-6">
-        <div className="max-w-6xl mx-auto text-center">
-          <div className="flex items-center justify-center space-x-2 mb-6">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">HM</span>
-            </div>
-            <span className="text-xl font-bold">HireMate</span>
-          </div>
-          <p className="text-gray-400 mb-6">
-            Transform Your Hiring Process with AI
-          </p>
-          <div className="flex justify-center space-x-8">
-            <a
-              href="#"
-              className="text-gray-400 hover:text-white transition-colors"
-            >
-              Privacy Policy
-            </a>
-            <a
-              href="#"
-              className="text-gray-400 hover:text-white transition-colors"
-            >
-              Terms of Service
-            </a>
-            <a
-              href="#"
-              className="text-gray-400 hover:text-white transition-colors"
-            >
-              Support
-            </a>
-          </div>
-        </div>
-      </footer>
+      
     </div>
   );
 };

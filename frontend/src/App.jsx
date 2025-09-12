@@ -15,13 +15,21 @@ import About from "./pages/About";
 import Services from "./pages/Services";
 import Clients from "./pages/Clients";
 import Contact from "./pages/Contact";
+import LayoutWithNavbar from "./pages/LayoutWithNavbar";
+
 
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route element={<LayoutWithNavbar />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/clients" element={<Clients />} />
+          <Route path="/contact" element={<Contact />} />
+        </Route>
         <Route
           path="/dashboard"
           element={
@@ -64,10 +72,7 @@ function App() {
 
         <Route path="/mockinterview/test" element={<VapiInterviewPage />} />
 
-        <Route path="/about" element={<About />} />
-        <Route path="/services" element={<Services />} />
-        <Route path="/clients" element={<Clients />} />
-        <Route path="/contact" element={<Contact />} />
+        
       </Routes>
     </Router>
   );
