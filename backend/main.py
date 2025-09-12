@@ -24,7 +24,6 @@ CORS(app, resources={
     r"/*": {
         "origins": [
             "http://localhost:5173",
-            "https://hiremate-dde0.onrender.com",
             "https://hire-mate-azure.vercel.app"
         ]
     }
