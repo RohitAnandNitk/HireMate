@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Vapi from "@vapi-ai/web";
 import { getMockInterviewPrompt } from "../Prompts/MockInterviewPrompt";
 
-export default function InterviewPage() {
+export default function VapiInterviewPage() {
   const [vapiClient, setVapiClient] = useState(null);
   const [resumeText, setResumeText] = useState("");
   const [resumeUploaded, setResumeUploaded] = useState(false);

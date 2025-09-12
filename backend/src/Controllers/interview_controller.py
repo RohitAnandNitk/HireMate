@@ -3,7 +3,7 @@ import io, json
 from flask import jsonify, request
 from src.Utils.VapiService import upload_resume
 import pdfplumber
-
+from src.Utils.Database import db 
 from src.Agents.MockInterviewAgent import MockInterviewAgent
 mock_interview_agent = MockInterviewAgent()
 
@@ -72,3 +72,13 @@ def evaluate_interview_controller(resume_text, transcript):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+from bson import ObjectId
+
+def get_candidate_info(candidate_id):
+    try:
+        candidate = db["candidates"].find_one({"_id": ObjectId(candidate_id)}, {"_id": 0})
+        if not candidate:
+            return jsonify({"error": "Candidate not found"}), 404
+        return jsonify(candidate), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

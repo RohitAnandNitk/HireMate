@@ -1,85 +1,35 @@
 import React, { useState, useEffect } from "react";
-import { Mic, MicOff, Video, VideoOff, Phone, Play } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import Vapi from "@vapi-ai/web";
+import { useLocation } from "react-router-dom";
+import { Mic, MicOff, Video, VideoOff, Phone, Settings, Monitor } from "lucide-react";
 import { getMockInterviewPrompt } from "../Prompts/MockInterviewPrompt";
-import { useParams } from "react-router-dom";
-const InterviewPage = ({ candidateId }) => {
-  // Core state
-  const [vapiClient, setVapiClient] = useState(null);
-  const [resumeText, setResumeText] = useState("");
-  const [conversation, setConversation] = useState([]);
-  const [currentQuestion, setCurrentQuestion] = useState(
-    "Waiting for interview to start..."
-  );
+import Vapi from "@vapi-ai/web"; // make sure you installed this
 
-  // UI state
+const InterviewPage = () => {
+  const location = useLocation();
+  const resumeData = location.state?.resumeData;   // ✅ get from router state
+  const resumeText = resumeData?.resume_content || "";
+
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [interviewStarted, setInterviewStarted] = useState(false);
-  const [interviewDuration, setInterviewDuration] = useState(0);
-  //api calling
-
-  const { id } = useParams(); // gets "453453kkaldjfkal"
-  const [resumeData, setResumeData] = useState(null);
-
-  useEffect(() => {
-    // Fetch resume details using the id
-    const fetchResume = async () => {
-      try {
-        const response = await fetch(`/api/resumes/${id}`);
-        const data = await response.json();
-        setResumeData(data);
-      } catch (error) {
-        console.error("Error fetching resume:", error);
-      }
-    };
-
-    fetchResume();
-  }, [id]);
-
-  // Timer
-  useEffect(() => {
-    let interval;
-    if (interviewStarted) {
-      interval = setInterval(() => {
-        setInterviewDuration((prev) => prev + 1);
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [interviewStarted]);
-
-  const formatDuration = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, "0")}:${secs
-      .toString()
-      .padStart(2, "0")}`;
-  };
-
-  // 🔹 Fetch resume from backend using candidateId
-  useEffect(() => {
-    const fetchResume = async () => {
-      try {
-        const res = await fetch(
-          `http://localhost:5000/api/candidates/${candidateId}/resume`
-        );
-        if (!res.ok) throw new Error("Failed to fetch resume");
-        const data = await res.json();
-        if (data.resumeText) {
-          setResumeText(data.resumeText);
-        }
-      } catch (err) {
-        console.error("Error fetching resume:", err);
-      }
-    };
-    if (candidateId) fetchResume();
-  }, [candidateId]);
+  const [conversation, setConversation] = useState([]);
+  const [currentQuestion, setCurrentQuestion] = useState("");
+  const [vapiClient, setVapiClient] = useState(null);
 
   // Vapi setup
   useEffect(() => {
-    const client = new Vapi(import.meta.env.VITE_PUBLIC_VAPI_API_KEY);
+    if (!resumeText) return;
+
+    console.log("Resume Text received in InterviewPage:", resumeText.substring(0, 100));
+
+    const apiKey = import.meta.env.VITE_PUBLIC_VAPI_API_KEY;
+    if (!apiKey) {
+      console.error("❌ Missing VAPI API Key. Check your .env file.");
+      return;
+    }
+
+    const client = new Vapi(apiKey);
     let finalMessages = [];
 
     client.on("message", (msg) => {
@@ -114,14 +64,11 @@ const InterviewPage = ({ candidateId }) => {
         }));
 
       try {
-        const res = await fetch(
-          "http://localhost:5000/api/interview/evaluate",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ resumeText, transcript: conversationOnly }),
-          }
-        );
+        const res = await fetch("http://localhost:5000/api/interview/evaluate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ resumeText, transcript: conversationOnly }),
+        });
         const data = await res.json();
         console.log("Evaluation Result:", data.decision, data.feedback);
       } catch (err) {
@@ -131,11 +78,20 @@ const InterviewPage = ({ candidateId }) => {
 
     client.on("error", (error) => console.error("Vapi error:", error));
     setVapiClient(client);
+
+    return () => {
+      if (client) {
+        client.stop().catch(console.error);
+      }
+    };
   }, [resumeText]);
 
   // Start interview
   const handleStartInterview = async () => {
-    if (!vapiClient || !resumeText) return;
+    if (!vapiClient || !resumeText) {
+      console.error("Cannot start interview: missing vapiClient or resumeText");
+      return;
+    }
 
     try {
       await vapiClient.start({
@@ -153,7 +109,6 @@ const InterviewPage = ({ candidateId }) => {
 
       setInterviewStarted(true);
       setIsRecording(true);
-      setInterviewDuration(0);
       setCurrentQuestion("Starting interview...");
     } catch (error) {
       console.error("Vapi start error:", error);
@@ -171,8 +126,15 @@ const InterviewPage = ({ candidateId }) => {
     }
     setInterviewStarted(false);
     setIsRecording(false);
-    setInterviewDuration(0);
   };
+
+  // ✅ Auto-start interview when everything is ready
+  useEffect(() => {
+    if (vapiClient && resumeText && !interviewStarted) {
+      console.log("Auto-starting interview...");
+      handleStartInterview();
+    }
+  }, [vapiClient, resumeText]);
 
   return (
     <div className="min-h-screen bg-gray-100 p-4">
@@ -182,74 +144,139 @@ const InterviewPage = ({ candidateId }) => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-xl font-semibold text-gray-900">
-                AI Mock Interview Session
+                Live Interview Session
               </h1>
-              <div className="flex items-center gap-4 mt-1 text-sm text-gray-600">
-                {resumeText ? (
-                  <span className="text-green-600">
-                    Resume Loaded • AI Interview
-                  </span>
-                ) : (
-                  <span className="text-gray-500">Fetching resume...</span>
-                )}
+              <div className="flex items-center gap-4 mt-1">
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                  {resumeData?.name || "Candidate"} • Mock Interview
+                </div>
+                <div className="text-sm text-gray-600">
+                  {interviewStarted ? "In Progress" : "Not Started"}
+                </div>
               </div>
             </div>
-            {interviewStarted ? (
+            {interviewStarted && (
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                 <span className="text-sm font-medium text-gray-900">Live</span>
-                <span className="text-sm text-gray-600">
-                  {formatDuration(interviewDuration)}
-                </span>
               </div>
-            ) : (
-              <div className="text-sm text-gray-500">Not started</div>
             )}
           </div>
         </div>
 
-        {/* Start button */}
-        {!interviewStarted && (
-          <motion.div
-            key="waiting"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -30 }}
-            transition={{ duration: 0.4 }}
-            className="bg-white rounded-lg shadow-sm p-8 flex flex-col items-center justify-center text-center"
+        {/* Main Video Grid */}
+        <div className="grid grid-cols-2 gap-4 mb-4">
+          {/* AI Interviewer Section */}
+          <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+            <div className="aspect-video bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center relative">
+              <div className="text-center">
+                <h3 className="text-white text-lg font-medium mb-2">
+                  AI Interviewer
+                </h3>
+                <div className="flex items-center justify-center gap-2">
+                  <span className="text-white text-sm opacity-80">
+                    {currentQuestion || "Waiting..."}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="p-3">
+              <p className="text-sm text-gray-600 italic">
+                {currentQuestion ||
+                  `"Tell me about your experience with React and how you've used it in previous projects."`}
+              </p>
+            </div>
+          </div>
+
+          {/* Candidate Video Section */}
+          <div className="bg-white rounded-lg shadow-sm overflow-hidden relative">
+            <div className="aspect-video bg-gray-900 flex items-center justify-center relative">
+              <div className="text-gray-400 text-center">
+                <Video className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">Video will be implemented here</p>
+              </div>
+
+              {/* Recording Indicator */}
+              {isRecording && (
+                <div className="absolute top-4 left-4 bg-red-500 bg-opacity-90 text-white px-2 py-1 rounded text-xs flex items-center gap-1">
+                  <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                  Recording
+                </div>
+              )}
+            </div>
+            <div className="p-3">
+              <div className="flex items-center justify-between">
+                <span className="font-medium text-gray-900">
+                  {resumeData?.name || "Candidate"}
+                </span>
+                <div className="flex items-center gap-1">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span className="text-xs text-gray-600">Good Connection</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Controls */}
+        <div className="bg-white rounded-lg shadow-sm p-4 flex items-center justify-center gap-4">
+          {/* Microphone Toggle */}
+          <button
+            onClick={() => setIsMuted(!isMuted)}
+            className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
+              isMuted
+                ? "bg-red-500 hover:bg-red-600 text-white"
+                : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+            }`}
           >
-            <h2 className="text-lg font-medium text-gray-800 mb-4">
-              {resumeText
-                ? "Ready to start your AI mock interview"
-                : "Fetching candidate resume..."}
-            </h2>
+            {isMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+          </button>
+
+          {/* Video Toggle */}
+          <button
+            onClick={() => setIsVideoOff(!isVideoOff)}
+            className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
+              isVideoOff
+                ? "bg-red-500 hover:bg-red-600 text-white"
+                : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+            }`}
+          >
+            {isVideoOff ? <VideoOff className="w-5 h-5" /> : <Video className="w-5 h-5" />}
+          </button>
+
+          {/* Start/End Call */}
+          {!interviewStarted ? (
             <button
               onClick={handleStartInterview}
-              disabled={!resumeText}
-              className={`px-6 py-3 rounded-lg font-medium flex items-center gap-2 transition-colors ${
-                resumeText
-                  ? "bg-green-600 hover:bg-green-700 text-white"
+              disabled={!resumeText || !vapiClient}
+              className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
+                resumeText && vapiClient
+                  ? "bg-green-500 hover:bg-green-600 text-white"
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
               }`}
             >
-              <Play className="w-5 h-5" />
-              Start Interview
+              <Phone className="w-5 h-5" />
             </button>
-          </motion.div>
-        )}
+          ) : (
+            <button
+              onClick={handleEndInterview}
+              className="w-12 h-12 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center transition-colors"
+            >
+              <Phone className="w-5 h-5" />
+            </button>
+          )}
 
-        {/* Interview UI (same as before) */}
-        {interviewStarted && (
-          <motion.div
-            key="interview"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.4 }}
-          >
-            {/* ... (keep your AI interviewer + candidate video grid + controls) ... */}
-          </motion.div>
-        )}
+          {/* Settings */}
+          <button className="w-12 h-12 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center transition-colors">
+            <Settings className="w-5 h-5" />
+          </button>
+
+          {/* Screen Share */}
+          <button className="w-12 h-12 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center transition-colors">
+            <Monitor className="w-5 h-5" />
+          </button>
+        </div>
       </div>
     </div>
   );

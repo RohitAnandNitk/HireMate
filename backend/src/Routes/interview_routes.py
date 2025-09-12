@@ -20,4 +20,8 @@ def evaluate_interview():
     return interview_controller.evaluate_interview_controller(
         data["resumeText"], data["transcript"]
     )
+#   
+@interview_bp.route("/candidate/<string:candidate_id>", methods=["GET"])
+def get_candidate(candidate_id):
+    return interview_controller.get_candidate_info(candidate_id)
 
