@@ -393,7 +393,7 @@ const Clients = () => {
                 key={index}
                 className="bg-white bg-opacity-20 p-4 rounded-xl backdrop-blur-sm shadow-lg text-center hover:shadow-2xl hover:bg-opacity-30 transition-all duration-300 transform hover:-translate-y-1"
               >
-                <p className="text-white font-semibold">{industry}</p>
+                <p className="text-black font-semibold">{industry}</p>
               </div>
             ))}
           </div>
