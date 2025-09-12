@@ -1,0 +1,12 @@
+const config = {
+  // Uncomment the one you want to use
+  BASE_URL: "http://localhost:4000", // Local development URL
+
+  // For deployment
+  //   BASE_URL: "https://satkar-backend.onrender.com", // Deployed production URL
+};
+
+export default config;
+
+// import config from "../config";
+// const BaseURL = config.BASE_URL;
