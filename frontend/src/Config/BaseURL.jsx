@@ -1,9 +1,9 @@
 const config = {
   // Uncomment the one you want to use
-  BASE_URL: "http://localhost:4000", // Local development URL
+  //   BASE_URL: "http://localhost:4000", // Local development URL
 
   // For deployment
-  //   BASE_URL: "https://satkar-backend.onrender.com", // Deployed production URL
+  BASE_URL: "https://hiremate-dde0.onrender.com", // Deployed production URL
 };
 
 export default config;

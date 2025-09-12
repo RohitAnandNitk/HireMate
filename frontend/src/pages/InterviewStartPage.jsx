@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Play, User, FileText, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 import { getMockInterviewPrompt } from "../Prompts/MockInterviewPrompt";
+import config from "../Config/BaseURL";
+const BASE_URL = config.BASE_URL;
 
 const InterviewStartPage = () => {
   const navigate = useNavigate();
@@ -20,7 +22,7 @@ const InterviewStartPage = () => {
         setError(null);
 
         const response = await fetch(
-          `http://localhost:5000/api/interview/candidate/${candidateId}`
+          `${BASE_URL}/api/interview/candidate/${candidateId}`
         );
 
         if (!response.ok) {
@@ -48,7 +50,7 @@ const InterviewStartPage = () => {
 
       // Navigate to /mockinterview/:id and pass state
       navigate(`/mockinterview/${candidateId}`, {
-        state: { resumeData, prompt }
+        state: { resumeData, prompt },
       });
     }
   };
@@ -64,9 +66,12 @@ const InterviewStartPage = () => {
           className="bg-white rounded-lg shadow-sm p-6 mb-6"
         >
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">AI Mock Interview</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              AI Mock Interview
+            </h1>
             <p className="text-gray-600">
-              Prepare for your next opportunity with AI-powered interview simulation
+              Prepare for your next opportunity with AI-powered interview
+              simulation
             </p>
           </div>
         </motion.div>
@@ -80,8 +85,12 @@ const InterviewStartPage = () => {
             className="bg-white rounded-lg shadow-sm p-8 text-center"
           >
             <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
-            <h2 className="text-xl font-medium text-gray-800 mb-2">Loading candidate data...</h2>
-            <p className="text-gray-600">Please wait while we fetch your information</p>
+            <h2 className="text-xl font-medium text-gray-800 mb-2">
+              Loading candidate data...
+            </h2>
+            <p className="text-gray-600">
+              Please wait while we fetch your information
+            </p>
           </motion.div>
         )}
 
@@ -124,27 +133,35 @@ const InterviewStartPage = () => {
                   <User className="w-8 h-8 text-blue-600" />
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-1">{resumeData.name || 'Candidate'}</h2>
+                  <h2 className="text-xl font-semibold text-gray-900 mb-1">
+                    {resumeData.name || "Candidate"}
+                  </h2>
                   <p className="text-gray-600 mb-3">{resumeData.email}</p>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="flex items-center gap-2">
                       <FileText className="w-4 h-4 text-gray-500" />
                       <span className="text-sm text-gray-600">
-                        Resume: {resumeData.resume_content ? 'Loaded' : 'Not available'}
+                        Resume:{" "}
+                        {resumeData.resume_content ? "Loaded" : "Not available"}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4 text-gray-500" />
                       <span className="text-sm text-gray-600">
-                        Created: {resumeData.created_at ? new Date(resumeData.created_at).toLocaleDateString() : 'Unknown'}
+                        Created:{" "}
+                        {resumeData.created_at
+                          ? new Date(resumeData.created_at).toLocaleDateString()
+                          : "Unknown"}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 text-gray-500">
                         <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                       </div>
-                      <span className="text-sm text-gray-600">Ready for interview</span>
+                      <span className="text-sm text-gray-600">
+                        Ready for interview
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -159,11 +176,13 @@ const InterviewStartPage = () => {
                 transition={{ duration: 0.5, delay: 0.4 }}
                 className="bg-white rounded-lg shadow-sm p-6"
               >
-                <h3 className="text-lg font-medium text-gray-900 mb-3">Resume Preview</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-3">
+                  Resume Preview
+                </h3>
                 <div className="bg-gray-50 rounded-lg p-4 max-h-40 overflow-y-auto">
                   <p className="text-sm text-gray-700 whitespace-pre-wrap">
                     {resumeData.resume_content.substring(0, 500)}
-                    {resumeData.resume_content.length > 500 && '...'}
+                    {resumeData.resume_content.length > 500 && "..."}
                   </p>
                 </div>
                 <div className="mt-2 text-sm text-gray-600">
@@ -189,8 +208,8 @@ const InterviewStartPage = () => {
                 whileTap={{ scale: 0.98 }}
                 className={`px-8 py-4 rounded-lg font-semibold flex items-center gap-3 mx-auto transition-all ${
                   resumeData.resume_content
-                    ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl'
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    ? "bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 }`}
               >
                 <Play className="w-6 h-6" />

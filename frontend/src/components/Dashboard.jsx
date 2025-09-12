@@ -4,6 +4,8 @@ import FileList from "./FileList";
 import SkillFilter from "./SkillFilter";
 import StatsCards from "./StatsCards";
 import Sidebar from "./Sidebar";
+import config from "../Config/BaseURL";
+const BASE_URL = config.BASE_URL;
 
 const Dashboard = () => {
   const [files, setFiles] = useState([]);
@@ -42,13 +44,10 @@ const Dashboard = () => {
       formData.append("role", role);
       formData.append("skills", JSON.stringify(skills));
 
-      const response = await fetch(
-        "http://localhost:5000/api/resume/upload-resumes",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const response = await fetch(`${BASE_URL}/api/resume/upload-resumes`, {
+        method: "POST",
+        body: formData,
+      });
 
       const result = await response.json();
       if (response.ok) {
@@ -73,9 +72,17 @@ const Dashboard = () => {
           <h1 className="text-xl font-semibold text-gray-900">Dashboard</h1>
           <button
             onClick={handleProcessResumes}
-            disabled={!role.trim() || files.length === 0 || skills.length === 0 || processing}
+            disabled={
+              !role.trim() ||
+              files.length === 0 ||
+              skills.length === 0 ||
+              processing
+            }
             className={`px-4 py-2 text-sm rounded-md ${
-              !role.trim() || files.length === 0 || skills.length === 0 || processing
+              !role.trim() ||
+              files.length === 0 ||
+              skills.length === 0 ||
+              processing
                 ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                 : "bg-gray-900 text-white hover:bg-black"
             }`}

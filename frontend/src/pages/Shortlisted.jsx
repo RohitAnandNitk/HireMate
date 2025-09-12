@@ -1,5 +1,7 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { Search, FileText } from "lucide-react";
+import config from "../Config/BaseURL";
+const BASE_URL = config.BASE_URL;
 
 const Shortlisted = () => {
   const [resumes, setResumes] = useState([]);
@@ -14,7 +16,7 @@ const Shortlisted = () => {
   useEffect(() => {
     const fetchResumes = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/resume/all"); // Update with your Flask API
+        const response = await fetch(`${BASE_URL}/api/resume/all`);
         if (!response.ok) {
           throw new Error("Failed to fetch resumes");
         }
@@ -125,7 +127,9 @@ const Shortlisted = () => {
                   </h3>
                   <p className="text-gray-600 text-sm">{resume.email}</p>
                   {resume.id && (
-                    <p className="text-xs text-gray-500 mt-1">ID: {resume.id}</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      ID: {resume.id}
+                    </p>
                   )}
                 </div>
               </div>

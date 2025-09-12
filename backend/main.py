@@ -20,7 +20,7 @@ app.register_blueprint(interview_bp, url_prefix="/api/interview")
 app.register_blueprint(resume_bp, url_prefix="/api/resume")
 
 # Enable CORS
-CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
+CORS(app, resources={r"/*": {"origins": [   "http://localhost:5173", "https://hiremate-dde0.onrender.com"]}})
 
 if __name__ == "__main__":
     print("Flask server started on http://localhost:5000")

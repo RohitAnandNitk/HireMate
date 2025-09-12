@@ -1,12 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { Mic, MicOff, Video, VideoOff, Phone, Settings, Monitor } from "lucide-react";
+import {
+  Mic,
+  MicOff,
+  Video,
+  VideoOff,
+  Phone,
+  Settings,
+  Monitor,
+} from "lucide-react";
 import { getMockInterviewPrompt } from "../Prompts/MockInterviewPrompt";
 import Vapi from "@vapi-ai/web"; // make sure you installed this
+import config from "../Config/BaseURL";
+const BASE_URL = config.BASE_URL;
 
 const InterviewPage = () => {
   const location = useLocation();
-  const resumeData = location.state?.resumeData;   // ✅ get from router state
+  const resumeData = location.state?.resumeData; // ✅ get from router state
   const resumeText = resumeData?.resume_content || "";
 
   const [isMuted, setIsMuted] = useState(false);
@@ -21,7 +31,10 @@ const InterviewPage = () => {
   useEffect(() => {
     if (!resumeText) return;
 
-    console.log("Resume Text received in InterviewPage:", resumeText.substring(0, 100));
+    console.log(
+      "Resume Text received in InterviewPage:",
+      resumeText.substring(0, 100)
+    );
 
     const apiKey = import.meta.env.VITE_PUBLIC_VAPI_API_KEY;
     if (!apiKey) {
@@ -64,7 +77,7 @@ const InterviewPage = () => {
         }));
 
       try {
-        const res = await fetch("http://localhost:5000/api/interview/evaluate", {
+        const res = await fetch(`${BASE_URL}/api/interview/evaluate`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ resumeText, transcript: conversationOnly }),
@@ -230,7 +243,11 @@ const InterviewPage = () => {
                 : "bg-gray-100 hover:bg-gray-200 text-gray-700"
             }`}
           >
-            {isMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+            {isMuted ? (
+              <MicOff className="w-5 h-5" />
+            ) : (
+              <Mic className="w-5 h-5" />
+            )}
           </button>
 
           {/* Video Toggle */}
@@ -242,7 +259,11 @@ const InterviewPage = () => {
                 : "bg-gray-100 hover:bg-gray-200 text-gray-700"
             }`}
           >
-            {isVideoOff ? <VideoOff className="w-5 h-5" /> : <Video className="w-5 h-5" />}
+            {isVideoOff ? (
+              <VideoOff className="w-5 h-5" />
+            ) : (
+              <Video className="w-5 h-5" />
+            )}
           </button>
 
           {/* Start/End Call */}

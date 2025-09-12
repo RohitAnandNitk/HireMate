@@ -1,6 +1,9 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { Search, FileText } from "lucide-react";
 
+import config from "../Config/BaseURL";
+const BASE_URL = config.BASE_URL;
+
 const ResumeLibrary = () => {
   const [resumes, setResumes] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -14,7 +17,7 @@ const ResumeLibrary = () => {
   useEffect(() => {
     const fetchResumes = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/resume/all");
+        const response = await fetch(`${BASE_URL}/api/resume/all`);
         if (!response.ok) {
           throw new Error("Failed to fetch resumes");
         }

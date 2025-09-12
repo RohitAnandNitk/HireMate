@@ -3,6 +3,9 @@ import { Users, CheckCircle, CalendarDays, Send } from "lucide-react";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 
+import config from "../Config/BaseURL";
+const BASE_URL = config.BASE_URL;
+
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function Analytics() {
@@ -14,7 +17,7 @@ export default function Analytics() {
   useEffect(() => {
     const fetchResumes = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/resume/all"); // Replace with your API
+        const response = await fetch(`${BASE_URL}/api/resume/all`); // Replace with your API
         if (!response.ok) throw new Error("Failed to fetch resumes");
         const data = await response.json();
         setResumes(data.data);
@@ -27,15 +30,25 @@ export default function Analytics() {
     fetchResumes();
   }, []);
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center text-gray-600">Loading...</div>;
-  if (error) return <div className="min-h-screen flex items-center justify-center text-red-500">{error}</div>;
+  if (loading)
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-600">
+        Loading...
+      </div>
+    );
+  if (error)
+    return (
+      <div className="min-h-screen flex items-center justify-center text-red-500">
+        {error}
+      </div>
+    );
 
   // Compute stats
   const stats = {
     applications: resumes.length,
-    shortlisted: resumes.filter(r => r.resume_shortlisted === "yes").length,
-    interviewed: resumes.filter(r => r.resume_shortlisted === "yes").length, // same as shortlisted
-    offers: resumes.filter(r => r.selected === "yes").length,
+    shortlisted: resumes.filter((r) => r.resume_shortlisted === "yes").length,
+    interviewed: resumes.filter((r) => r.resume_shortlisted === "yes").length, // same as shortlisted
+    offers: resumes.filter((r) => r.selected === "yes").length,
   };
 
   const pieLabels = ["Applications", "Shortlisted", "Interviewed"];
@@ -73,21 +86,45 @@ export default function Analytics() {
     <div className="min-h-screen bg-gray-50 p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">Analytics Overview</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">
+          Analytics Overview
+        </h1>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard title="Total Applications" value={stats.applications} change="+12% from last month" icon={Users} />
-        <StatCard title="Shortlisted" value={stats.shortlisted} change="+8% from last month" icon={CheckCircle} />
-        <StatCard title="Interviews Scheduled" value={stats.interviewed} change="-3% from last month" icon={CalendarDays} />
-        <StatCard title="Offers Sent" value={stats.offers} change="+15% from last month" icon={Send} />
+        <StatCard
+          title="Total Applications"
+          value={stats.applications}
+          change="+12% from last month"
+          icon={Users}
+        />
+        <StatCard
+          title="Shortlisted"
+          value={stats.shortlisted}
+          change="+8% from last month"
+          icon={CheckCircle}
+        />
+        <StatCard
+          title="Interviews Scheduled"
+          value={stats.interviewed}
+          change="-3% from last month"
+          icon={CalendarDays}
+        />
+        <StatCard
+          title="Offers Sent"
+          value={stats.offers}
+          change="+15% from last month"
+          icon={Send}
+        />
       </div>
 
       {/* Application Trends + Pie Chart */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <div className="bg-white rounded-lg border p-6 flex flex-col items-center justify-center">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Application Trends</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            Application Trends
+          </h2>
           <Pie data={data} options={options} />
           {stats.interviewed > 0 && (
             <button
@@ -101,15 +138,19 @@ export default function Analytics() {
 
         {/* Upcoming Interviews (same as shortlisted) */}
         <div className="bg-white rounded-lg border p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Upcoming Interviews</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            Upcoming Interviews
+          </h2>
           <ul className="space-y-3">
             {resumes
-              .filter(r => r.resume_shortlisted === "yes")
+              .filter((r) => r.resume_shortlisted === "yes")
               .slice(0, 5) // show top 5 for example
               .map((r, idx) => (
                 <li key={idx}>
                   <p className="font-medium text-gray-900">{r.name}</p>
-                  <p className="text-sm text-gray-500">Interview scheduled — TBD</p>
+                  <p className="text-sm text-gray-500">
+                    Interview scheduled — TBD
+                  </p>
                 </li>
               ))}
           </ul>
