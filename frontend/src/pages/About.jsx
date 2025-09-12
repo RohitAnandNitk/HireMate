@@ -1,7 +1,69 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Users, Target, Award, Zap } from "lucide-react";
 
+// Custom hook for animated counter
+const useAnimatedCounter = (end, duration = 2000, startAnimation = false, decimal = false) => {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!startAnimation) return;
+
+    let startTime = null;
+
+    const animateCount = (timestamp) => {
+      if (!startTime) startTime = timestamp;
+      const progress = timestamp - startTime;
+      
+      if (progress < duration) {
+        const currentCount = decimal 
+          ? parseFloat(((progress / duration) * end).toFixed(1))
+          : Math.floor((progress / duration) * end);
+        setCount(currentCount);
+        requestAnimationFrame(animateCount);
+      } else {
+        setCount(end);
+      }
+    };
+
+    requestAnimationFrame(animateCount);
+  }, [end, duration, startAnimation, decimal]);
+
+  return count;
+};
+
+// Intersection Observer hook for triggering animation when section comes into view
+const useIntersectionObserver = (options = {}) => {
+  const [isIntersecting, setIsIntersecting] = useState(false);
+  const [element, setElement] = useState(null);
+
+  useEffect(() => {
+    if (!element) return;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setIsIntersecting(true);
+        observer.unobserve(element); // Trigger only once
+      }
+    }, { threshold: 0.3, ...options });
+
+    observer.observe(element);
+
+    return () => {
+      if (element) observer.unobserve(element);
+    };
+  }, [element, options]);
+
+  return [setElement, isIntersecting];
+};
+
 const About = () => {
+  const [statsRef, statsVisible] = useIntersectionObserver();
+
+  // Animated counters for stats
+  const screeningSpeed = useAnimatedCounter(95, 2000, statsVisible);
+  const candidatesCount = useAnimatedCounter(50, 2200, statsVisible);
+  const accuracyRate = useAnimatedCounter(99.8, 2500, statsVisible, true);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
       {/* Hero Section */}
@@ -25,7 +87,7 @@ const About = () => {
       <section className="py-16 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="bg-red-50 p-8 rounded-2xl border border-red-100">
+            <div className="bg-red-50 p-8 rounded-2xl border border-red-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
               <h2 className="text-3xl font-bold text-red-700 mb-6">
                 The Problem
               </h2>
@@ -65,7 +127,7 @@ const About = () => {
               </div>
             </div>
 
-            <div className="bg-green-50 p-8 rounded-2xl border border-green-100">
+            <div className="bg-green-50 p-8 rounded-2xl border border-green-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
               <h2 className="text-3xl font-bold text-green-700 mb-6">
                 Our Solution
               </h2>
@@ -113,7 +175,7 @@ const About = () => {
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="text-center group">
-              <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 transition-colors">
+              <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 transition-all duration-300 group-hover:scale-110">
                 <Zap className="w-8 h-8 text-blue-600" />
               </div>
               <h3 className="text-xl font-semibold text-gray-800 mb-3">
@@ -126,7 +188,7 @@ const About = () => {
             </div>
 
             <div className="text-center group">
-              <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-green-200 transition-colors">
+              <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-green-200 transition-all duration-300 group-hover:scale-110">
                 <Target className="w-8 h-8 text-green-600" />
               </div>
               <h3 className="text-xl font-semibold text-gray-800 mb-3">
@@ -139,7 +201,7 @@ const About = () => {
             </div>
 
             <div className="text-center group">
-              <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-purple-200 transition-colors">
+              <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-purple-200 transition-all duration-300 group-hover:scale-110">
                 <Users className="w-8 h-8 text-purple-600" />
               </div>
               <h3 className="text-xl font-semibold text-gray-800 mb-3">
@@ -152,7 +214,7 @@ const About = () => {
             </div>
 
             <div className="text-center group">
-              <div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-200 transition-colors">
+              <div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-200 transition-all duration-300 group-hover:scale-110">
                 <Award className="w-8 h-8 text-orange-600" />
               </div>
               <h3 className="text-xl font-semibold text-gray-800 mb-3">
@@ -171,7 +233,7 @@ const About = () => {
       <section className="py-16 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12">
-            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-8 rounded-2xl border border-blue-100">
+            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-8 rounded-2xl border border-blue-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
               <h2 className="text-3xl font-bold text-blue-700 mb-6">
                 Our Mission
               </h2>
@@ -183,7 +245,7 @@ const About = () => {
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-8 rounded-2xl border border-purple-100">
+            <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-8 rounded-2xl border border-purple-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
               <h2 className="text-3xl font-bold text-purple-700 mb-6">
                 Our Vision
               </h2>
@@ -199,25 +261,29 @@ const About = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 px-6 bg-gray-50">
+      <section className="py-16 px-6 bg-gray-50" ref={statsRef}>
         <div className="max-w-6xl mx-auto text-center">
           <h2 className="text-4xl font-bold text-gray-800 mb-12">
             HireMate by the Numbers
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-white p-8 rounded-2xl shadow-sm">
-              <div className="text-4xl font-bold text-blue-600 mb-2">95%</div>
+            <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+              <div className={`text-4xl font-bold text-blue-600 mb-2 transition-all duration-500 ${statsVisible ? 'animate-pulse' : ''}`}>
+                {screeningSpeed}%
+              </div>
               <div className="text-gray-600 font-medium">Faster Screening</div>
             </div>
-            <div className="bg-white p-8 rounded-2xl shadow-sm">
-              <div className="text-4xl font-bold text-cyan-600 mb-2">50K+</div>
+            <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+              <div className={`text-4xl font-bold text-cyan-600 mb-2 transition-all duration-500 ${statsVisible ? 'animate-pulse' : ''}`}>
+                {candidatesCount}K+
+              </div>
               <div className="text-gray-600 font-medium">
                 Candidates Processed
               </div>
             </div>
-            <div className="bg-white p-8 rounded-2xl shadow-sm">
-              <div className="text-4xl font-bold text-green-600 mb-2">
-                99.8%
+            <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+              <div className={`text-4xl font-bold text-green-600 mb-2 transition-all duration-500 ${statsVisible ? 'animate-pulse' : ''}`}>
+                {accuracyRate}%
               </div>
               <div className="text-gray-600 font-medium">Accuracy Rate</div>
             </div>

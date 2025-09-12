@@ -1,7 +1,53 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Star, Quote, TrendingUp, Users, Clock, Award } from "lucide-react";
 
+// Custom hook for animated counter
+const useAnimatedCounter = (end, duration = 2000, startAnimation = false) => {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!startAnimation) return;
+
+    let startTime = null;
+    let startCount = 0;
+
+    const animateCount = (timestamp) => {
+      if (!startTime) startTime = timestamp;
+      const progress = timestamp - startTime;
+      
+      if (progress < duration) {
+        const currentCount = Math.floor((progress / duration) * end);
+        setCount(currentCount);
+        requestAnimationFrame(animateCount);
+      } else {
+        setCount(end);
+      }
+    };
+
+    requestAnimationFrame(animateCount);
+  }, [end, duration, startAnimation]);
+
+  return count;
+};
+
 const Clients = () => {
+  const [startAnimation, setStartAnimation] = useState(false);
+
+  useEffect(() => {
+    // Start animation when component mounts
+    const timer = setTimeout(() => {
+      setStartAnimation(true);
+    }, 500); // Small delay for better effect
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Animated counters
+  const clientsCount = useAnimatedCounter(500, 2000, startAnimation);
+  const resumesCount = useAnimatedCounter(2000, 2500, startAnimation);
+  const retentionCount = useAnimatedCounter(95, 2200, startAnimation);
+  const savingsCount = useAnimatedCounter(60, 1800, startAnimation);
+
   const testimonials = [
     {
       name: "Sarah Johnson",
@@ -167,20 +213,28 @@ const Clients = () => {
       <section className="py-16 px-6 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-4 gap-8 text-center">
-            <div className="p-6">
-              <div className="text-4xl font-bold text-blue-600 mb-2">500+</div>
+            <div className="p-6 transform transition-all duration-500 hover:scale-105">
+              <div className={`text-4xl font-bold text-blue-600 mb-2 transition-all duration-500 ${startAnimation ? 'animate-pulse' : ''}`}>
+                {clientsCount}+
+              </div>
               <div className="text-gray-600 font-medium">Active Clients</div>
             </div>
-            <div className="p-6">
-              <div className="text-4xl font-bold text-cyan-600 mb-2">2M+</div>
+            <div className="p-6 transform transition-all duration-500 hover:scale-105">
+              <div className={`text-4xl font-bold text-cyan-600 mb-2 transition-all duration-500 ${startAnimation ? 'animate-pulse' : ''}`}>
+                {resumesCount >= 1000 ? `${Math.floor(resumesCount/1000)}M` : resumesCount}+
+              </div>
               <div className="text-gray-600 font-medium">Resumes Processed</div>
             </div>
-            <div className="p-6">
-              <div className="text-4xl font-bold text-green-600 mb-2">95%</div>
+            <div className="p-6 transform transition-all duration-500 hover:scale-105">
+              <div className={`text-4xl font-bold text-green-600 mb-2 transition-all duration-500 ${startAnimation ? 'animate-pulse' : ''}`}>
+                {retentionCount}%
+              </div>
               <div className="text-gray-600 font-medium">Client Retention</div>
             </div>
-            <div className="p-6">
-              <div className="text-4xl font-bold text-purple-600 mb-2">60%</div>
+            <div className="p-6 transform transition-all duration-500 hover:scale-105">
+              <div className={`text-4xl font-bold text-purple-600 mb-2 transition-all duration-500 ${startAnimation ? 'animate-pulse' : ''}`}>
+                {savingsCount}%
+              </div>
               <div className="text-gray-600 font-medium">
                 Average Time Savings
               </div>
@@ -199,7 +253,7 @@ const Clients = () => {
             {testimonials.map((testimonial, index) => (
               <div
                 key={index}
-                className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100"
+                className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
               >
                 <div className="flex items-center mb-6">
                   <img
@@ -245,7 +299,7 @@ const Clients = () => {
             {companies.map((company, index) => (
               <div
                 key={index}
-                className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 text-center hover:shadow-md transition-shadow"
+                className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 text-center hover:shadow-md transition-all duration-300 transform hover:-translate-y-1"
               >
                 <div className="w-16 h-16 bg-gradient-to-r from-blue-100 to-cyan-100 rounded-xl flex items-center justify-center mx-auto mb-4">
                   <span className="text-blue-600 font-bold text-lg">
@@ -275,7 +329,7 @@ const Clients = () => {
             {caseStudies.map((study, index) => (
               <div
                 key={index}
-                className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100"
+                className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300"
               >
                 <div className="grid lg:grid-cols-3 gap-8">
                   <div>
@@ -303,7 +357,7 @@ const Clients = () => {
                       {study.results.map((result, resultIndex) => (
                         <div
                           key={resultIndex}
-                          className="bg-green-50 p-4 rounded-xl border border-green-100"
+                          className="bg-green-50 p-4 rounded-xl border border-green-100 hover:bg-green-100 transition-colors duration-300"
                         >
                           <TrendingUp className="w-6 h-6 text-green-600 mb-2" />
                           <p className="text-green-800 font-medium text-sm">
@@ -337,9 +391,9 @@ const Clients = () => {
             ].map((industry, index) => (
               <div
                 key={index}
-                className="bg-white bg-opacity-20 p-4 rounded-xl backdrop-blur-sm"
+                className="bg-white bg-opacity-20 p-4 rounded-xl backdrop-blur-sm shadow-lg text-center hover:shadow-2xl hover:bg-opacity-30 transition-all duration-300 transform hover:-translate-y-1"
               >
-                <p className="text-white font-medium">{industry}</p>
+                <p className="text-black font-semibold">{industry}</p>
               </div>
             ))}
           </div>
@@ -357,10 +411,10 @@ const Clients = () => {
             who trust HireMate.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-blue-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors">
+            <button className="bg-blue-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
               Get Started Today
             </button>
-            <button className="border-2 border-blue-600 text-blue-600 px-8 py-3 rounded-xl font-semibold hover:bg-blue-600 hover:text-white transition-colors">
+            <button className="border-2 border-blue-600 text-blue-600 px-8 py-3 rounded-xl font-semibold hover:bg-blue-600 hover:text-white transition-all duration-300 transform hover:scale-105">
               View Case Studies
             </button>
           </div>

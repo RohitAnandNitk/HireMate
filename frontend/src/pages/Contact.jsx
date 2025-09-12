@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import emailjs from '@emailjs/browser';
 import {
   Mail,
   Phone,
@@ -10,12 +11,14 @@ import {
   Users,
   Headphones,
   Globe,
+  AlertCircle,
 } from "lucide-react";
 
 const Contact = () => {
+  const form = useRef();
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
+    user_name: "",
+    user_email: "",
     company: "",
     phone: "",
     inquiryType: "general",
@@ -23,19 +26,59 @@ const Contact = () => {
   });
 
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
+  // EmailJS credentials
+const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
 
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+    // Clear any previous errors
+    setSubmitError("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simulate form submission
-    setIsSubmitted(true);
-    setTimeout(() => setIsSubmitted(false), 3000);
+    setIsSubmitting(true);
+    setSubmitError("");
+
+    try {
+      const result = await emailjs.sendForm(
+        SERVICE_ID,
+        TEMPLATE_ID,
+        form.current,
+        PUBLIC_KEY
+      );
+      
+      console.log('Email sent successfully:', result.text);
+      setIsSubmitted(true);
+      
+      // Reset form
+      setFormData({
+        user_name: "",
+        user_email: "",
+        company: "",
+        phone: "",
+        inquiryType: "general",
+        message: "",
+      });
+      
+      // Hide success message after 5 seconds
+      setTimeout(() => setIsSubmitted(false), 5000);
+      
+    } catch (error) {
+      console.error('Email send failed:', error);
+      setSubmitError("Failed to send message. Please try again or contact us directly.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactInfo = [
@@ -109,9 +152,6 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
-      {/* Navigation */}
-      
-
       {/* Hero Section */}
       <section className="py-20 px-6">
         <div className="max-w-6xl mx-auto text-center">
@@ -143,116 +183,141 @@ const Contact = () => {
                 <div className="text-center py-12">
                   <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
                   <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                    Message Sent!
+                    Message Sent Successfully!
                   </h3>
                   <p className="text-gray-600">
-                    We'll get back to you within 24 hours.
+                    Thank you for contacting us. We'll get back to you within 24 hours.
                   </p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Full Name *
-                      </label>
-                      <input
-                        type="text"
-                        name="name"
-                        required
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Your full name"
-                      />
+                <>
+                  {submitError && (
+                    <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center">
+                      <AlertCircle className="w-5 h-5 text-red-500 mr-3" />
+                      <p className="text-red-700">{submitError}</p>
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Email Address *
-                      </label>
-                      <input
-                        type="email"
-                        name="email"
-                        required
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="your.email@company.com"
-                      />
+                  )}
+                  
+                  <form ref={form} onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Full Name *
+                        </label>
+                        <input
+                          type="text"
+                          name="user_name"
+                          required
+                          value={formData.user_name}
+                          onChange={handleInputChange}
+                          disabled={isSubmitting}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                          placeholder="Your full name"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Email Address *
+                        </label>
+                        <input
+                          type="email"
+                          name="user_email"
+                          required
+                          value={formData.user_email}
+                          onChange={handleInputChange}
+                          disabled={isSubmitting}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                          placeholder="your.email@company.com"
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Company
-                      </label>
-                      <input
-                        type="text"
-                        name="company"
-                        value={formData.company}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="Your company name"
-                      />
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Company
+                        </label>
+                        <input
+                          type="text"
+                          name="company"
+                          value={formData.company}
+                          onChange={handleInputChange}
+                          disabled={isSubmitting}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                          placeholder="Your company name"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Phone Number
+                        </label>
+                        <input
+                          type="tel"
+                          name="phone"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                          disabled={isSubmitting}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                          placeholder="+1 (555) 123-4567"
+                        />
+                      </div>
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Phone Number
-                      </label>
-                      <input
-                        type="tel"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="+1 (555) 123-4567"
-                      />
-                    </div>
-                  </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Inquiry Type
-                    </label>
-                    <select
-                      name="inquiryType"
-                      value={formData.inquiryType}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Inquiry Type
+                      </label>
+                      <select
+                        name="inquiryType"
+                        value={formData.inquiryType}
+                        onChange={handleInputChange}
+                        disabled={isSubmitting}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      >
+                        <option value="general">General Inquiry</option>
+                        <option value="demo">Request Demo</option>
+                        <option value="pricing">Pricing Information</option>
+                        <option value="support">Technical Support</option>
+                        <option value="partnership">Partnership</option>
+                        <option value="enterprise">Enterprise Solutions</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Message *
+                      </label>
+                      <textarea
+                        name="message"
+                        required
+                        rows={5}
+                        value={formData.message}
+                        onChange={handleInputChange}
+                        disabled={isSubmitting}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                        placeholder="Tell us about your needs and how we can help..."
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-blue-700 hover:to-cyan-700 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      <option value="general">General Inquiry</option>
-                      <option value="demo">Request Demo</option>
-                      <option value="pricing">Pricing Information</option>
-                      <option value="support">Technical Support</option>
-                      <option value="partnership">Partnership</option>
-                      <option value="enterprise">Enterprise Solutions</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Message *
-                    </label>
-                    <textarea
-                      name="message"
-                      required
-                      rows={5}
-                      value={formData.message}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Tell us about your needs and how we can help..."
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-blue-700 hover:to-cyan-700 transition-colors flex items-center justify-center"
-                  >
-                    <Send className="w-4 h-4 mr-2" />
-                    Send Message
-                  </button>
-                </form>
+                      {isSubmitting ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          Sending...
+                        </>
+                      ) : (
+                        <>
+                          <Send className="w-4 h-4 mr-2" />
+                          Send Message
+                        </>
+                      )}
+                    </button>
+                  </form>
+                </>
               )}
             </div>
 
@@ -311,6 +376,22 @@ const Contact = () => {
                   ))}
                 </div>
               </div>
+
+              {/* Setup Instructions */}
+              <div className="bg-yellow-50 p-6 rounded-xl border border-yellow-200">
+                <h3 className="text-lg font-semibold text-yellow-800 mb-3">
+                  EmailJS Setup Required
+                </h3>
+                <p className="text-yellow-700 text-sm mb-3">
+                  To make this form functional, you need to:
+                </p>
+                <ol className="text-yellow-700 text-sm space-y-1 pl-4">
+                  <li>1. Create an account at emailjs.com</li>
+                  <li>2. Create an email service</li>
+                  <li>3. Create an email template</li>
+                  <li>4. Replace the placeholder IDs in the code</li>
+                </ol>
+              </div>
             </div>
           </div>
         </div>
@@ -326,7 +407,7 @@ const Contact = () => {
             {officeLocations.map((office, index) => (
               <div
                 key={index}
-                className="bg-gray-50 p-8 rounded-2xl border border-gray-100"
+                className="bg-gray-50 p-8 rounded-2xl border border-gray-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
               >
                 <div className="mb-4">
                   <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
@@ -359,7 +440,7 @@ const Contact = () => {
             Frequently Asked Questions
           </h2>
           <div className="space-y-6">
-            <div className="bg-white p-6 rounded-xl border border-gray-100">
+            <div className="bg-white p-6 rounded-xl border border-gray-100 hover:shadow-md transition-shadow">
               <h3 className="text-lg font-semibold text-gray-800 mb-3">
                 How quickly can I get started with HireMate?
               </h3>
@@ -370,7 +451,7 @@ const Contact = () => {
               </p>
             </div>
 
-            <div className="bg-white p-6 rounded-xl border border-gray-100">
+            <div className="bg-white p-6 rounded-xl border border-gray-100 hover:shadow-md transition-shadow">
               <h3 className="text-lg font-semibold text-gray-800 mb-3">
                 What file formats does HireMate support?
               </h3>
@@ -381,7 +462,7 @@ const Contact = () => {
               </p>
             </div>
 
-            <div className="bg-white p-6 rounded-xl border border-gray-100">
+            <div className="bg-white p-6 rounded-xl border border-gray-100 hover:shadow-md transition-shadow">
               <h3 className="text-lg font-semibold text-gray-800 mb-3">
                 Is my candidate data secure?
               </h3>
@@ -392,7 +473,7 @@ const Contact = () => {
               </p>
             </div>
 
-            <div className="bg-white p-6 rounded-xl border border-gray-100">
+            <div className="bg-white p-6 rounded-xl border border-gray-100 hover:shadow-md transition-shadow">
               <h3 className="text-lg font-semibold text-gray-800 mb-3">
                 Can HireMate integrate with our existing HR tools?
               </h3>
@@ -403,7 +484,7 @@ const Contact = () => {
               </p>
             </div>
 
-            <div className="bg-white p-6 rounded-xl border border-gray-100">
+            <div className="bg-white p-6 rounded-xl border border-gray-100 hover:shadow-md transition-shadow">
               <h3 className="text-lg font-semibold text-gray-800 mb-3">
                 What kind of support do you offer?
               </h3>
@@ -414,7 +495,7 @@ const Contact = () => {
               </p>
             </div>
 
-            <div className="bg-white p-6 rounded-xl border border-gray-100">
+            <div className="bg-white p-6 rounded-xl border border-gray-100 hover:shadow-md transition-shadow">
               <h3 className="text-lg font-semibold text-gray-800 mb-3">
                 Do you offer custom pricing for large organizations?
               </h3>
@@ -448,8 +529,6 @@ const Contact = () => {
           </div>
         </div>
       </section>
-
-      
     </div>
   );
 };

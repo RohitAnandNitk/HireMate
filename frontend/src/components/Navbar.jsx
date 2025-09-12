@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import logo from "../assets/hiremate.png";
 import { Menu, X } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navLinkClasses = ({ isActive }) =>
