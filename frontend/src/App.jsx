@@ -7,10 +7,15 @@ import ResumeLibrary from "./pages/ResumeLibrary";
 import Shortlisted from "./pages/Shortlisted";
 import Analytics from "./pages/Analytics";
 import Home from "./pages/Home";
+
+import VapiInterviewPage from './pages/VapiInterviewPage';
+import InterviewStartPage from "./pages/InterviewStartPage";
+
 import About from "./pages/About";
 import Services from "./pages/Services";
 import Clients from "./pages/Clients";
 import Contact from "./pages/Contact";
+
 
 function App() {
   return (
@@ -23,6 +28,12 @@ function App() {
             <Layout>
               <Dashboard />
             </Layout>
+          }
+        />
+        <Route
+          path="/interview_start"
+          element={
+            <InterviewStartPage />
           }
         />
         <Route
@@ -50,6 +61,9 @@ function App() {
           }
         />
         <Route path="/mockinterview/:id" element={<InterviewPage />} />
+
+        <Route path="/mockinterview/test" element={<VapiInterviewPage />} />
+
         <Route path="/about" element={<About />} />
         <Route path="/services" element={<Services />} />
         <Route path="/clients" element={<Clients />} />

@@ -3,6 +3,7 @@ import io, json, os
 from flask import jsonify, request
 from src.Utils.VapiService import upload_resume
 import pdfplumber
+
 from dotenv import load_dotenv
 from src.Utils.Database import db
 from datetime import datetime
@@ -14,6 +15,7 @@ EMAIL_USER = os.getenv("EMAIL_USER")
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 
 # interview mock agent for evaluating the result of mock interview
+
 from src.Agents.MockInterviewAgent import MockInterviewAgent
 mock_interview_agent = MockInterviewAgent()
 #email service instance for sending emails
@@ -105,4 +107,17 @@ def evaluate_interview_controller(resume_text, transcript, candidate_email):
         return jsonify(result)
 
     except Exception as e:
+
         return jsonify({"error": str(e)}), 500
+
+from bson import ObjectId
+
+def get_candidate_info(candidate_id):
+    try:
+        candidate = db["candidates"].find_one({"_id": ObjectId(candidate_id)}, {"_id": 0})
+        if not candidate:
+            return jsonify({"error": "Candidate not found"}), 404
+        return jsonify(candidate), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+

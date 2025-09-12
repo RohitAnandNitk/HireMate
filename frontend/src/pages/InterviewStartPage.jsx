@@ -1,0 +1,207 @@
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Play, User, FileText, Calendar } from "lucide-react";
+import { motion } from "framer-motion";
+import { getMockInterviewPrompt } from "../Prompts/MockInterviewPrompt";
+
+const InterviewStartPage = () => {
+  const navigate = useNavigate();
+  const [resumeData, setResumeData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const candidateId = "68c0651ef460c079cb7ee2b9"; // Example hardcoded ID
+
+  // Fetch candidate data
+  useEffect(() => {
+    const fetchCandidateData = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        const response = await fetch(
+          `http://localhost:5000/api/interview/candidate/${candidateId}`
+        );
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch candidate data: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setResumeData(data);
+        console.log("Fetched candidate data:", data);
+      } catch (error) {
+        console.error("Error fetching candidate data:", error);
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCandidateData();
+  }, [candidateId]);
+
+  // Handle start interview and navigate
+  const handleStartInterview = () => {
+    if (resumeData && resumeData.resume_content) {
+      const prompt = getMockInterviewPrompt(resumeData.resume_content);
+
+      // Navigate to /mockinterview/:id and pass state
+      navigate(`/mockinterview/${candidateId}`, {
+        state: { resumeData, prompt }
+      });
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 p-4">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="bg-white rounded-lg shadow-sm p-6 mb-6"
+        >
+          <div className="text-center">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">AI Mock Interview</h1>
+            <p className="text-gray-600">
+              Prepare for your next opportunity with AI-powered interview simulation
+            </p>
+          </div>
+        </motion.div>
+
+        {/* Loading */}
+        {isLoading && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4 }}
+            className="bg-white rounded-lg shadow-sm p-8 text-center"
+          >
+            <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
+            <h2 className="text-xl font-medium text-gray-800 mb-2">Loading candidate data...</h2>
+            <p className="text-gray-600">Please wait while we fetch your information</p>
+          </motion.div>
+        )}
+
+        {/* Error */}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4 }}
+            className="bg-white rounded-lg shadow-sm p-8 text-center"
+          >
+            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FileText className="w-6 h-6 text-red-600" />
+            </div>
+            <h2 className="text-xl font-medium text-red-800 mb-2">
+              Failed to load candidate data
+            </h2>
+            <p className="text-red-600 mb-4">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+            >
+              Try Again
+            </button>
+          </motion.div>
+        )}
+
+        {/* Candidate Info & Start */}
+        {!isLoading && !error && resumeData && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="space-y-6"
+          >
+            {/* Candidate Info Card */}
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <div className="flex items-start gap-4">
+                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                  <User className="w-8 h-8 text-blue-600" />
+                </div>
+                <div className="flex-1">
+                  <h2 className="text-xl font-semibold text-gray-900 mb-1">{resumeData.name || 'Candidate'}</h2>
+                  <p className="text-gray-600 mb-3">{resumeData.email}</p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-gray-500" />
+                      <span className="text-sm text-gray-600">
+                        Resume: {resumeData.resume_content ? 'Loaded' : 'Not available'}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-gray-500" />
+                      <span className="text-sm text-gray-600">
+                        Created: {resumeData.created_at ? new Date(resumeData.created_at).toLocaleDateString() : 'Unknown'}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-4 h-4 text-gray-500">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      </div>
+                      <span className="text-sm text-gray-600">Ready for interview</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Resume Preview */}
+            {resumeData.resume_content && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="bg-white rounded-lg shadow-sm p-6"
+              >
+                <h3 className="text-lg font-medium text-gray-900 mb-3">Resume Preview</h3>
+                <div className="bg-gray-50 rounded-lg p-4 max-h-40 overflow-y-auto">
+                  <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                    {resumeData.resume_content.substring(0, 500)}
+                    {resumeData.resume_content.length > 500 && '...'}
+                  </p>
+                </div>
+                <div className="mt-2 text-sm text-gray-600">
+                  Total characters: {resumeData.resume_content.length}
+                </div>
+              </motion.div>
+            )}
+
+            {/* Start Interview Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+              className="bg-white rounded-lg shadow-sm p-8 text-center"
+            >
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                Ready to Start Your Mock Interview?
+              </h3>
+              <motion.button
+                onClick={handleStartInterview}
+                disabled={!resumeData.resume_content}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className={`px-8 py-4 rounded-lg font-semibold flex items-center gap-3 mx-auto transition-all ${
+                  resumeData.resume_content
+                    ? 'bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                }`}
+              >
+                <Play className="w-6 h-6" />
+                Start AI Interview
+              </motion.button>
+            </motion.div>
+          </motion.div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default InterviewStartPage;

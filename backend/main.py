@@ -4,6 +4,7 @@ import os
 from src.Routes.interview_routes import interview_bp
 from src.Routes.resume_routes import resume_bp
 from src.Controllers.allresumes_controller import get_allresumes_controller
+from src.Controllers import interview_controller
 # from src.Utils.VapiService import vapiServices  # ensure vapi initializes at startup
 
 # Import the database to initialize connection
