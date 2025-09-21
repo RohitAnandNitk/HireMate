@@ -20,7 +20,7 @@ class InterviewSchedulingAgent:
             interview_datetime = interview_datetime.replace(hour=10, minute=0, second=0, microsecond=0)
 
         if meeting_link is None:
-            meeting_link = "https://hire-mate-azure.vercel.app/interview_start"
+            meeting_link = "https://hirekruit.vercel.app/interview_start"
 
         for candidate in shortlisted_candidates:
             # Fetch candidate record from the database using email
