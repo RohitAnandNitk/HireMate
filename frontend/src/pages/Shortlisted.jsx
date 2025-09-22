@@ -1,6 +1,8 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { Search, FileText } from "lucide-react";
 import config from "../Config/BaseURL";
+import Loader from "../components/Loader";
+
 const BASE_URL = config.BASE_URL;
 
 const Shortlisted = () => {
@@ -64,9 +66,7 @@ const Shortlisted = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-gray-600">
-        Loading resumes...
-      </div>
+      <Loader />
     );
   }
 
