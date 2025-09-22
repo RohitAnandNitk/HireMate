@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import logo from "../assets/hiremate.png";
+
 const items = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
   { label: "All Resumes", icon: FileText, path: "/resumes" },
@@ -21,14 +22,14 @@ const items = [
 
 const Sidebar = () => {
   const navigate = useNavigate();
-  const location = useLocation(); // 👈 for active route detection
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(true);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   return (
     <>
-      {/* Mobile toggle button */}
-      <div className="md:hidden p-2 border-b border-gray-200 bg-white/80 backdrop-blur-sm flex justify-between items-center">
+      {/* Mobile header - stays outside sidebar */}
+      <div className="md:hidden fixed top-0 left-0 right-0 z-30 p-4 border-b border-gray-200 bg-white/80 backdrop-blur-sm flex justify-between items-center">
         <img src={logo} alt="HireMate" className="h-8" />
         <button
           onClick={() => setIsMobileOpen(!isMobileOpen)}
@@ -48,15 +49,14 @@ const Sidebar = () => {
 
       {/* Sidebar */}
       <aside
-        className={`fixed md:static top-0 left-0 h-full md:h-auto border-r border-gray-200 bg-white/80 backdrop-blur-sm transform transition-all duration-300 ease-in-out z-50
+        className={`fixed md:static h-full md:h-auto border-r border-gray-200 bg-white/80 backdrop-blur-sm transform transition-all duration-300 ease-in-out z-50
         ${isMobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
-        ${isOpen ? "w-56" : "w-16 md:w-16"}`}
+        ${isOpen ? "w-56" : "w-16 md:w-16"}
+        md:top-0 top-16`}
       >
-        {/* Desktop toggle button */}
+        {/* Desktop header - only visible on desktop */}
         <div className="hidden md:flex justify-between items-center px-4 py-4">
-          {isOpen && (
-              <img src={logo} alt="HireMate" className="h-[50px]" />
-          )}
+          {isOpen && <img src={logo} alt="HireMate" className="h-[50px]" />}
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="p-1 hover:bg-gray-100 rounded-lg transition-colors ml-auto"
@@ -65,18 +65,27 @@ const Sidebar = () => {
           </button>
         </div>
 
-        {/* Mobile header */}
-        <div className="md:hidden px-4 py-4 border-b border-gray-200">
-          <div className="text-sm font-semibold text-gray-800">HireMate</div>
+        {/* Mobile close button - positioned at top of sidebar */}
+        <div className="md:hidden flex justify-end items-center px-4 py-4 border-b border-gray-200">
+          <button
+            onClick={() => setIsMobileOpen(false)}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <X size={20} />
+          </button>
         </div>
 
         <nav className="mt-2">
           {items.map((item) => {
             const IconComponent = item.icon;
-            const isActive = location.pathname === item.path; // 👈 check current route
+            const isActive = location.pathname === item.path;
             return (
               <button
-                onClick={() => navigate(item.path)}
+                onClick={() => {
+                  navigate(item.path);
+                  // Close mobile sidebar when navigating
+                  setIsMobileOpen(false);
+                }}
                 key={item.label}
                 className={`w-full text-left px-4 py-3 text-sm flex items-center gap-3 transition-all duration-200
                   ${
@@ -89,7 +98,7 @@ const Sidebar = () => {
                 <IconComponent size={20} className="flex-shrink-0" />
                 <span
                   className={`transition-all duration-200 overflow-hidden ${
-                    isOpen
+                    isOpen || isMobileOpen
                       ? "opacity-100 w-auto"
                       : "opacity-0 w-0 md:opacity-0 md:w-0"
                   }`}
@@ -101,6 +110,9 @@ const Sidebar = () => {
           })}
         </nav>
       </aside>
+
+      {/* Spacer for mobile to push content below fixed header */}
+      <div className="md:hidden h-16"></div>
     </>
   );
 };

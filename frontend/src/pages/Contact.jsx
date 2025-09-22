@@ -85,7 +85,7 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
     {
       icon: Mail,
       title: "Email Us",
-      details: "hello@hiremate.ai",
+      details: "hirekruit@gmail.com",
       description: "Send us an email anytime",
     },
     {
@@ -377,21 +377,7 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
                 </div>
               </div>
 
-              {/* Setup Instructions */}
-              <div className="bg-yellow-50 p-6 rounded-xl border border-yellow-200">
-                <h3 className="text-lg font-semibold text-yellow-800 mb-3">
-                  EmailJS Setup Required
-                </h3>
-                <p className="text-yellow-700 text-sm mb-3">
-                  To make this form functional, you need to:
-                </p>
-                <ol className="text-yellow-700 text-sm space-y-1 pl-4">
-                  <li>1. Create an account at emailjs.com</li>
-                  <li>2. Create an email service</li>
-                  <li>3. Create an email template</li>
-                  <li>4. Replace the placeholder IDs in the code</li>
-                </ol>
-              </div>
+              
             </div>
           </div>
         </div>

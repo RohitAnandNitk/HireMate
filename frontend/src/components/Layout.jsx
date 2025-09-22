@@ -1,4 +1,5 @@
 import Sidebar from "./Sidebar";
+import { Link } from "react-router-dom";
 
 const Layout = ({ children, files, onProcess }) => {
   return (
@@ -7,8 +8,11 @@ const Layout = ({ children, files, onProcess }) => {
       <div className="flex-1 flex flex-col">
         <header className="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-gray-200">
           <div className="px-6 py-4 flex items-center justify-between">
-            <div className="text-gray-900 font-semibold">HireMate</div>
+            <Link to="/" className="text-gray-900 font-semibold  cursor-pointer">
+              <span className="text-blue-600">HiRe</span>kruit
+            </Link>
           </div>
+
         </header>
 
         {/* Full-width main content */}

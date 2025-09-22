@@ -1,17 +1,16 @@
 import React, { useState } from "react";
 import logo from "../assets/hiremate.png";
 import { Menu, X } from "lucide-react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, Link } from "react-router-dom";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navLinkClasses = ({ isActive }) =>
-    `text-sm font-medium py-2 px-3 rounded-lg transition-all duration-200 ${
-      isActive
-        ? "text-blue-600 bg-blue-50"
-        : "text-gray-600 hover:text-blue-600 hover:bg-blue-50"
+    `text-sm font-medium py-2 px-3 rounded-lg transition-all duration-200 ${isActive
+      ? "text-blue-600 bg-blue-50"
+      : "text-gray-600 hover:text-blue-600 hover:bg-blue-50"
     }`;
 
   return (
@@ -22,12 +21,16 @@ const Navbar = () => {
           <div className="flex items-center space-x-3">
             <img
               src={logo}
-              alt="HireMate Logo"
+              alt="HiRekruit Logo"
               className="w-10 h-10 object-contain"
             />
-            <span className="text-lg font-semibold text-gray-900">
-              HireMate
-            </span>
+            <div className="px-6 py-4 flex items-center justify-between">
+              <Link to="/">
+                <span className="text-lg font-semibold text-gray-900 cursor-pointer">
+                  <span className="text-blue-600 ">HiRe</span>kruit
+                </span>
+              </Link>
+            </div>
           </div>
 
           {/* Desktop Navigation */}
