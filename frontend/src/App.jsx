@@ -18,6 +18,13 @@ import Clients from "./pages/Clients";
 import Contact from "./pages/Contact";
 import LayoutWithNavbar from "./pages/LayoutWithNavbar";
 
+<<<<<<< Updated upstream
+=======
+import { SignedIn, SignedOut, SignInButton, UserButton } from '@clerk/clerk-react';
+
+
+
+>>>>>>> Stashed changes
 function App() {
   return (
     <Router>
