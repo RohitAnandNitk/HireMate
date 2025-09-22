@@ -24,7 +24,7 @@ CORS(app, resources={
     r"/*": {
         "origins": [
             "http://localhost:5173",
-            "https://hirekruit.com"
+            "https://www.hirekruit.com"
         ]
     }
 })
