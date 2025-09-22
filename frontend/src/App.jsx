@@ -7,8 +7,9 @@ import ResumeLibrary from "./pages/ResumeLibrary";
 import Shortlisted from "./pages/Shortlisted";
 import Analytics from "./pages/Analytics";
 import Home from "./pages/Home";
+import JobCreation from "./components/JobCreation";
 
-import VapiInterviewPage from './pages/VapiInterviewPage';
+import VapiInterviewPage from "./pages/VapiInterviewPage";
 import InterviewStartPage from "./pages/InterviewStartPage";
 
 import About from "./pages/About";
@@ -16,8 +17,6 @@ import Services from "./pages/Services";
 import Clients from "./pages/Clients";
 import Contact from "./pages/Contact";
 import LayoutWithNavbar from "./pages/LayoutWithNavbar";
-
-
 
 function App() {
   return (
@@ -30,6 +29,18 @@ function App() {
           <Route path="/clients" element={<Clients />} />
           <Route path="/contact" element={<Contact />} />
         </Route>
+
+        {/* Job Creation Route - First page */}
+        <Route
+          path="/job-creation"
+          element={
+            <Layout>
+              <JobCreation />
+            </Layout>
+          }
+        />
+
+        {/* Dashboard Route - Modified to accept job data */}
         <Route
           path="/dashboard"
           element={
@@ -38,12 +49,8 @@ function App() {
             </Layout>
           }
         />
-        <Route
-          path="/interview_start"
-          element={
-            <InterviewStartPage />
-          }
-        />
+
+        <Route path="/interview_start" element={<InterviewStartPage />} />
         <Route
           path="/resumes"
           element={
@@ -69,10 +76,7 @@ function App() {
           }
         />
         <Route path="/mockinterview/:id" element={<InterviewPage />} />
-
         <Route path="/mockinterview/test" element={<VapiInterviewPage />} />
-
-        
       </Routes>
     </Router>
   );
