@@ -9,7 +9,7 @@ const Layout = ({ children, files, onProcess }) => {
         <header className="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-gray-200">
           <div className="px-6 py-4 flex items-center justify-between">
             <Link to="/" className="text-gray-900 font-semibold  cursor-pointer">
-              HiRekruit
+              <span className="text-blue-600">HiRe</span>kruit
             </Link>
           </div>
 
