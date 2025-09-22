@@ -8,6 +8,7 @@ import Shortlisted from "./pages/Shortlisted";
 import Analytics from "./pages/Analytics";
 import Home from "./pages/Home";
 import JobCreation from "./components/JobCreation";
+import Drives from "./components/Drives";
 
 import VapiInterviewPage from "./pages/VapiInterviewPage";
 import InterviewStartPage from "./pages/InterviewStartPage";
@@ -48,6 +49,15 @@ function App() {
           element={
             <Layout>
               <Dashboard />
+            </Layout>
+          }
+        />
+
+        <Route
+          path="/drives"
+          element={
+            <Layout>
+              <Drives />
             </Layout>
           }
         />
