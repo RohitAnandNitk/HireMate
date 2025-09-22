@@ -27,7 +27,7 @@ const Navbar = () => {
             <div className="px-6 py-4 flex items-center justify-between">
               <Link to="/">
                 <span className="text-lg font-semibold text-gray-900 cursor-pointer">
-                  HiRekruit
+                  <span className="text-blue-600 ">HiRe</span>kruit
                 </span>
               </Link>
             </div>
