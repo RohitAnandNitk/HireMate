@@ -85,7 +85,7 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
     {
       icon: Mail,
       title: "Email Us",
-      details: "hello@hiremate.ai",
+      details: "hirekruit@gmail.com",
       description: "Send us an email anytime",
     },
     {
