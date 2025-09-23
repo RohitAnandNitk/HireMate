@@ -56,7 +56,7 @@ const Clients = () => {
       image:
         "https://images.unsplash.com/photo-1494790108755-2616b612b742?w=150&h=150&fit=crop&crop=face",
       rating: 5,
-      text: "HireMate has completely transformed our recruitment process. We've reduced our time-to-hire by 60% and the quality of candidates has significantly improved. The AI-powered matching is incredibly accurate.",
+      text: "HiRekruit has completely transformed our recruitment process. We've reduced our time-to-hire by 60% and the quality of candidates has significantly improved. The AI-powered matching is incredibly accurate.",
     },
     {
       name: "Michael Chen",
@@ -74,7 +74,7 @@ const Clients = () => {
       image:
         "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
       rating: 5,
-      text: "We've seen a 40% increase in diversity in our candidate pool since implementing HireMate. The bias-free screening has been a game-changer for our inclusive hiring initiatives.",
+      text: "We've seen a 40% increase in diversity in our candidate pool since implementing HiRekruit. The bias-free screening has been a game-changer for our inclusive hiring initiatives.",
     },
     {
       name: "David Park",
@@ -83,7 +83,7 @@ const Clients = () => {
       image:
         "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
       rating: 5,
-      text: "The ROI on HireMate has been exceptional. We've reduced our recruitment costs by 45% while dramatically improving our hiring success rate. It's an indispensable tool for any modern HR team.",
+      text: "The ROI on HiRekruit has been exceptional. We've reduced our recruitment costs by 45% while dramatically improving our hiring success rate. It's an indispensable tool for any modern HR team.",
     },
     {
       name: "Lisa Thompson",
@@ -92,7 +92,7 @@ const Clients = () => {
       image:
         "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face",
       rating: 5,
-      text: "HireMate's collaborative features have revolutionized how our distributed team works together. The integration with our existing tools was seamless and the support team was exceptional.",
+      text: "HiRekruit's collaborative features have revolutionized how our distributed team works together. The integration with our existing tools was seamless and the support team was exceptional.",
     },
     {
       name: "James Wilson",
@@ -101,7 +101,7 @@ const Clients = () => {
       image:
         "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&crop=face",
       rating: 5,
-      text: "We process over 10,000 resumes monthly and HireMate handles it effortlessly. The accuracy and speed are unmatched. Our recruiters can now focus on building relationships instead of manual screening.",
+      text: "We process over 10,000 resumes monthly and HiRekruit handles it effortlessly. The accuracy and speed are unmatched. Our recruiters can now focus on building relationships instead of manual screening.",
     },
   ];
 
@@ -161,7 +161,7 @@ const Clients = () => {
       company: "TechFlow Solutions",
       challenge: "Manual screening of 200+ weekly applications",
       solution:
-        "Implemented HireMate's AI-powered resume parsing and filtering",
+        "Implemented HiRekruit's AI-powered resume parsing and filtering",
       results: [
         "60% reduction in time-to-hire",
         "85% improvement in candidate quality",
@@ -171,7 +171,7 @@ const Clients = () => {
     {
       company: "ScaleTech",
       challenge: "Scaling recruitment for rapid growth",
-      solution: "Deployed enterprise-grade HireMate with custom workflows",
+      solution: "Deployed enterprise-grade HiRekruit with custom workflows",
       results: [
         "10x increase in processing capacity",
         "95% faster initial screening",
@@ -181,7 +181,7 @@ const Clients = () => {
     {
       company: "GrowthLab",
       challenge: "Improving diversity in hiring",
-      solution: "Used HireMate's bias-free screening algorithms",
+      solution: "Used HiRekruit's bias-free screening algorithms",
       results: [
         "40% increase in diverse candidates",
         "Eliminated unconscious bias in initial screening",
@@ -204,7 +204,7 @@ const Clients = () => {
           </h1>
           <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto">
             Discover how organizations worldwide are transforming their hiring
-            processes with HireMate's AI-powered recruitment solutions.
+            processes with HiRekruit's AI-powered recruitment solutions.
           </p>
         </div>
       </section>
@@ -408,7 +408,7 @@ const Clients = () => {
           </h2>
           <p className="text-xl text-gray-600 mb-8">
             Ready to transform your hiring process? Join hundreds of companies
-            who trust HireMate.
+            who trust HiRekruit.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="bg-blue-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 hover:shadow-lg">

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import logo from "../assets/hiremate.png";
+import logo from "../assets/HiRekruit.png";
 import { Menu, X } from "lucide-react";
 import { NavLink, useNavigate, Link } from "react-router-dom";
 

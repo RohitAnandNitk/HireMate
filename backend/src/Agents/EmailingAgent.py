@@ -37,7 +37,7 @@ class EmailingAgent:
     def process_and_send(self, shortlisted, not_shortlisted):
         templates = self.create_email_templates()
 
-        company_name = "HireMate"
+        company_name = "HiRekruit"
 
         for person in shortlisted:
             body = templates["shortlisted"].format(name=person["name"], company_name=company_name)
@@ -51,7 +51,7 @@ class EmailingAgent:
 
     # we will have a method to send the emails to final selected candidates
     def send_final_decision_email(self,candidate, decision, feedback):
-        company_name = "HireMate"
+        company_name = "HiRekruit"
         job_role = "Software Engineer"
         if decision == "SELECT":
             subject = f"Congratulations! Job Offer from {company_name}"

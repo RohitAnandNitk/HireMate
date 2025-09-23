@@ -329,7 +329,7 @@ const Services = () => {
           </h2>
           <p className="text-xl text-blue-100 mb-8">
             Join thousands of companies who have revolutionized their
-            recruitment process with HireMate.
+            recruitment process with HiRekruit.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="bg-white text-blue-600 px-8 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-colors">

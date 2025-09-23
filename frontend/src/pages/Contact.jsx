@@ -91,14 +91,14 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
     {
       icon: Phone,
       title: "Call Us",
-      details: "+1 (555) 123-4567",
-      description: "Mon-Fri from 9am to 6pm EST",
+      details: "+91-6202908328",
+      description: "Mon-Fri from 9am to 6pm IST",
     },
     {
       icon: MapPin,
       title: "Visit Us",
-      details: "123 Innovation Drive, Tech Hub, CA 94105",
-      description: "Our headquarters in Silicon Valley",
+      details: "NITK, Surathkal, India",
+      description: "Our headquarters in Karnataka",
     },
     {
       icon: Clock,
@@ -163,7 +163,7 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
           </h1>
           <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto">
             Ready to transform your hiring process? We're here to help you get
-            started with HireMate. Reach out to us and discover how AI can
+            started with HiRekruit. Reach out to us and discover how AI can
             revolutionize your recruitment.
           </p>
         </div>
@@ -428,7 +428,7 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
           <div className="space-y-6">
             <div className="bg-white p-6 rounded-xl border border-gray-100 hover:shadow-md transition-shadow">
               <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                How quickly can I get started with HireMate?
+                How quickly can I get started with HiRekruit?
               </h3>
               <p className="text-gray-600">
                 You can get started immediately after signing up. Our onboarding
@@ -439,10 +439,10 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
             <div className="bg-white p-6 rounded-xl border border-gray-100 hover:shadow-md transition-shadow">
               <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                What file formats does HireMate support?
+                What file formats does HiRekruit support?
               </h3>
               <p className="text-gray-600">
-                HireMate supports all major resume formats including PDF, DOCX,
+                HiRekruit supports all major resume formats including PDF, DOCX,
                 DOC, TXT, and RTF. Our AI can extract information from any
                 structured document format.
               </p>
@@ -461,10 +461,10 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
             <div className="bg-white p-6 rounded-xl border border-gray-100 hover:shadow-md transition-shadow">
               <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                Can HireMate integrate with our existing HR tools?
+                Can HiRekruit integrate with our existing HR tools?
               </h3>
               <p className="text-gray-600">
-                Yes, HireMate offers seamless integrations with popular HR
+                Yes, HiRekruit offers seamless integrations with popular HR
                 platforms like Workday, BambooHR, Greenhouse, and many others.
                 We also provide API access for custom integrations.
               </p>
@@ -503,7 +503,7 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
           </h2>
           <p className="text-xl text-blue-100 mb-8">
             Join thousands of companies who have transformed their hiring
-            process with HireMate.
+            process with HiRekruit.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="bg-white text-blue-600 px-8 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-colors">

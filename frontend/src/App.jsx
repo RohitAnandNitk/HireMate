@@ -18,6 +18,7 @@ import Services from "./pages/Services";
 import Clients from "./pages/Clients";
 import Contact from "./pages/Contact";
 import LayoutWithNavbar from "./pages/LayoutWithNavbar";
+import Chatbot from "./components/Chatbot";
 
 function App() {
   return (
@@ -88,6 +89,8 @@ function App() {
         <Route path="/mockinterview/:id" element={<InterviewPage />} />
         <Route path="/mockinterview/test" element={<VapiInterviewPage />} />
       </Routes>
+
+      <Chatbot />
     </Router>
   );
 }
