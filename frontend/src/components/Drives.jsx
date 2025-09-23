@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus, Search, Filter, Briefcase } from "lucide-react";
 import DriveCard from "./DriveCard";
+import Loader from "./Loader";
 
 const Drives = () => {
   const navigate = useNavigate();
@@ -100,11 +101,7 @@ const Drives = () => {
 
   if (loading) {
     return (
-      <div className="flex-1 w-full">
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-        </div>
-      </div>
+      <Loader />
     );
   }
 
