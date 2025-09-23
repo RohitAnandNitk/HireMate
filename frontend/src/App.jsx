@@ -19,8 +19,6 @@ import Clients from "./pages/Clients";
 import Contact from "./pages/Contact";
 import LayoutWithNavbar from "./pages/LayoutWithNavbar";
 
-
-
 function App() {
   return (
     <Router>
