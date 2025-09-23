@@ -1,2 +1,2 @@
-# HireMate
+# HiRekruit
 

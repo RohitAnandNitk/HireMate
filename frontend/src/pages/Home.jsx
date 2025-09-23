@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/hiremate.png";
+import logo from "../assets/HiRekruit.png";
 import {
   Menu,
   X,

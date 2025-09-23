@@ -35,7 +35,7 @@ class InterviewSchedulingAgent:
             # Construct the interview link with the candidate's unique ID
             interview_url = f"{meeting_link}/{candidate_id}"
 
-            subject = "Interview Invitation - HireMate"
+            subject = "Interview Invitation - HiRekruit"
             
             body = f"Dear {candidate['name']},\n\n" \
                 "Congratulations! You have been shortlisted for the next stage of our recruitment process.\n\n" \

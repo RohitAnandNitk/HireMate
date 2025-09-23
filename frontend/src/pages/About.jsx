@@ -72,7 +72,7 @@ const About = () => {
           <h1 className="text-5xl font-bold text-gray-800 mb-6">
             About{" "}
             <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-              HireMate
+              HiRekruit
             </span>
           </h1>
           <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto">
@@ -133,7 +133,7 @@ const About = () => {
               </h2>
               <div className="space-y-4 text-gray-700">
                 <p>
-                  HireMate leverages cutting-edge AI technologies to automate
+                  HiRekruit leverages cutting-edge AI technologies to automate
                   and optimize recruitment tasks.
                 </p>
                 <ul className="space-y-2 pl-6">
@@ -264,7 +264,7 @@ const About = () => {
       <section className="py-16 px-6 bg-gray-50" ref={statsRef}>
         <div className="max-w-6xl mx-auto text-center">
           <h2 className="text-4xl font-bold text-gray-800 mb-12">
-            HireMate by the Numbers
+            HiRekruit by the Numbers
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 transform hover:scale-105">

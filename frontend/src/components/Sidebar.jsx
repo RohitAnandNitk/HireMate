@@ -12,7 +12,7 @@ import {
   Briefcase,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import logo from "../assets/hiremate.png";
+import logo from "../assets/HiRekruit.png";
 
 const items = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/job-creation" },
@@ -32,7 +32,7 @@ const Sidebar = () => {
     <>
       {/* Mobile header - stays outside sidebar */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-30 p-4 border-b border-gray-200 bg-white/80 backdrop-blur-sm flex justify-between items-center">
-        <img src={logo} alt="HireMate" className="h-8" />
+        <img src={logo} alt="HiRekruit" className="h-8" />
         <button
           onClick={() => setIsMobileOpen(!isMobileOpen)}
           className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -58,7 +58,7 @@ const Sidebar = () => {
       >
         {/* Desktop header - only visible on desktop */}
         <div className="hidden md:flex justify-between items-center px-4 py-4">
-          {isOpen && <img src={logo} alt="HireMate" className="h-[50px]" />}
+          {isOpen && <img src={logo} alt="HiRekruit" className="h-[50px]" />}
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="p-1 hover:bg-gray-100 rounded-lg transition-colors ml-auto"
