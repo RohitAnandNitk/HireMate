@@ -1,14 +1,19 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import config from "../Config/BaseURL";
+const BASE_URL = config.BASE_URL;
+
 const JobCreation = () => {
   const navigate = useNavigate();
+  // we have to bring the company id from the hhr(user) data.
   const [jobData, setJobData] = useState({
-    jobId: "",
+    company_id: "comp_01",
+    job_id: "",
     role: "",
     rounds: [{ type: "Technical", description: "" }],
-    startDate: "",
-    endDate: "",
+    start_date: "",
+    end_date: "",
     location: "",
   });
 
@@ -29,7 +34,7 @@ const JobCreation = () => {
   };
 
   const addRound = () => {
-    console.log("Adding round")
+    console.log("Adding round");
     setJobData((prev) => ({
       ...prev,
       rounds: [...prev.rounds, { type: "Technical", description: "" }],
@@ -46,32 +51,47 @@ const JobCreation = () => {
     }
   };
 
-  const handleSubmit = () => {
-    console.log("Inside submission")
+  const handleSubmit = async () => {
+    console.log("Inside submission");
+
     // Validate required fields
+    const { job_id, role, start_date, end_date, location, rounds } = jobData;
+
     if (
-      !jobData.jobId.trim() ||
-      !jobData.role.trim() ||
-      !jobData.startDate ||
-      !jobData.endDate ||
-      !jobData.location.trim()
+      !job_id?.trim() ||
+      !role?.trim() ||
+      !start_date ||
+      !end_date ||
+      !location?.trim()
     ) {
-      alert("Please fill in all required fields");
-      return;
+      return alert("Please fill in all required fields");
     }
 
-    // Check if all rounds have types
-    const invalidRounds = jobData.rounds.some((round) => !round.type.trim());
-    if (invalidRounds) {
-      alert("Please specify type for all rounds");
-      return;
+    // Validate rounds
+    if (rounds.some((round) => !round.type?.trim())) {
+      return alert("Please specify type for all rounds");
     }
 
-    // Store job data in localStorage or sessionStorage for the dashboard to access
-    localStorage.setItem("currentJobData", JSON.stringify(jobData));
+    try {
+      const response = await fetch(`${BASE_URL}/api/drive/create`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(jobData),
+      });
 
-    // Navigate to dashboard
-    navigate("/dashboard");
+      if (!response.ok) {
+        throw new Error("Failed to create a drive");
+      }
+
+      const data = await response.json();
+      console.log("Drive created successfully!", data);
+
+      // Navigate to dashboard
+      navigate("/dashboard");
+    } catch (err) {
+      console.error("Error creating drive:", err.message);
+      alert("Something went wrong while creating the drive. Please try again.");
+    }
   };
 
   const roundTypes = [
@@ -100,8 +120,8 @@ const JobCreation = () => {
           </label>
           <input
             type="text"
-            value={jobData.jobId}
-            onChange={(e) => handleInputChange("jobId", e.target.value)}
+            value={jobData.job_id}
+            onChange={(e) => handleInputChange("job_id", e.target.value)}
             placeholder="Enter unique job ID, e.g., JOB-2024-001"
             className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -194,8 +214,8 @@ const JobCreation = () => {
             </label>
             <input
               type="date"
-              value={jobData.startDate}
-              onChange={(e) => handleInputChange("startDate", e.target.value)}
+              value={jobData.start_date}
+              onChange={(e) => handleInputChange("start_date", e.target.value)}
               className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -205,9 +225,9 @@ const JobCreation = () => {
             </label>
             <input
               type="date"
-              value={jobData.endDate}
-              onChange={(e) => handleInputChange("endDate", e.target.value)}
-              min={jobData.startDate}
+              value={jobData.end_date}
+              onChange={(e) => handleInputChange("end_date", e.target.value)}
+              min={jobData.start_date}
               className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>

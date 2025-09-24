@@ -2,8 +2,6 @@ import React from "react";
 import {
   Calendar,
   MapPin,
-  Users,
-  Star,
   Clock,
   CheckCircle,
   Eye,
@@ -12,17 +10,15 @@ import {
 
 const DriveCard = ({ drive, onView }) => {
   const {
-    id,
-    jobId,
+    _id,
+    job_id,
     role,
     location,
-    startDate,
-    endDate,
+    start_date,
+    end_date,
     status,
     rounds,
-    totalApplicants,
-    shortlisted,
-    createdAt,
+    created_at,
   } = drive;
 
   const statusConfig = {
@@ -43,12 +39,12 @@ const DriveCard = ({ drive, onView }) => {
   const currentStatus = statusConfig[status] || statusConfig.ongoing;
   const StatusIcon = currentStatus.icon;
 
-  // Calculate progress percentage for ongoing drives
+  // Calculate progress percentage
   const getProgress = () => {
     if (status === "finished") return 100;
 
-    const start = new Date(startDate);
-    const end = new Date(endDate);
+    const start = new Date(start_date);
+    const end = new Date(end_date);
     const now = new Date();
 
     if (now < start) return 0;
@@ -61,7 +57,7 @@ const DriveCard = ({ drive, onView }) => {
 
   const progress = getProgress();
 
-  // Format date for display
+  // Format date
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       month: "short",
@@ -70,11 +66,11 @@ const DriveCard = ({ drive, onView }) => {
     });
   };
 
-  // Calculate days remaining for ongoing drives
+  // Days remaining
   const getDaysRemaining = () => {
     if (status === "finished") return null;
 
-    const end = new Date(endDate);
+    const end = new Date(end_date);
     const now = new Date();
     const diffTime = end - now;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -91,7 +87,9 @@ const DriveCard = ({ drive, onView }) => {
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-xs font-medium text-gray-500">{jobId}</span>
+              <span className="text-xs font-medium text-gray-500">
+                {job_id}
+              </span>
               <div
                 className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${currentStatus.bgColor} ${currentStatus.color}`}
               >
@@ -111,7 +109,7 @@ const DriveCard = ({ drive, onView }) => {
         </div>
       </div>
 
-      {/* Progress Bar for Ongoing Drives */}
+      {/* Progress Bar */}
       {status === "ongoing" && (
         <div className="px-4 py-2 bg-gray-50">
           <div className="flex justify-between items-center mb-2">
@@ -140,7 +138,7 @@ const DriveCard = ({ drive, onView }) => {
         <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
           <Calendar size={14} />
           <span>
-            {formatDate(startDate)} - {formatDate(endDate)}
+            {formatDate(start_date)} - {formatDate(end_date)}
           </span>
         </div>
 
@@ -166,53 +164,6 @@ const DriveCard = ({ drive, onView }) => {
           </div>
         </div>
 
-        {/* Statistics */}
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <div className="text-center p-2 bg-gray-50 rounded">
-            <div className="flex items-center justify-center gap-1 mb-1">
-              <Users size={14} className="text-gray-600" />
-              <span className="text-xs text-gray-600">Total</span>
-            </div>
-            <div className="text-lg font-semibold text-gray-900">
-              {totalApplicants}
-            </div>
-          </div>
-          <div className="text-center p-2 bg-green-50 rounded">
-            <div className="flex items-center justify-center gap-1 mb-1">
-              <Star size={14} className="text-green-600" />
-              <span className="text-xs text-green-600">Shortlisted</span>
-            </div>
-            <div className="text-lg font-semibold text-green-700">
-              {shortlisted}
-            </div>
-          </div>
-        </div>
-
-        {/* Success Rate */}
-        <div className="mb-4">
-          <div className="flex justify-between items-center mb-1">
-            <span className="text-xs text-gray-600">Success Rate</span>
-            <span className="text-xs font-medium text-gray-900">
-              {totalApplicants > 0
-                ? Math.round((shortlisted / totalApplicants) * 100)
-                : 0}
-              %
-            </span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-1">
-            <div
-              className="bg-green-500 h-1 rounded-full"
-              style={{
-                width: `${
-                  totalApplicants > 0
-                    ? (shortlisted / totalApplicants) * 100
-                    : 0
-                }%`,
-              }}
-            ></div>
-          </div>
-        </div>
-
         {/* Action Button */}
         <button
           onClick={onView}
@@ -226,7 +177,7 @@ const DriveCard = ({ drive, onView }) => {
       {/* Footer */}
       <div className="px-4 py-3 bg-gray-50 rounded-b-lg border-t">
         <div className="text-xs text-gray-500">
-          Created on {formatDate(createdAt)}
+          Created on {formatDate(created_at)}
         </div>
       </div>
     </div>

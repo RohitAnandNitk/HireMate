@@ -4,6 +4,9 @@ import { Plus, Search, Filter, Briefcase } from "lucide-react";
 import DriveCard from "./DriveCard";
 import Loader from "./Loader";
 
+import config from "../Config/BaseURL";
+const BASE_URL = config.BASE_URL;
+
 const Drives = () => {
   const navigate = useNavigate();
   const [drives, setDrives] = useState([]);
@@ -11,72 +14,40 @@ const Drives = () => {
   const [filterStatus, setFilterStatus] = useState("all"); // all, ongoing, finished
   const [loading, setLoading] = useState(true);
 
-  // Sample data - replace with actual API call
-  useEffect(() => {
-    const sampleDrives = [
-      {
-        id: "DRIVE-001",
-        jobId: "JOB-2024-001",
-        role: "Senior Software Engineer",
-        location: "Bangalore",
-        startDate: "2024-01-15",
-        endDate: "2024-02-15",
-        status: "ongoing",
-        rounds: [
-          { type: "Technical", description: "Coding round" },
-          { type: "System Design", description: "Architecture discussion" },
-          { type: "HR", description: "Final interview" },
-        ],
-        totalApplicants: 45,
-        shortlisted: 12,
-        createdAt: "2024-01-10",
-      },
-      {
-        id: "DRIVE-002",
-        jobId: "JOB-2024-002",
-        role: "Frontend Developer",
-        location: "Remote",
-        startDate: "2023-12-01",
-        endDate: "2023-12-20",
-        status: "finished",
-        rounds: [
-          { type: "Technical", description: "React assessment" },
-          { type: "Behavioral", description: "Culture fit" },
-        ],
-        totalApplicants: 78,
-        shortlisted: 8,
-        createdAt: "2023-11-25",
-      },
-      {
-        id: "DRIVE-003",
-        jobId: "JOB-2024-003",
-        role: "Data Scientist",
-        location: "Hyderabad",
-        startDate: "2024-02-01",
-        endDate: "2024-02-28",
-        status: "ongoing",
-        rounds: [
-          { type: "Technical", description: "ML algorithms" },
-          { type: "Panel", description: "Team interview" },
-        ],
-        totalApplicants: 23,
-        shortlisted: 5,
-        createdAt: "2024-01-20",
-      },
-    ];
+  // we have to bring the company id form the current user(hr)
+  const [companyId, setCompanyId] = useState("comp_01");
 
-    // Simulate API call
-    setTimeout(() => {
-      setDrives(sampleDrives);
-      setLoading(false);
-    }, 1000);
+  useEffect(() => {
+    const fetchDrives = async () => {
+      try {
+        setLoading(true);
+
+        const response = await fetch(
+          `${BASE_URL}/api/drive/company/${companyId}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch drives");
+        }
+
+        const data = await response.json();
+        console.log("All drives : ", data.drives);
+        setDrives(data.drives); // assuming API returns array of drives
+      } catch (err) {
+        console.error("Error fetching drives:", err.message);
+        alert("Could not load drives. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDrives();
   }, []);
 
   // Filter drives based on search and status
   const filteredDrives = drives.filter((drive) => {
     const matchesSearch =
       drive.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      drive.jobId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      drive.job_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       drive.location.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus =
@@ -86,6 +57,7 @@ const Drives = () => {
   });
 
   const handleCreateNewDrive = () => {
+    // here we have to navigate to the progress page.....
     navigate("/job-creation");
   };
 
@@ -224,7 +196,7 @@ const Drives = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredDrives.map((drive) => (
             <DriveCard
-              key={drive.id}
+              key={drive._id}
               drive={drive}
               onView={() => handleViewDrive(drive.id)}
             />

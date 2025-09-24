@@ -1,6 +1,6 @@
 from datetime import datetime
 
-def create_drive(company_id, role, location, start_date, end_date, rounds=None, job_id=None):
+def create_drive(company_id, role, location, start_date, end_date, rounds=None, job_id=None, status = "ongoing"):
     """
     Create a drive (job posting) document.
 
@@ -18,6 +18,7 @@ def create_drive(company_id, role, location, start_date, end_date, rounds=None, 
         "start_date": start_date,
         "end_date": end_date,
         "rounds": rounds,           # interview rounds info
+        "status" : status,
         "created_at": datetime.utcnow(),
         "updated_at": datetime.utcnow()
     }

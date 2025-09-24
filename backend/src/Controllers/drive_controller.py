@@ -5,7 +5,9 @@ from src.Utils.Database import db
 from datetime import datetime
 
 def create_drive_controller():
+    print("Create Drive Controller called.")
     data = request.get_json()
+    
     company_id = data.get("company_id")
     role = data.get("role")
     location = data.get("location")
@@ -31,7 +33,7 @@ def create_drive_controller():
 
     # Convert _id to string before returning
     drive["_id"] = str(result.inserted_id)
-
+    print("Drive created successfully.")
     return jsonify({
         "message": "Drive created successfully",
         "drive": drive
