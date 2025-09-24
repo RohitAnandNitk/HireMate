@@ -29,6 +29,7 @@ const JobCreation = () => {
   };
 
   const addRound = () => {
+    console.log("Adding round")
     setJobData((prev) => ({
       ...prev,
       rounds: [...prev.rounds, { type: "Technical", description: "" }],
@@ -46,6 +47,7 @@ const JobCreation = () => {
   };
 
   const handleSubmit = () => {
+    console.log("Inside submission")
     // Validate required fields
     if (
       !jobData.jobId.trim() ||
@@ -127,7 +129,7 @@ const JobCreation = () => {
             </label>
             <button
               onClick={addRound}
-              className="px-3 py-1 text-sm bg-black text-white rounded-md hover:bg-gray-800"
+              className="px-3 py-1 text-sm bg-black cursor-pointer text-white rounded-md hover:bg-gray-800"
             >
               Add Round
             </button>
