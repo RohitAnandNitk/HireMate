@@ -1,10 +1,10 @@
 from datetime import datetime
 
-def create_candidate(name, email, resume_content):
+def create_company(name, industry=None, location=None):
     return {
         "name": name,
-        "email": email,
-        "resume_content": resume_content,
+        "industry": industry,
+        "location": location,
         "created_at": datetime.utcnow(),
         "updated_at": datetime.utcnow()
     }

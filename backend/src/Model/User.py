@@ -1,12 +1,11 @@
 from datetime import datetime
 
-def create_user(name, email, password_hash, company_name, role="hr"):
+def create_user(name, email, company_id, role="hr"):
     return {
         "name": name,
         "email": email,
-        "password_hash": password_hash,
-        "role": role,
-        "company_name": company_name,
+        "role": role,  # "hr", "admin", etc.
+        "company_id": company_id,  # Reference to Company
         "created_at": datetime.utcnow(),
         "updated_at": datetime.utcnow()
     }
