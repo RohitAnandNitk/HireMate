@@ -5,6 +5,9 @@ import { Send, MessageCircle, X, User, ShipWheel } from "lucide-react";
 import saarthiImage from "../assets/image.png"; // Saarthi logo
 import { motion } from "framer-motion";
 
+import config from "../Config/BaseURL";
+const BASE_URL = config.BASE_URL;
+
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -20,9 +23,6 @@ const Chatbot = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
   const chatRef = useRef(null);
-
-  const GROK_API_KEY = "your-grok-api-key-here";
-  const GROK_API_URL = "https://api.x.ai/v1/chat/completions";
 
   useEffect(() => setMounted(true), []);
 
@@ -45,38 +45,31 @@ const Chatbot = () => {
     };
   }, [isOpen]);
 
-  const sendMessageToGrok = async (message) => {
+  const sendMessageToSaarthi = async (message) => {
     try {
-      const response = await fetch(GROK_API_URL, {
+      const response = await fetch(`${BASE_URL}/api/chatbot/query`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${GROK_API_KEY}`,
         },
-        body: JSON.stringify({
-          messages: [
-            {
-              role: "system",
-              content:
-                "You are Saarthi, a helpful assistant for HireKruit - a recruitment and hiring platform. Be friendly, professional, and concise.",
-            },
-            { role: "user", content: message },
-          ],
-          model: "grok-beta",
-          stream: false,
-          temperature: 0.7,
-        }),
+        body: JSON.stringify({ message }), // send message to backend
       });
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch response from chatbot");
+      }
+
       const data = await response.json();
-      return data.choices?.[0]?.message?.content ?? "Sorry, no reply.";
+      // console.log("Chatbot response:", data);
+      return data.response;
     } catch (err) {
-      console.error("Grok error:", err);
-      return "I'm sorry, I'm having trouble connecting right now. Please try again later.";
+      console.error("Error fetching chatbot response:", err.message);
+      alert("Could not load chatbot response. Please try again.");
     }
   };
 
   const handleSendMessage = async () => {
+    console.log("function called for get reply form the saarthi");
     if (!inputMessage.trim()) return;
 
     const userMessage = {
@@ -91,7 +84,7 @@ const Chatbot = () => {
     setIsLoading(true);
 
     try {
-      const botResponse = await sendMessageToGrok(userMessage.text);
+      const botResponse = await sendMessageToSaarthi(userMessage.text);
       setMessages((p) => [
         ...p,
         {
@@ -134,9 +127,10 @@ const Chatbot = () => {
       {/* Chat window */}
       <div
         className={`mb-1 w-80 max-w-[92vw] h-[520px] bg-white rounded-2xl shadow-2xl border border-blue-100 overflow-hidden transition-all duration-300 ease-out transform
-          ${isOpen
-            ? "translate-y-0 opacity-100 pointer-events-auto"
-            : "translate-y-6 opacity-0 pointer-events-none"
+          ${
+            isOpen
+              ? "translate-y-0 opacity-100 pointer-events-auto"
+              : "translate-y-6 opacity-0 pointer-events-none"
           }`}
       >
         {/* Header */}
@@ -164,20 +158,24 @@ const Chatbot = () => {
           {messages.map((message) => (
             <div
               key={message.id}
-              className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
+              className={`flex ${
+                message.sender === "user" ? "justify-end" : "justify-start"
+              }`}
               style={{ animation: "fadeInSlide 0.35s ease-out" }}
             >
               <div
-                className={`flex items-start space-x-2 max-w-[80%] ${message.sender === "user"
-                  ? "flex-row-reverse space-x-reverse"
-                  : ""
-                  }`}
+                className={`flex items-start space-x-2 max-w-[80%] ${
+                  message.sender === "user"
+                    ? "flex-row-reverse space-x-reverse"
+                    : ""
+                }`}
               >
                 <div
-                  className={`flex items-center justify-center overflow-hidden ${message.sender === "user"
-                    ? "w-6 h-6 rounded-full bg-blue-600 text-white"
-                    : "w-10 h-4 rounded-full bg-white"
-                    }`}
+                  className={`flex items-center justify-center overflow-hidden ${
+                    message.sender === "user"
+                      ? "w-6 h-6 rounded-full bg-blue-600 text-white"
+                      : "w-10 h-4 rounded-full bg-white"
+                  }`}
                 >
                   {message.sender === "user" ? (
                     <User className="w-4 h-4" />
@@ -186,10 +184,11 @@ const Chatbot = () => {
                   )}
                 </div>
                 <div
-                  className={`px-4 py-2 rounded-2xl ${message.sender === "user"
-                    ? "bg-blue-600 text-white rounded-br-md"
-                    : "bg-white text-gray-800 border border-blue-100 rounded-bl-md shadow-sm"
-                    }`}
+                  className={`px-4 py-2 rounded-2xl ${
+                    message.sender === "user"
+                      ? "bg-blue-600 text-white rounded-br-md"
+                      : "bg-white text-gray-800 border border-blue-100 rounded-bl-md shadow-sm"
+                  }`}
                 >
                   <p className="text-sm">{message.text}</p>
                   <p className="text-xs mt-1 text-gray-400">
@@ -262,7 +261,11 @@ const Chatbot = () => {
         <motion.button
           onClick={() => setIsOpen((s) => !s)}
           className={`w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-white overflow-hidden pointer-events-auto
-            ${isOpen ? "bg-gray-600 rotate-45" : "bg-gradient-to-r from-blue-600 to-blue-700"}`}
+            ${
+              isOpen
+                ? "bg-gray-600 rotate-45"
+                : "bg-gradient-to-r from-blue-600 to-blue-700"
+            }`}
           animate={{ rotate: 360 }}
           transition={{ repeat: Infinity, duration: 12, ease: "linear" }}
         >
