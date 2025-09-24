@@ -16,7 +16,12 @@ app = Flask(__name__, static_folder="static", static_url_path="/static")
 
 
 # Enable CORS
-CORS(app, origins=["http://localhost:5173", "https://www.hirekruit.com"], supports_credentials=True)
+CORS(
+    app,
+    resources={r"/api/*": {"origins": ["http://localhost:5173", "https://www.hirekruit.com"]}},
+    supports_credentials=True
+)
+
 
 # Register routes
 app.register_blueprint(interview_bp, url_prefix="/api/interview")
