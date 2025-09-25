@@ -7,14 +7,15 @@ const BASE_URL = config.BASE_URL;
 const JobCreation = () => {
   const navigate = useNavigate();
   // we have to bring the company id from the hhr(user) data.
+  const savedJobData = JSON.parse(localStorage.getItem("currentJobData"));
   const [jobData, setJobData] = useState({
     company_id: "comp_01",
-    job_id: "",
-    role: "",
-    rounds: [{ type: "Technical", description: "" }],
-    start_date: "",
-    end_date: "",
-    location: "",
+    job_id: savedJobData?.job_id || "",
+    role: savedJobData?.role || "",
+    rounds: savedJobData?.rounds || [{ type: "Technical", description: "" }],
+    start_date: savedJobData?.start_date || "",
+    end_date: savedJobData?.end_date || "",
+    location: savedJobData?.location || "",
   });
 
   const handleInputChange = (field, value) => {
@@ -72,6 +73,7 @@ const JobCreation = () => {
       return alert("Please specify type for all rounds");
     }
 
+    localStorage.setItem("currentJobData", JSON.stringify(jobData));
     try {
       const response = await fetch(`${BASE_URL}/api/drive/create`, {
         method: "POST",

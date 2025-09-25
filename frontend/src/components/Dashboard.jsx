@@ -100,19 +100,19 @@ const Dashboard = () => {
           </h1>
           {jobData && (
             <p className="text-sm text-gray-600 mt-1">
-              Job ID: {jobData.jobId} | Role: {jobData.role}
+              Job ID: {jobData.job_id} | Role: {jobData.role}
             </p>
           )}
         </div>
         <div className="flex gap-3">
           {jobData ? (
             <>
-              <button
+              {/* <button
                 onClick={handleBackToJobCreation}
                 className="px-4 py-2 text-sm text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50"
               >
                 ← Edit Job Details
-              </button>
+              </button> */}
               <button
                 onClick={handleProcessResumes}
                 disabled={
@@ -153,7 +153,7 @@ const Dashboard = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
             <div>
               <span className="text-gray-600">Job ID:</span>
-              <p className="font-medium">{jobData.jobId}</p>
+              <p className="font-medium">{jobData.job_id}</p>
             </div>
             <div>
               <span className="text-gray-600">Role:</span>
@@ -165,11 +165,11 @@ const Dashboard = () => {
             </div>
             <div>
               <span className="text-gray-600">Start Date:</span>
-              <p className="font-medium">{jobData.startDate}</p>
+              <p className="font-medium">{jobData.start_date}</p>
             </div>
             <div>
               <span className="text-gray-600">End Date:</span>
-              <p className="font-medium">{jobData.endDate}</p>
+              <p className="font-medium">{jobData.end_date}</p>
             </div>
             <div>
               <span className="text-gray-600">Interview Rounds:</span>

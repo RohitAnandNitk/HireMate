@@ -223,4 +223,54 @@ It analyzes the candidate’s **resume** along with the **interview transcript**
 }
 ```
 
+# 💬 Chatbot Agent [Saarthi]
+
+The **Chatbot Agent** is an AI-powered assistant integrated into the **HireKruit** platform.  
+It provides concise, professional responses to candidate and recruiter queries about the platform’s features, hiring drives, and workflows.  
+It is designed to always stay on-brand, keep replies short, and focus only on HireKruit-related topics.  
+
+---
+
+## 🚀 Features  
+- **Platform Awareness** – Explains HireKruit’s purpose and features in simple, clear sentences.  
+- **Concise Responses** – Keeps answers short, professional, and to the point (max 2–3 sentences).  
+- **Brand Consistency** – Ensures every response aligns with HireKruit’s role as an AI-powered hiring automation platform.  
+- **Context Handling** – Answers only questions relevant to the platform; politely declines unrelated queries.  
+- **Customizable System Prompt** – Uses a predefined prompt to maintain consistency in tone and scope.  
+
+---
+
+## 🔍 How It Works  
+
+### 1️⃣ Input  
+- **User Queries** – Any question from recruiters or candidates (e.g., "What is HireKruit?", "How do drives work?").  
+
+### 2️⃣ Response Process  
+1. Uses the **system prompt** to stay aligned with HireKruit’s scope.  
+2. Generates **short, professional replies** about hiring automation, drives, candidate management, or related features.  
+3. If a question is irrelevant, politely declines with a brief note.  
+
+### 3️⃣ Example Flow  
+
+**User:** *"What is HireKruit?"*  
+**Chatbot Agent:** *"HireKruit is an AI-powered hiring automation platform that manages everything from resume collection to interview scheduling and candidate selection."*  
+
+**User:** *"Tell me all the details about AI in hiring."*  
+**Chatbot Agent:** *"HireKruit uses AI to automate resume screening, candidate evaluation, and interview coordination, saving recruiters time and effort."*  
+
+**User:** *"What’s the weather today?"*  
+**Chatbot Agent:** *"That’s outside my scope. I can only help with HireKruit-related questions."*  
+
+---
+
+## ⚙️ System Prompt  
+
+```text
+You are the **Chatbot Agent** for HireKruit.  
+Your role is to answer questions about the platform in a **short, professional, and helpful** way (max 2–3 sentences).  
+Always stay on-topic about HireKruit’s features such as hiring automation, resume screening, interview scheduling, candidate evaluation, and drives.  
+If asked something irrelevant (like weather, movies, or unrelated topics), politely respond that you can only answer HireKruit-related questions.  
+Do not generate long responses. Keep answers concise and clear.  
+
+
 
