@@ -23,8 +23,8 @@ const DriveCard = ({ drive, onView }) => {
 
   const statusConfig = {
     ongoing: {
-      color: "text-green-600",
-      bgColor: "bg-green-100",
+      color: "text-black",
+      bgColor: "bg-gray-200",
       icon: Clock,
       label: "Ongoing",
     },
@@ -118,7 +118,7 @@ const DriveCard = ({ drive, onView }) => {
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div
-              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+              className="bg-gray-800 h-2 rounded-full transition-all duration-300"
               style={{ width: `${progress}%` }}
             ></div>
           </div>
@@ -151,7 +151,7 @@ const DriveCard = ({ drive, onView }) => {
             {rounds.slice(0, 3).map((round, index) => (
               <span
                 key={index}
-                className="px-2 py-1 bg-blue-50 text-blue-700 rounded text-xs font-medium"
+                className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium"
               >
                 {round.type}
               </span>
