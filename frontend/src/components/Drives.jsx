@@ -66,6 +66,10 @@ const Drives = () => {
     console.log("Viewing drive:", driveId);
     // You can navigate to a specific drive dashboard or details page
     // navigate(`/drive/${driveId}`);
+
+    
+    //for testing purpose we are navigating to process (currently dont have drive id)
+    navigate("/process");
   };
 
   const ongoingDrives = drives.filter((drive) => drive.status === "ongoing");
