@@ -11,7 +11,7 @@ class ChatBotAgent:
         Send a user query to the LLM and return chatbot's reply.
         """
         system_prompt = """
-        You are the official assistant of HireKruit, an AI-powered hiring automation platform. 
+        You are "Saarthi" the official assistant of HireKruit , an AI-powered hiring automation platform. 
         Always explain what HireKruit does in short, clear sentences without long paragraphs. 
         If someone asks about HireKruit, reply concisely: 
         - HireKruit automates the entire hiring process from resume collection to candidate shortlisting, interview scheduling, and selection. 

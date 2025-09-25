@@ -11,6 +11,8 @@ const Shortlisted = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedHiring, setSelectedHiring] = useState("");
+  const [jobId, setJobId] = useState("");
 
   const resumesPerPage = 5;
 
@@ -19,9 +21,7 @@ const Shortlisted = () => {
     const fetchResumes = async () => {
       try {
         const response = await fetch(`${BASE_URL}/api/resume/all`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch resumes");
-        }
+        if (!response.ok) throw new Error("Failed to fetch resumes");
         const data = await response.json();
 
         // Filter only shortlisted resumes
@@ -35,21 +35,27 @@ const Shortlisted = () => {
         setLoading(false);
       }
     };
-
     fetchResumes();
   }, []);
 
-  // Filter resumes based on search
+  // Filter resumes based on search + dropdown + jobId
   const filteredResumes = useMemo(() => {
-    return resumes.filter(
-      (r) =>
+    return resumes.filter((r) => {
+      const matchesSearch =
         r.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         r.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (r.id && r.id.toString().includes(searchTerm))
-    );
-  }, [resumes, searchTerm]);
+        (r.id && r.id.toString().includes(searchTerm));
 
-  // Pagination logic
+      const matchesHiring = selectedHiring
+        ? r.hiring_name === selectedHiring
+        : true;
+
+      const matchesJobId = jobId ? r.job_id?.toString().includes(jobId) : true;
+
+      return matchesSearch && matchesHiring && matchesJobId;
+    });
+  }, [resumes, searchTerm, selectedHiring, jobId]);
+
   const totalPages = Math.ceil(filteredResumes.length / resumesPerPage);
   const startIndex = (currentPage - 1) * resumesPerPage;
   const currentResumes = filteredResumes.slice(
@@ -64,19 +70,13 @@ const Shortlisted = () => {
       .join("")
       .toUpperCase();
 
-  if (loading) {
-    return (
-      <Loader />
-    );
-  }
-
-  if (error) {
+  if (loading) return <Loader />;
+  if (error)
     return (
       <div className="min-h-screen flex items-center justify-center text-red-500">
         {error}
       </div>
     );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -86,11 +86,15 @@ const Shortlisted = () => {
           <h1 className="text-3xl font-light text-gray-900 mb-2">
             Shortlisted Resumes
           </h1>
+          <p className="text-gray-600">
+            Browse shortlisted candidates and filter by hiring or Job ID
+          </p>
         </div>
       </div>
 
-      {/* Search */}
-      <div className="max-w-6xl mx-auto px-6 py-6">
+      {/* Filters */}
+      <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col md:flex-row gap-4 items-start">
+        {/* Search */}
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
@@ -99,11 +103,39 @@ const Shortlisted = () => {
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);
-              setCurrentPage(1); // reset to first page on search
+              setCurrentPage(1);
             }}
             className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 bg-white focus:ring-1 focus:ring-gray-400 focus:border-gray-400 text-sm transition-colors"
           />
         </div>
+
+        {/* Dropdown for current/previous hirings */}
+        <select
+          value={selectedHiring}
+          onChange={(e) => {
+            setSelectedHiring(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="px-3 py-3 rounded-lg border border-gray-300 bg-white focus:ring-1 focus:ring-gray-400 focus:border-gray-400 text-sm transition-colors"
+        >
+          <option value="current">Current Hiring</option>
+          <option value="prev1">Hiring Cycle-Q1 2025</option>
+          <option value="prev2">Hiring Cycle-Q2 2024</option>
+          <option value="prev3">Hiring Cycle-Q1 2024</option>
+          <option value="prev4">Hiring Cycle-Q1 2023</option>
+        </select>
+
+        {/* Job ID input */}
+        <input
+          type="text"
+          placeholder="Filter by Job ID..."
+          value={jobId}
+          onChange={(e) => {
+            setJobId(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="flex-1 px-3 py-3 rounded-lg border border-gray-300 bg-white focus:ring-1 focus:ring-gray-400 focus:border-gray-400 text-sm transition-colors"
+        />
       </div>
 
       {/* Resume Cards */}
@@ -115,20 +147,25 @@ const Shortlisted = () => {
               className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-sm transition-shadow"
             >
               <div className="flex items-start gap-4">
-                {/* Avatar */}
                 <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 font-medium text-sm flex-shrink-0">
                   {getInitials(resume.name)}
                 </div>
-
-                {/* Content */}
                 <div className="flex-1 min-w-0">
                   <h3 className="text-lg font-medium text-gray-900 mb-1">
                     {resume.name}
                   </h3>
                   <p className="text-gray-600 text-sm">{resume.email}</p>
                   {resume.id && (
+                    <p className="text-xs text-gray-500 mt-1">ID: {resume.id}</p>
+                  )}
+                  {resume.job_id && (
                     <p className="text-xs text-gray-500 mt-1">
-                      ID: {resume.id}
+                      Job ID: {resume.job_id}
+                    </p>
+                  )}
+                  {resume.hiring_name && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Hiring: {resume.hiring_name}
                     </p>
                   )}
                 </div>
