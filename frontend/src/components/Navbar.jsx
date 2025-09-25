@@ -24,7 +24,7 @@ const Navbar = () => {
               alt="HiRekruit Logo"
               className="w-10 h-10 object-contain"
             />
-            <div className="px-6 py-4 flex items-center justify-between">
+            <div className="px-0 py-4 flex items-center justify-between">
               <Link to="/">
                 <span className="text-lg font-semibold text-gray-900 cursor-pointer">
                   <span className="text-blue-600 ">HiRe</span>kruit
