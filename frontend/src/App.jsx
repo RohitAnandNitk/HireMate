@@ -19,6 +19,7 @@ import Clients from "./pages/Clients";
 import Contact from "./pages/Contact";
 import LayoutWithNavbar from "./pages/LayoutWithNavbar";
 import Chatbot from "./components/Chatbot";
+import Process from "./pages/Process";
 
 function App() {
   return (
@@ -38,6 +39,14 @@ function App() {
           element={
             <Layout>
               <JobCreation />
+            </Layout>
+          }
+        />
+        <Route
+          path="/process"
+          element={
+            <Layout>
+              <Process />
             </Layout>
           }
         />
