@@ -125,7 +125,7 @@ const JobCreation = () => {
             value={jobData.job_id}
             onChange={(e) => handleInputChange("job_id", e.target.value)}
             placeholder="Enter unique job ID, e.g., JOB-2024-001"
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-black"
           />
         </div>
 
@@ -139,7 +139,7 @@ const JobCreation = () => {
             value={jobData.role}
             onChange={(e) => handleInputChange("role", e.target.value)}
             placeholder="Enter role, e.g., Software Engineer"
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-black"
           />
         </div>
 
@@ -172,7 +172,7 @@ const JobCreation = () => {
                     onChange={(e) =>
                       handleRoundChange(index, "type", e.target.value)
                     }
-                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-black"
                   >
                     {roundTypes.map((type) => (
                       <option key={type} value={type}>
@@ -192,7 +192,7 @@ const JobCreation = () => {
                       handleRoundChange(index, "description", e.target.value)
                     }
                     placeholder="Brief description of the round"
-                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-black"
                   />
                 </div>
                 {jobData.rounds.length > 1 && (
@@ -218,7 +218,7 @@ const JobCreation = () => {
               type="date"
               value={jobData.start_date}
               onChange={(e) => handleInputChange("start_date", e.target.value)}
-              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-black"
             />
           </div>
           <div>
@@ -230,7 +230,7 @@ const JobCreation = () => {
               value={jobData.end_date}
               onChange={(e) => handleInputChange("end_date", e.target.value)}
               min={jobData.start_date}
-              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-black"
             />
           </div>
         </div>
@@ -245,7 +245,7 @@ const JobCreation = () => {
             value={jobData.location}
             onChange={(e) => handleInputChange("location", e.target.value)}
             placeholder="Enter location, e.g., Bangalore, Remote, Hybrid"
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-black"
           />
         </div>
 
