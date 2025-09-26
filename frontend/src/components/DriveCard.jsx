@@ -22,13 +22,31 @@ const DriveCard = ({ drive, onView }) => {
   } = drive;
 
   const statusConfig = {
-    ongoing: {
+    resumeUploaded: {
       color: "text-black",
       bgColor: "bg-gray-200",
       icon: Clock,
       label: "Ongoing",
     },
-    finished: {
+    resumeShortlisted: {
+      color: "text-black",
+      bgColor: "bg-gray-200",
+      icon: Clock,
+      label: "Ongoing",
+    },
+    emailSent: {
+      color: "text-black",
+      bgColor: "bg-gray-200",
+      icon: Clock,
+      label: "Ongoing",
+    },
+    InterviewScheduled: {
+      color: "text-black",
+      bgColor: "bg-gray-200",
+      icon: Clock,
+      label: "Ongoing",
+    },
+    selectionEmailSent: {
       color: "text-gray-600",
       bgColor: "bg-gray-100",
       icon: CheckCircle,
@@ -41,7 +59,7 @@ const DriveCard = ({ drive, onView }) => {
 
   // Calculate progress percentage
   const getProgress = () => {
-    if (status === "finished") return 100;
+    if (status === "selectionEmailSent") return 100;
 
     const start = new Date(start_date);
     const end = new Date(end_date);

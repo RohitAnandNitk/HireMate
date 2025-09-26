@@ -71,8 +71,16 @@ const Drives = () => {
     navigate(`/process/${driveId}`);
   };
 
-  const ongoingDrives = drives.filter((drive) => drive.status === "ongoing");
-  const finishedDrives = drives.filter((drive) => drive.status === "finished");
+  const ongoingDrives = drives.filter(
+    (drive) =>
+      drive.status === "resumeUploaded" ||
+      drive.status === "resumeShortlisted" ||
+      drive.status === "emailSent" ||
+      drive.status === "InterviewScheduled"
+  );
+  const finishedDrives = drives.filter(
+    (drive) => drive.status === "selectionEmailSent"
+  );
 
   if (loading) {
     return <Loader />;
@@ -167,8 +175,18 @@ const Drives = () => {
             className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
           >
             <option value="all">All Status</option>
-            <option value="ongoing">Ongoing</option>
-            <option value="finished">Finished</option>
+            {/* here we have to handle more caase like resumeuplaoded , emailsent and others how can we */}
+            <option
+              value={
+                "resumeUploaded" ||
+                "resumeShortlisted" ||
+                "emailSent" ||
+                "InterviewScheduled"
+              }
+            >
+              Ongoing
+            </option>
+            <option value="selectionEmailSent">Finished</option>
           </select>
         </div>
       </div>
