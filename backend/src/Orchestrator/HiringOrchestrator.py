@@ -20,41 +20,43 @@ EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 # 2. Create a drivecadnidate instances for each resume using ResumeShortlistingAgent
 def create_driveCandidate(file_paths, keywords, job_role, drive_id):
     print("Starting drive candidate process")
-
     # ResumeIntakeAgent processes resumes and extracts candidate information
     resume_agent = ResumeIntakeAgent()
     candidates = resume_agent.process_resumes(file_paths,drive_id)
     return candidates
 
+# Shortlisting agent shortlists candidates based on keywords and job role
+def shortlist_candidates(candidates, keywords, job_role):
+    print("Starting shortlisting process")
+    shortlisting_agent = ResumeShortlistingAgent()
+    shortlist_result  = shortlisting_agent.shortlist_candidates(candidates, keywords, job_role)
+    return shortlist_result
+
+# EmailingAgent sends emails to shortlisted and not-shortlisted candidates
+def email_candidates(shortlist_result):
+    print("Starting emailing process")
+    #creating the email service instance
+    email_service = EmailService(SMTP_SERVER, SMTP_PORT, EMAIL_USER, EMAIL_PASSWORD)
+    emailing_agent = EmailingAgent(email_service)
+    emailing_agent.process_and_send(shortlist_result["shortlisted"], shortlist_result["not_shortlisted"])
+    return "Emails sent successfully"
+
+# Scheduling interviews for shortlisted candidates
+def schedule_interviews(shortlisted_candidates):
+    print("Starting interview scheduling process")
+    #creating the email service instance
+    email_service = EmailService(SMTP_SERVER, SMTP_PORT, EMAIL_USER, EMAIL_PASSWORD)
+    interview_scheduling_agent = InterviewSchedulingAgent(email_service)
+    interview_scheduling_agent.schedule_interviews(shortlisted_candidates)
+    return "Interviews scheduled successfully"
+
+# Final selection mail to the selected candidates
+def send_final_selection_emails(selected_candidates):
+    print("Starting final selection emailing process")
+    #creating the email service instance
+    email_service = EmailService(SMTP_SERVER, SMTP_PORT, EMAIL_USER, EMAIL_PASSWORD)
+    emailing_agent = EmailingAgent(email_service)
+    emailing_agent.send_final_selection_emails(selected_candidates)
+    return "Final selection emails sent successfully"
 
 
-
-
-
-
-# def hiringOrchestrator(file_paths, keywords, job_role):
-#     print("Starting hiring orchestrator")
-
-#     # ResumeIntakeAgent processes resumes and extracts candidate information
-#     resume_agent = ResumeIntakeAgent()
-#     candidates = resume_agent.process_resumes(file_paths)
-
-#     # ResumeShortlistingAgent shortlists candidates based on keywords and job role
-#     shortlisting_agent = ResumeShortlistingAgent()
-#     shortlist_result  = shortlisting_agent.shortlist_candidates(candidates, keywords, job_role)
-
-#     #creating the email service instance
-#     email_service = EmailService(SMTP_SERVER, SMTP_PORT, EMAIL_USER, EMAIL_PASSWORD)
-#     # EmailingAgent sends emails to shortlisted and not-shortlisted candidates
-#     emailing_agent = EmailingAgent(email_service)
-#     emailing_agent.process_and_send(shortlist_result["shortlisted"], shortlist_result["not_shortlisted"])
-
-#     # Scheduling interviews for shortlisted candidates
-#     interview_scheduling_agent = InterviewSchedulingAgent(email_service)
-#     interview_scheduling_agent.schedule_interviews(shortlist_result["shortlisted"])
-
-#     return {
-#         "message": "Resumes processed, shortlisted successfully, emails sent, and interviews scheduled.",
-#         "shortlist_result": shortlist_result["shortlisted"],
-#         "not_shortlisted": shortlist_result["not_shortlisted"]
-#     }

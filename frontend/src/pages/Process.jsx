@@ -122,6 +122,7 @@ const Process = () => {
   };
 
   const updateDriveStatus = async (newStatus) => {
+    console.log("updating drive status function called");
     if (!driveId) {
       setError("Drive ID is required");
       return false;
@@ -130,8 +131,8 @@ const Process = () => {
     try {
       setLoading(true);
       setError(null);
-
-      const response = await fetch(`/api/drive/${driveId}/status`, {
+      console.log("Updating drive status to:", newStatus);
+      const response = await fetch(`${BaseURL}/api/drive/${driveId}/status`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -4,7 +4,14 @@ from src.Model.Drive import create_drive
 from src.Utils.Database import db
 from datetime import datetime
 from src.Model.Drive import DriveStatus
+from src.Orchestrator.HiringOrchestrator import (
+    shortlist_candidates,
+    email_candidates,
+    schedule_interviews,
+    send_final_selection_emails
+)
 
+# Cretate a new drive
 def create_drive_controller():
     print("Create Drive Controller called.")
     data = request.get_json()
@@ -40,7 +47,7 @@ def create_drive_controller():
         "drive": drive
     }), 201
 
-
+# Get drives by company id
 def get_drives_by_company(company_id):
     """
     Get all drives for a company
@@ -138,6 +145,28 @@ def update_drive_status(drive_id):
         drive = db.drives.find_one({"_id": object_id})
         if not drive:
             return jsonify({"error": "Drive not found"}), 404
+
+        # Here for different status we need to call the Agents for the respective tasks then update the status
+
+        if new_status == DriveStatus.RESUME_SHORTLISTED:
+            print("Calling shortlisting agent...")
+            # Call your shortlisting agent here
+            # shortlisting_agent(drive_id)
+
+        elif new_status == DriveStatus.EMAIL_SENT:
+            print("Calling email sending agent...")
+            # Call your email sending agent here
+            # email_sending_agent(drive_id)
+
+        elif new_status == DriveStatus.INTERVIEW_SCHEDULED:
+            print("Calling interview scheduling agent...")
+            # Call your interview scheduling agent here
+            # interview_scheduling_agent(drive_id)
+
+        elif new_status == DriveStatus.SELECTION_EMAIL_SENT:
+            print("Calling selection email agent...")
+            # Call your selection email agent here
+            # selection_email_agent(drive_id)
 
         # Update the drive status
         result = db.drives.update_one(
