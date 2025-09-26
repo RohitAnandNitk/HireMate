@@ -6,10 +6,12 @@ import SkillFilter from "./SkillFilter";
 import StatsCards from "./StatsCards";
 import Sidebar from "./Sidebar";
 import config from "../Config/BaseURL";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const BASE_URL = config.BASE_URL;
 
 const Dashboard = () => {
-  // here we need to extract drive id from the url params
   const queryParams = new URLSearchParams(window.location.search);
   const { drive_id } = useParams(); // get the :drive_id from URL
 
@@ -27,6 +29,7 @@ const Dashboard = () => {
         setJobData(parsedJobData);
       } catch (error) {
         console.error("Error parsing job data:", error);
+        toast.error("Error loading job data");
       }
     }
   }, []);
@@ -49,7 +52,10 @@ const Dashboard = () => {
   }, []);
 
   const handleProcessResumes = async () => {
-    if (!jobData?.role?.trim() || files.length === 0) return;
+    if (!jobData?.role?.trim() || files.length === 0) {
+      toast.warn("Please add job details and upload resumes first");
+      return;
+    }
 
     setProcessing(true);
     try {
@@ -69,27 +75,22 @@ const Dashboard = () => {
 
       const result = await response.json();
       if (response.ok) {
-        alert("Resumes processed successfully!");
+        toast.success("Resumes processed successfully!");
         console.log("Result:", result);
         navigate("/drives");
       } else {
-        alert("Failed to process resumes");
+        toast.error("Failed to process resumes");
         console.error("Error:", result);
       }
     } catch (error) {
       console.error("Error uploading resumes:", error);
-      alert("Error uploading resumes");
+      toast.error("Error uploading resumes");
     } finally {
       setProcessing(false);
     }
   };
 
-  // const handleBackToJobCreation = () => {
-  //   navigate("/job-creation");
-  // };
-
   const handleCreateNewJob = () => {
-    // Clear current job data and navigate to job creation
     localStorage.removeItem("currentJobData");
     navigate("/job-creation");
   };
@@ -105,12 +106,6 @@ const Dashboard = () => {
         <div className="flex gap-3">
           {jobData ? (
             <>
-              {/* <button
-                onClick={handleBackToJobCreation}
-                className="px-4 py-2 text-sm text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50"
-              >
-                ← Edit Job Details
-              </button> */}
               <button
                 onClick={handleProcessResumes}
                 disabled={
@@ -240,6 +235,9 @@ const Dashboard = () => {
       {/* Rest of your dashboard components */}
       <UploadDropzone onAddFiles={onAddFiles} />
       <FileList files={files} onRemove={onRemove} />
+
+      {/* Toast Container */}
+      <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
     </div>
   );
 };

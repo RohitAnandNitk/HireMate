@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import config from "../Config/BaseURL";
 import SkillFilter from "./SkillFilter";
@@ -66,12 +68,18 @@ const JobCreation = () => {
       !end_date ||
       !location?.trim()
     ) {
-      return alert("Please fill in all required fields");
+      return toast.error("Please fill in all required fields", {
+        position: "top-right",
+        autoClose: 3000,
+      });
     }
 
     // Validate rounds
     if (rounds.some((round) => !round.type?.trim())) {
-      return alert("Please specify type for all rounds");
+      return toast.error("Please specify type for all rounds", {
+        position: "top-right",
+        autoClose: 3000,
+      });
     }
 
     console.log("Submitting job data:", jobData);
@@ -90,11 +98,21 @@ const JobCreation = () => {
       const data = await response.json();
       console.log("Drive created successfully!", data);
 
-      // Navigate to dashboard
-      navigate(`/dashboard/${data.drive._id}`);
+      toast.success("Drive created successfully!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+
+      // Navigate to dashboard after a short delay so toast is visible
+      setTimeout(() => {
+        navigate(`/dashboard/${data.drive._id}`);
+      }, 1000);
     } catch (err) {
       console.error("Error creating drive:", err.message);
-      alert("Something went wrong while creating the drive. Please try again.");
+      toast.error("Something went wrong while creating the drive. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
     }
   };
 
@@ -110,6 +128,7 @@ const JobCreation = () => {
 
   return (
     <div className="max-w-4xl mx-auto">
+      <ToastContainer />
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-xl font-semibold text-gray-900">
           Create New Drive
