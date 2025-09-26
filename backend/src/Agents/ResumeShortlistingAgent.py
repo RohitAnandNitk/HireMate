@@ -1,5 +1,7 @@
 import json
 from datetime import datetime
+
+from bson import ObjectId
 from src.LLM.Groq import GroqLLM
 from src.Prompts.PromptBuilder import PromptBuilder
 from src.Utils.Database import db  # Import the database
@@ -17,7 +19,7 @@ class ResumeShortlistingAgent:
         Returns shortlisted and not_shortlisted lists.
         Also updates the shortlist status in the database.
         """
-        print("ShortlistingAgent called")
+        print("ShortlistingAgent called with candidates")
         shortlisted = []
         not_shortlisted = []
 
@@ -60,10 +62,17 @@ class ResumeShortlistingAgent:
         ```
 
         """
-
+        print("here..........")
         for candidate in candidates:
+
+            # here first we need to fetch the resume content from candidate
+            # from the drivecandidate first get the candidate id then form candidate fetch the resume content
+            candidate_id = candidate.get("candidate_id")
+            candidate_data = db.candidates.find_one({"_id": ObjectId(candidate_id)})
+            resume_content = candidate_data.get("resume_content", "")
+
             human_prompt = (
-                f"Here is the candidate's resume content:\n{candidate['resume_content']}\n\n"
+                f"Here is the candidate's resume content:\n{resume_content}\n\n"
                 "Based on this resume, determine if the candidate is a suitable match for the job role and required skills."
             )
 
@@ -72,21 +81,23 @@ class ResumeShortlistingAgent:
 
             try:
                 llm_output = json.loads(response.content.strip())
-                # print("Shortlisting Agent:", llm_output)
+                print("Shortlisting Agent:", llm_output)
             except json.JSONDecodeError:
                 print(f"Invalid JSON for {candidate.get('resume', 'unknown')}:\n", response.content)
                 continue
 
             shortlist_status = llm_output.get("shortlisted", "").lower()
             result = {
-                "resume": candidate.get("resume", ""),
-                "name": candidate.get("name", ""),
-                "email": candidate.get("email", "")
+                "resume": candidate_data.get("resume_content", ""),
+                "name": candidate_data.get("name", ""),
+                "email": candidate_data.get("email", "")
             }
 
             # Update the shortlist status in the database
-            db.candidates.update_one(
-                {"email": candidate.get("email")},
+            # here we have to update the drivecandidate collection
+            # assuming candidate has unique email
+            db.drive_candidates.update_one(
+                {"_id": candidate.get("_id")},
                 {"$set": {
                     "resume_shortlisted": "yes" if shortlist_status == "yes" else "no",
                     "updated_at": datetime.utcnow()

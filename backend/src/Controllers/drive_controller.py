@@ -135,7 +135,7 @@ def update_drive_status(drive_id):
         data = request.get_json()
         new_status = data.get("status")
 
-        print(f"New status: {new_status}")
+        # print(f"New status: {new_status}")
 
         # Validate status
         if new_status not in DriveStatus._value2member_map_:
@@ -147,13 +147,25 @@ def update_drive_status(drive_id):
         drive = db.drives.find_one({"_id": object_id})
         if not drive:
             return jsonify({"error": "Drive not found"}), 404
+        
+        # Here we first fetch the drive details with driveid(role and skills).
+        drive_details = db.drives.find_one({"_id": object_id}, {"role": 1, "skills": 1})
+        job_role = drive_details.get("role", "")
+        keywords = drive_details.get("skills", [])
+
+        # print(f"Drive details - Role: {job_role}, Skills: {keywords}")
+
+        # now fetch all the candidates associated with this driveid
+        candidates = list(db.drive_candidates.find({"drive_id": drive_id}))
+        print("Found candidates for this drive:", candidates)
 
         # Here for different status we need to call the Agents for the respective tasks then update the status
 
         if new_status == DriveStatus.RESUME_SHORTLISTED:
             print("Calling shortlisting agent...")
             # Call your shortlisting agent here
-            # shortlisting_agent(drive_id)
+            shortlist_result = shortlist_candidates(candidates, keywords, job_role)
+            print(f"Shortlisting result: {shortlist_result}")
 
         elif new_status == DriveStatus.EMAIL_SENT:
             print("Calling email sending agent...")
