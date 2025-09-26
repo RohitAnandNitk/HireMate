@@ -33,13 +33,13 @@ def shortlist_candidates(candidates, keywords, job_role):
     return shortlist_result
 
 # EmailingAgent sends emails to shortlisted and not-shortlisted candidates
-def email_candidates(shortlist_result):
+def email_candidates(drive_id):
     print("Starting emailing process")
     #creating the email service instance
     email_service = EmailService(SMTP_SERVER, SMTP_PORT, EMAIL_USER, EMAIL_PASSWORD)
     emailing_agent = EmailingAgent(email_service)
-    emailing_agent.process_and_send(shortlist_result["shortlisted"], shortlist_result["not_shortlisted"])
-    return "Emails sent successfully"
+    emailing_agent.send_mail_to_all_candidates(drive_id)
+    # return "Emails sent successfully"
 
 # Scheduling interviews for shortlisted candidates
 def schedule_interviews(shortlisted_candidates):

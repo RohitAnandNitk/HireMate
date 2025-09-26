@@ -1,4 +1,6 @@
 import os
+
+from bson import ObjectId
 from src.Utils.EmailService import EmailService
 
 
@@ -34,18 +36,37 @@ class EmailingAgent:
         }
 
 
-    def process_and_send(self, shortlisted, not_shortlisted):
+    def send_mail_to_all_candidates(self, drive_id):
         templates = self.create_email_templates()
 
         company_name = "HiRekruit"
 
-        for person in shortlisted:
-            body = templates["shortlisted"].format(name=person["name"], company_name=company_name)
-            self.email_service.send_email(person["email"], "Shortlist Notification", body)
+        # here we will fetch the candidates from the database based on the drive_id
+        from src.Utils.Database import db
+        candidates = list(db.drive_candidates.find({"drive_id": drive_id}))
 
-        for person in not_shortlisted:
-            body = templates["not_shortlisted"].format(name=person["name"], company_name=company_name)
-            self.email_service.send_email(person["email"], "Application Status", body)
+        for person in candidates:
+            # here we first get info of candiddate then we need their email and name
+            candidate_id = person["candidate_id"]
+            candidate_info = db.candidates.find_one({"_id": ObjectId(candidate_id)})
+            # print("Processing candidate:", candidate_info)
+            if not candidate_info:
+                print(f"Candidate info not found for ID: {person['candidate_id']}")
+                continue
+
+            if person["resume_shortlisted"] == "yes":
+                body = templates["shortlisted"].format(name=candidate_info["name"], company_name=company_name)
+                self.email_service.send_email(candidate_info["email"], "Shortlist Notification", body)
+            elif person["resume_shortlisted"] == "no":
+                body = templates["not_shortlisted"].format(name=candidate_info["name"], company_name=company_name)
+                self.email_service.send_email(candidate_info["email"], "Application Status", body)
+
+            # now we will update the email_sent status in drive_candidates collection
+            db.drive_candidates.update_one(
+                {"_id": person["_id"]},
+                {"$set": {"email_sent": "yes"}}
+            )
+
 
         print("Email notifications sent.")
 

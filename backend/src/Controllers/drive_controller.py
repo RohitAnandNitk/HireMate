@@ -157,7 +157,7 @@ def update_drive_status(drive_id):
 
         # now fetch all the candidates associated with this driveid
         candidates = list(db.drive_candidates.find({"drive_id": drive_id}))
-        print("Found candidates for this drive:", candidates)
+        # print("Found candidates for this drive:", candidates)
 
         # Here for different status we need to call the Agents for the respective tasks then update the status
 
@@ -165,12 +165,12 @@ def update_drive_status(drive_id):
             print("Calling shortlisting agent...")
             # Call your shortlisting agent here
             shortlist_result = shortlist_candidates(candidates, keywords, job_role)
-            print(f"Shortlisting result: {shortlist_result}")
+            # print(f"Shortlisting result: {shortlist_result}")
 
         elif new_status == DriveStatus.EMAIL_SENT:
             print("Calling email sending agent...")
             # Call your email sending agent here
-            # email_sending_agent(drive_id)
+            email_candidates(drive_id)
 
         elif new_status == DriveStatus.INTERVIEW_SCHEDULED:
             print("Calling interview scheduling agent...")
