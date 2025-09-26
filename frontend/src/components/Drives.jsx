@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Plus, Search, Filter, Briefcase } from "lucide-react";
 import DriveCard from "./DriveCard";
 import Loader from "./Loader";
+import {toast , ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import config from "../Config/BaseURL";
 const BASE_URL = config.BASE_URL;
@@ -34,7 +36,8 @@ const Drives = () => {
         setDrives(data.drives); // assuming API returns array of drives
       } catch (err) {
         console.error("Error fetching drives:", err.message);
-        alert("Could not load drives. Please try again.");
+        //use toast here
+          toast.error("Could not load drives. Please try again.");
       } finally {
         setLoading(false);
       }
