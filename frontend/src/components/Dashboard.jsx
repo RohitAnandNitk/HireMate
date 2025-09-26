@@ -15,7 +15,6 @@ const Dashboard = () => {
 
   const navigate = useNavigate();
   const [files, setFiles] = useState([]);
-  const [skills, setSkills] = useState([]);
   const [processing, setProcessing] = useState(false);
   const [jobData, setJobData] = useState(null);
 
@@ -50,8 +49,7 @@ const Dashboard = () => {
   }, []);
 
   const handleProcessResumes = async () => {
-    if (!jobData?.role?.trim() || files.length === 0 || skills.length === 0)
-      return;
+    if (!jobData?.role?.trim() || files.length === 0) return;
 
     setProcessing(true);
     try {
@@ -60,9 +58,8 @@ const Dashboard = () => {
         formData.append("resumes", file);
       });
 
-      // Add job data, driveid and skills to formData
+      // Add job data and driveid to formData
       formData.append("jobData", JSON.stringify(jobData));
-      formData.append("skills", JSON.stringify(skills));
       formData.append("drive_id", drive_id);
 
       const response = await fetch(`${BASE_URL}/api/resume/upload-resumes`, {
@@ -74,6 +71,7 @@ const Dashboard = () => {
       if (response.ok) {
         alert("Resumes processed successfully!");
         console.log("Result:", result);
+        navigate("/drives");
       } else {
         alert("Failed to process resumes");
         console.error("Error:", result);
@@ -103,11 +101,6 @@ const Dashboard = () => {
           <h1 className="text-xl font-semibold text-gray-900">
             {jobData ? "Resume Processing Dashboard" : "Dashboard"}
           </h1>
-          {jobData && (
-            <p className="text-sm text-gray-600 mt-1">
-              Job ID: {jobData.job_id} | Role: {jobData.role}
-            </p>
-          )}
         </div>
         <div className="flex gap-3">
           {jobData ? (
@@ -121,16 +114,10 @@ const Dashboard = () => {
               <button
                 onClick={handleProcessResumes}
                 disabled={
-                  !jobData?.role?.trim() ||
-                  files.length === 0 ||
-                  skills.length === 0 ||
-                  processing
+                  !jobData?.role?.trim() || files.length === 0 || processing
                 }
                 className={`px-4 py-2 text-sm rounded-md ${
-                  !jobData?.role?.trim() ||
-                  files.length === 0 ||
-                  skills.length === 0 ||
-                  processing
+                  !jobData?.role?.trim() || files.length === 0 || processing
                     ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                     : "bg-gray-900 text-white hover:bg-black"
                 }`}
@@ -181,6 +168,25 @@ const Dashboard = () => {
               <p className="font-medium">
                 {jobData.rounds?.length || 0} rounds
               </p>
+            </div>
+            <div>
+              <span className="text-gray-600 font-medium block mb-2">
+                Skills Required:
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {jobData.skills && jobData.skills.length > 0 ? (
+                  jobData.skills.map((skill, index) => (
+                    <span
+                      key={index}
+                      className="px-3 py-1 text-sm rounded-full bg-blue-100 text-blue-700 font-light shadow-sm hover:bg-blue-200 transition"
+                    >
+                      {skill}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-gray-400">N/A</span>
+                )}
+              </div>
             </div>
           </div>
 
@@ -234,7 +240,6 @@ const Dashboard = () => {
       {/* Rest of your dashboard components */}
       <UploadDropzone onAddFiles={onAddFiles} />
       <FileList files={files} onRemove={onRemove} />
-      <SkillFilter skills={skills} setSkills={setSkills} />
     </div>
   );
 };

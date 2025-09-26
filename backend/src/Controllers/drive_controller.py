@@ -23,6 +23,7 @@ def create_drive_controller():
     end_date = data.get("end_date")
     rounds = data.get("rounds", [])
     job_id = data.get("job_id")
+    skills = data.get("skills", [])
 
     if not job_id:
         return jsonify({"error": "job_id is required"}), 400
@@ -36,6 +37,7 @@ def create_drive_controller():
     drive = create_drive(company_id, role, location, start_date, end_date)
     drive["rounds"] = rounds
     drive["job_id"] = job_id
+    drive["skills"] = skills
 
     result = db.drives.insert_one(drive)
 

@@ -1,7 +1,7 @@
 // Chatbot.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { Send, MessageCircle, X, User, ShipWheel } from "lucide-react";
+import { Send, X, User, ShipWheel } from "lucide-react";
 import saarthiImage from "../assets/image.png"; // Saarthi logo
 import { motion } from "framer-motion";
 
@@ -21,6 +21,8 @@ const Chatbot = () => {
   ]);
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false); // tooltip state
+  const tooltipTimeoutRef = useRef(null); // timeout ref for delayed hide
   const messagesEndRef = useRef(null);
   const chatRef = useRef(null);
 
@@ -52,7 +54,7 @@ const Chatbot = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message }), // send message to backend
+        body: JSON.stringify({ message }),
       });
 
       if (!response.ok) {
@@ -60,7 +62,6 @@ const Chatbot = () => {
       }
 
       const data = await response.json();
-      // console.log("Chatbot response:", data);
       return data.response;
     } catch (err) {
       console.error("Error fetching chatbot response:", err.message);
@@ -69,7 +70,6 @@ const Chatbot = () => {
   };
 
   const handleSendMessage = async () => {
-    console.log("function called for get reply form the saarthi");
     if (!inputMessage.trim()) return;
 
     const userMessage = {
@@ -118,6 +118,19 @@ const Chatbot = () => {
 
   const formatTime = (ts) =>
     ts.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+  const handleMouseEnter = () => {
+    if (tooltipTimeoutRef.current) {
+      clearTimeout(tooltipTimeoutRef.current);
+    }
+    setShowTooltip(true);
+  };
+
+  const handleMouseLeave = () => {
+    tooltipTimeoutRef.current = setTimeout(() => {
+      setShowTooltip(false);
+    }, 1000); // 5 seconds delay
+  };
 
   const ui = (
     <div
@@ -245,12 +258,17 @@ const Chatbot = () => {
       </div>
 
       {/* Floating Button with Tooltip */}
-      <div className="relative flex items-center">
-        {!isOpen && (
+      <div
+        className="relative flex items-center"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        {!isOpen && showTooltip && (
           <motion.div
             initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
             className="absolute right-16 bg-white shadow-lg border border-blue-100 rounded-xl px-4 py-2 text-sm text-gray-700 whitespace-nowrap pointer-events-auto"
           >
             👋 Hi, I’m Saarthi! How can I help you?

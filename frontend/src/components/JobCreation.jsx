@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import config from "../Config/BaseURL";
+import SkillFilter from "./SkillFilter";
 const BASE_URL = config.BASE_URL;
 
 const JobCreation = () => {
   const navigate = useNavigate();
-  // now no need to set from local storage here
+
   const [jobData, setJobData] = useState({
     company_id: "comp_01",
     job_id: "",
@@ -15,6 +16,7 @@ const JobCreation = () => {
     start_date: "",
     end_date: "",
     location: "",
+    skills: "", // Added skills field as string
   });
 
   const handleInputChange = (field, value) => {
@@ -72,12 +74,13 @@ const JobCreation = () => {
       return alert("Please specify type for all rounds");
     }
 
+    console.log("Submitting job data:", jobData);
     localStorage.setItem("currentJobData", JSON.stringify(jobData));
     try {
       const response = await fetch(`${BASE_URL}/api/drive/create`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(jobData),
+        body: JSON.stringify(jobData), // This now includes the skills field
       });
 
       if (!response.ok) {
@@ -140,6 +143,22 @@ const JobCreation = () => {
             placeholder="Enter role, e.g., Software Engineer"
             className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-black"
           />
+        </div>
+
+        {/* Skills */}
+        <div>
+          <label className="block text-gray-700 mb-2 font-medium">
+            Required Skills
+          </label>
+          <SkillFilter
+            skills={jobData.skills}
+            setSkills={(skills) => handleInputChange("skills", skills)}
+            className="mb-2 rounded-md border ring-1 focus:ring-black"
+          />
+          <p className="text-sm text-gray-500 mt-1">
+            Separate skills with commas. Example: JavaScript, React, Node.js,
+            MongoDB
+          </p>
         </div>
 
         {/* Rounds Section */}

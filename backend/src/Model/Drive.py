@@ -9,7 +9,7 @@ class DriveStatus(str, Enum):
     SELECTION_EMAIL_SENT = "selectionEmailSent"
 
 
-def create_drive(company_id, role, location, start_date, end_date, rounds=None, job_id=None, status=None):
+def create_drive(company_id, role, location, start_date, end_date, skills=None, rounds=None, job_id=None, status=None):
     """
     Create a drive (job posting) document.
     """
@@ -30,6 +30,7 @@ def create_drive(company_id, role, location, start_date, end_date, rounds=None, 
         "end_date": end_date,
         "rounds": rounds,
         "status": status,
+        "skills": skills,
         "created_at": datetime.utcnow(),
         "updated_at": datetime.utcnow()
     }

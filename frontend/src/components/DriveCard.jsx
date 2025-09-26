@@ -6,6 +6,7 @@ import {
   CheckCircle,
   Eye,
   MoreVertical,
+  BrainCircuit,
 } from "lucide-react";
 
 const DriveCard = ({ drive, onView }) => {
@@ -18,6 +19,7 @@ const DriveCard = ({ drive, onView }) => {
     end_date,
     status,
     rounds,
+    skills,
     created_at,
   } = drive;
 
@@ -116,6 +118,12 @@ const DriveCard = ({ drive, onView }) => {
               </div>
             </div>
             <h3 className="text-lg font-semibold text-gray-900 mb-1">{role}</h3>
+            {/* skills */}
+            <div className="flex items-center gap-1 text-sm text-gray-600">
+              <BrainCircuit size={14} />
+              {/* here we have iterate the skills */}
+              {skills.join(", ")}
+            </div>
             <div className="flex items-center gap-1 text-sm text-gray-600">
               <MapPin size={14} />
               {location}
