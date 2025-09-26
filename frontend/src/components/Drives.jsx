@@ -67,9 +67,8 @@ const Drives = () => {
     // You can navigate to a specific drive dashboard or details page
     // navigate(`/drive/${driveId}`);
 
-    
     //for testing purpose we are navigating to process (currently dont have drive id)
-    navigate("/process");
+    navigate(`/process/${driveId}`);
   };
 
   const ongoingDrives = drives.filter((drive) => drive.status === "ongoing");
@@ -202,7 +201,7 @@ const Drives = () => {
             <DriveCard
               key={drive._id}
               drive={drive}
-              onView={() => handleViewDrive(drive.id)}
+              onView={() => handleViewDrive(drive._id)}
             />
           ))}
         </div>
@@ -211,4 +210,4 @@ const Drives = () => {
   );
 };
 
-export default Drives;  
+export default Drives;

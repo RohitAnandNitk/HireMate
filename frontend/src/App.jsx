@@ -43,7 +43,7 @@ function App() {
           }
         />
         <Route
-          path="/process"
+          path="/process/:driveId"
           element={
             <Layout>
               <Process />

@@ -3,6 +3,7 @@ from flask import jsonify, request
 from src.Model.Drive import create_drive
 from src.Utils.Database import db
 from datetime import datetime
+from src.Model.Drive import DriveStatus
 
 def create_drive_controller():
     print("Create Drive Controller called.")
@@ -48,3 +49,114 @@ def get_drives_by_company(company_id):
     for drive in drives:
         drive["_id"] = str(drive["_id"])  # Convert ObjectId to string for JSON
     return jsonify({"drives": drives}), 200
+
+
+# Get drive by id
+def get_drive_by_id(drive_id):
+    """
+    Get a single drive by its ID
+    """
+    try:
+        print(f"Fetching drive with ID: {drive_id}")
+        
+        # Convert string ID to ObjectId
+        try:
+            object_id = ObjectId(drive_id)
+        except Exception:
+            return jsonify({"error": "Invalid drive ID format"}), 400
+        
+        # Find the drive in database
+        drive = db.drives.find_one({"_id": object_id})
+        
+        if not drive:
+            return jsonify({"error": "Drive not found"}), 404
+        
+        # Convert ObjectId to string for JSON serialization
+        drive["_id"] = str(drive["_id"])
+        
+        print(f"Drive found successfully: {drive.get('job_id', 'No job_id')}")
+        
+        return jsonify({
+            "message": "Drive retrieved successfully",
+            "drive": drive
+        }), 200
+        
+    except Exception as e:
+        print(f"Error in get_drive_by_id: {str(e)}")
+        return jsonify({"error": f"Server error: {str(e)}"}), 500
+
+#gel all drives
+def get_all_drives():
+    """
+    Get all drives (optional - for admin purposes)
+    """
+    try:
+        print("Fetching all drives")
+        
+        drives = list(db.drives.find())
+        
+        # Convert ObjectId to string for each drive
+        for drive in drives:
+            drive["_id"] = str(drive["_id"])
+        
+        print(f"Found {len(drives)} drives")
+        
+        return jsonify({
+            "message": f"Retrieved {len(drives)} drives",
+            "drives": drives,
+            "count": len(drives)
+        }), 200
+        
+    except Exception as e:
+        print(f"Error in get_all_drives: {str(e)}")
+        return jsonify({"error": f"Server error: {str(e)}"}), 500
+
+
+# Update your existing update_drive_status function to fix ObjectId handling
+def update_drive_status(drive_id):
+    try:
+        print(f"Updating status for drive ID: {drive_id}")
+        
+        # Convert string ID to ObjectId
+        try:
+            object_id = ObjectId(drive_id)
+        except Exception:
+            return jsonify({"error": "Invalid drive ID format"}), 400
+        
+        data = request.get_json()
+        new_status = data.get("status")
+
+        print(f"New status: {new_status}")
+
+        # Validate status
+        if new_status not in DriveStatus._value2member_map_:
+            return jsonify({
+                "error": f"Invalid status '{new_status}'. Valid statuses: {list(DriveStatus._value2member_map_.keys())}"
+            }), 400
+
+        # Check if drive exists
+        drive = db.drives.find_one({"_id": object_id})
+        if not drive:
+            return jsonify({"error": "Drive not found"}), 404
+
+        # Update the drive status
+        result = db.drives.update_one(
+            {"_id": object_id},
+            {"$set": {"status": new_status, "updated_at": datetime.utcnow()}}
+        )
+
+        if result.modified_count == 0:
+            return jsonify({"error": "Failed to update drive status"}), 500
+
+        print(f"Drive status updated successfully to: {new_status}")
+
+        return jsonify({
+            "message": "Drive status updated successfully", 
+            "status": new_status,
+            "drive_id": drive_id,
+            "updated_at": datetime.utcnow().isoformat()
+        }), 200
+        
+    except Exception as e:
+        print(f"Error in update_drive_status: {str(e)}")
+        return jsonify({"error": f"Server error: {str(e)}"}), 500
