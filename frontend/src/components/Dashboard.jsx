@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import UploadDropzone from "./UploadDropzone";
 import FileList from "./FileList";
 import SkillFilter from "./SkillFilter";
@@ -9,6 +9,10 @@ import config from "../Config/BaseURL";
 const BASE_URL = config.BASE_URL;
 
 const Dashboard = () => {
+  // here we need to extract drive id from the url params
+  const queryParams = new URLSearchParams(window.location.search);
+  const { drive_id } = useParams(); // get the :drive_id from URL
+
   const navigate = useNavigate();
   const [files, setFiles] = useState([]);
   const [skills, setSkills] = useState([]);
@@ -56,9 +60,10 @@ const Dashboard = () => {
         formData.append("resumes", file);
       });
 
-      // Add job data and skills to formData
+      // Add job data, driveid and skills to formData
       formData.append("jobData", JSON.stringify(jobData));
       formData.append("skills", JSON.stringify(skills));
+      formData.append("drive_id", drive_id);
 
       const response = await fetch(`${BASE_URL}/api/resume/upload-resumes`, {
         method: "POST",
@@ -81,9 +86,9 @@ const Dashboard = () => {
     }
   };
 
-  const handleBackToJobCreation = () => {
-    navigate("/job-creation");
-  };
+  // const handleBackToJobCreation = () => {
+  //   navigate("/job-creation");
+  // };
 
   const handleCreateNewJob = () => {
     // Clear current job data and navigate to job creation

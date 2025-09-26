@@ -6,16 +6,15 @@ const BASE_URL = config.BASE_URL;
 
 const JobCreation = () => {
   const navigate = useNavigate();
-  // we have to bring the company id from the hhr(user) data.
-  const savedJobData = JSON.parse(localStorage.getItem("currentJobData"));
+  // now no need to set from local storage here
   const [jobData, setJobData] = useState({
     company_id: "comp_01",
-    job_id: savedJobData?.job_id || "",
-    role: savedJobData?.role || "",
-    rounds: savedJobData?.rounds || [{ type: "Technical", description: "" }],
-    start_date: savedJobData?.start_date || "",
-    end_date: savedJobData?.end_date || "",
-    location: savedJobData?.location || "",
+    job_id: "",
+    role: "",
+    rounds: [{ type: "Technical", description: "" }],
+    start_date: "",
+    end_date: "",
+    location: "",
   });
 
   const handleInputChange = (field, value) => {
@@ -89,7 +88,7 @@ const JobCreation = () => {
       console.log("Drive created successfully!", data);
 
       // Navigate to dashboard
-      navigate("/dashboard");
+      navigate(`/dashboard/${data.drive._id}`);
     } catch (err) {
       console.error("Error creating drive:", err.message);
       alert("Something went wrong while creating the drive. Please try again.");

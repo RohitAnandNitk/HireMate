@@ -4,6 +4,8 @@ from datetime import datetime
 from src.LLM.Groq import GroqLLM
 from src.Prompts.PromptBuilder import PromptBuilder
 from src.Utils.Database import db
+from src.Model.Candidate import create_candidate
+from src.Model.DriveCandidate import create_drive_candidate
 
 groq = GroqLLM()
 
@@ -20,7 +22,7 @@ class ResumeIntakeAgent:
                 text += page.get_text()
         return text.strip()
 
-    def process_resumes(self, pdf_files):
+    def process_resumes(self, pdf_files,drive_id):
         """
         Extracts name, email, and resume content using LLM for all resumes,
         enriches with timestamps, and saves/upserts into the database.
@@ -75,10 +77,9 @@ class ResumeIntakeAgent:
                     "name": llm_output["name"],
                     "email": llm_output["email"],
                     "resume_content": llm_output["resume_content"],
-                    "resume_shortlisted": "no",
-                    "selected": "no",
                     "updated_at": datetime.utcnow()
                 }
+
 
                 existing_candidate = db.candidates.find_one({"email": candidate_data["email"]})
                 if existing_candidate:
@@ -89,6 +90,18 @@ class ResumeIntakeAgent:
                 db.candidates.update_one(
                     {"email": candidate_data["email"]},
                     {"$set": candidate_data},
+                    upsert=True
+                )
+                
+                # here first fetch the candidate id from db
+                candidate_record = db.candidates.find_one({"email": candidate_data["email"]})
+                candidate_data["candidate_id"] = str(candidate_record["_id"])
+
+                #here we will now create a drivecandidate instance for this candidate and save teh driveid and other fields
+                drive_candidate_data = create_drive_candidate(candidate_id=candidate_data["candidate_id"], drive_id=drive_id)
+                db.drive_candidates.update_one(
+                    {"candidate_id": candidate_data["candidate_id"], "drive_id": drive_id},
+                    {"$set": drive_candidate_data},
                     upsert=True
                 )
 

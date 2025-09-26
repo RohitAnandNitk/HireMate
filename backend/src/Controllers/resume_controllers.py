@@ -1,7 +1,7 @@
 from flask import request, jsonify
 from werkzeug.utils import secure_filename
 import os
-from src.Orchestrator.HiringOrchestrator import hiringOrchestrator
+from src.Orchestrator.HiringOrchestrator import create_driveCandidate
 
 UPLOAD_FOLDER = './uploads/resumes'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -14,6 +14,8 @@ def upload_resumes():
     files = request.files.getlist('resumes')
     skills = request.form.get('skills')
     job_role = request.form.get('job_role')
+    drive_id = request.form.get('drive_id')
+    print(f"Drive ID: {drive_id}, Job Role: {job_role}, Skills: {skills}")
 
     if not files:
         return jsonify({"error": "No files uploaded"}), 400
@@ -29,11 +31,9 @@ def upload_resumes():
         file_paths.append(file_path)
 
     # Pass all info to the orchestrator function
-    result = hiringOrchestrator(file_paths, skills, job_role)
+    result = create_driveCandidate(file_paths, skills, job_role, drive_id)
 
     return jsonify({
         "status": "success",
-        "message": result["message"],
-        "shortlisted": result["shortlist_result"],
-        "not_shortlisted": result["not_shortlisted"]
+         "response" : result
     })

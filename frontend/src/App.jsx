@@ -53,7 +53,7 @@ function App() {
 
         {/* Dashboard Route - Modified to accept job data */}
         <Route
-          path="/dashboard"
+          path="/dashboard/:drive_id"
           element={
             <Layout>
               <Dashboard />
