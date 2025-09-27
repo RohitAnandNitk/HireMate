@@ -27,11 +27,11 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
   return (
     <aside
-      className={`fixed md:static h-full md:h-auto border-r border-gray-200 bg-white/80 backdrop-blur-sm transform transition-all duration-300 ease-in-out z-50
-      ${isOpen ? "w-56" : "w-16 md:w-16"} md:top-0 top-16`}
+      className={`fixed left-0 top-0 h-screen border-r border-gray-200 bg-white/80 backdrop-blur-sm transform transition-all duration-300 ease-in-out z-40
+      ${isOpen ? "w-56" : "w-16"}`}
     >
       {/* Desktop header */}
-      <div className="hidden md:flex justify-between items-center px-4 py-4">
+      <div className="flex justify-between items-center px-4 py-4 h-16 border-b border-gray-200">
         {isOpen && <img src={logo} alt="HiRekruit" className="h-[20px]" />}
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -42,7 +42,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       </div>
 
       {/* Navigation */}
-      <nav className="mt-2">
+      <nav className="mt-2 overflow-y-auto h-[calc(100vh-4rem)]">
         {items.map((item) => {
           const IconComponent = item.icon;
           const isActive = location.pathname === item.path;
