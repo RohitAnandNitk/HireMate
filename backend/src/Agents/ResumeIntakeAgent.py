@@ -47,7 +47,7 @@ class ResumeIntakeAgent:
             * Preserve the information but remove decorative or corrupted characters.
 
             Output format:
-            Return ONLY valid JSON without any extra characters, text, explanation, or formatting.
+            Return ONLY **valid JSON** without any extra characters, text, explanation, or formatting.
             Do NOT include markdown, code blocks, or annotations like ```json```.
             Just output the JSON object, nothing else.
 

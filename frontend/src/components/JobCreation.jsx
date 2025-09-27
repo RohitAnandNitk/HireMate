@@ -109,10 +109,13 @@ const JobCreation = () => {
       }, 1000);
     } catch (err) {
       console.error("Error creating drive:", err.message);
-      toast.error("Something went wrong while creating the drive. Please try again.", {
-        position: "top-right",
-        autoClose: 3000,
-      });
+      toast.error(
+        "Something went wrong while creating the drive. Please try again.",
+        {
+          position: "top-right",
+          autoClose: 3000,
+        }
+      );
     }
   };
 
@@ -174,10 +177,6 @@ const JobCreation = () => {
             setSkills={(skills) => handleInputChange("skills", skills)}
             className="mb-2 rounded-md border ring-1 focus:ring-black"
           />
-          <p className="text-sm text-gray-500 mt-1">
-            Separate skills with commas. Example: JavaScript, React, Node.js,
-            MongoDB
-          </p>
         </div>
 
         {/* Rounds Section */}
