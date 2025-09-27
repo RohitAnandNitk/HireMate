@@ -52,3 +52,40 @@ def register_user():
         "user": user,
         "company": company
     }), 201
+
+# Login controller
+def login_user():
+    """
+    Called when user tries to log in.
+    Expects: email (required), name, company_name, role (default 'hr').
+    """
+    print("Login route called")
+    data = request.get_json()
+    email = data.get("email")
+    name = data.get("name")  # not strictly needed, but frontend sends it
+    company_name = data.get("company_name")
+    role = data.get("role", "hr")
+
+    if not email:
+        return jsonify({"error": "Email is required"}), 400
+
+    # 1. Find user by email
+    user = db.users.find_one({"email": email})
+    if not user:
+        return jsonify({"error": "User not found. Please register first."}), 404
+
+    # Convert ObjectId to string for JSON response
+    user["_id"] = str(user["_id"])
+    user["company_id"] = str(user["company_id"])
+
+    # 2. Get company details
+    company = db.companies.find_one({"_id": db.to_object_id(user["company_id"])})
+
+    if company:
+        company["_id"] = str(company["_id"])
+
+    return jsonify({
+        "message": "Login successful",
+        "user": user,
+        "company": company
+    }), 200
