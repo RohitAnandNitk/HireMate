@@ -9,15 +9,14 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
-  
+
   const { isSignedIn, user } = useUser();
   const { signOut } = useClerk();
 
   const navLinkClasses = ({ isActive }) =>
-    `text-sm font-medium py-2 px-3 rounded-lg transition-all duration-200 ${
-      isActive
-        ? "text-blue-600 bg-blue-50"
-        : "text-gray-600 hover:text-blue-600 hover:bg-blue-50"
+    `text-sm font-medium py-2 px-3 rounded-lg transition-all duration-200 ${isActive
+      ? "text-black bg-gray-100"
+      : "text-gray-600 hover:text-black hover:bg-gray-100"
     }`;
 
   const handleSignUp = async () => {
@@ -47,20 +46,16 @@ const Navbar = () => {
       <div className="max-w-screen-xl mx-auto px-6 lg:px-8">
         <div className="flex justify-between items-center py-3">
           {/* Logo */}
-          <div className="flex items-center space-x-3">
-            <img
-              src={logo}
-              alt="HiRekruit Logo"
-              className="w-10 h-10 object-contain"
-            />
-            <div className="px-0 py-4 flex items-center justify-between">
-              <Link to="/" className="transition-transform duration-200 hover:scale-105">
-                <span className="text-lg font-semibold text-gray-900 cursor-pointer">
-                  <span className="text-blue-600">HiRe</span>kruit
-                </span>
-              </Link>
-            </div>
+          <div className="flex items-center">
+            <Link to="/" className="transition-transform duration-200 hover:scale-105">
+              <img
+                src={logo}
+                alt="HiRekruit Logo"
+                className="w-24 h-15 object-contain" // much bigger logo
+              />
+            </Link>
           </div>
+
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
@@ -85,19 +80,18 @@ const Navbar = () => {
               <div className="relative ml-4">
                 <button
                   onClick={handleUserDropdown}
-                  className="flex items-center space-x-2 bg-blue-50 text-blue-600 py-2 px-4 rounded-lg hover:bg-blue-100 transition-all duration-200 border border-blue-200"
+                  className="flex items-center space-x-2 bg-gray-100 text-black py-2 px-4 rounded-lg hover:bg-gray-200 transition-all duration-200 border border-gray-300"
                 >
-                  <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center">
+                  <div className="w-6 h-6 bg-black rounded-full flex items-center justify-center">
                     <User size={14} className="text-white" />
                   </div>
                   <span className="text-sm font-medium">
                     {user?.firstName || user?.emailAddresses[0]?.emailAddress?.split('@')[0] || 'User'}
                   </span>
-                  <ChevronDown 
-                    size={16} 
-                    className={`transition-transform duration-200 ${
-                      isUserDropdownOpen ? 'rotate-180' : ''
-                    }`} 
+                  <ChevronDown
+                    size={16}
+                    className={`transition-transform duration-200 ${isUserDropdownOpen ? 'rotate-180' : ''
+                      }`}
                   />
                 </button>
 
@@ -112,7 +106,7 @@ const Navbar = () => {
                         {user?.emailAddresses[0]?.emailAddress}
                       </p>
                     </div>
-                    
+
                     <Link
                       to="/profile"
                       className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150"
@@ -122,7 +116,7 @@ const Navbar = () => {
                     </Link>
                     <button
                       onClick={handleSignOut}
-                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-150 flex items-center space-x-2"
+                      className="w-full text-left px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 transition-colors duration-150 flex items-center space-x-2"
                     >
                       <LogOut size={14} />
                       <span>Sign Out</span>
@@ -134,9 +128,8 @@ const Navbar = () => {
               <button
                 onClick={handleSignUp}
                 disabled={isNavigating}
-                className={`ml-4 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100 shadow-md hover:shadow-lg ${
-                  isNavigating ? 'animate-pulse' : ''
-                }`}
+                className={`ml-4 bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition-all duration-300 transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100 shadow-md hover:shadow-lg ${isNavigating ? 'animate-pulse' : ''
+                  }`}
               >
                 {isNavigating ? (
                   <div className="flex items-center space-x-2">
@@ -153,55 +146,54 @@ const Navbar = () => {
           {/* Mobile menu button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200"
+            className="md:hidden p-2 text-gray-600 hover:text-black hover:bg-gray-100 rounded-lg transition-all duration-200"
           >
             {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
 
         {/* Mobile Navigation */}
-        <div className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
-          isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-        }`}>
+        <div className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+          }`}>
           <div className="border-t border-gray-200/60 pt-4 pb-2">
             <div className="flex flex-col space-y-2">
-              <NavLink 
-                to="/" 
-                className={navLinkClasses} 
+              <NavLink
+                to="/"
+                className={navLinkClasses}
                 end
                 onClick={() => setIsMenuOpen(false)}
               >
                 Home
               </NavLink>
-              <NavLink 
-                to="/about" 
+              <NavLink
+                to="/about"
                 className={navLinkClasses}
                 onClick={() => setIsMenuOpen(false)}
               >
                 About
               </NavLink>
-              <NavLink 
-                to="/services" 
+              <NavLink
+                to="/services"
                 className={navLinkClasses}
                 onClick={() => setIsMenuOpen(false)}
               >
                 Services
               </NavLink>
-              <NavLink 
-                to="/clients" 
+              <NavLink
+                to="/clients"
                 className={navLinkClasses}
                 onClick={() => setIsMenuOpen(false)}
               >
                 Clients
               </NavLink>
-              <NavLink 
-                to="/contact" 
+              <NavLink
+                to="/contact"
                 className={navLinkClasses}
                 onClick={() => setIsMenuOpen(false)}
               >
                 Contact
               </NavLink>
-              
+
               {/* Mobile Authentication */}
               <div className="pt-2 border-t border-gray-200/60 mt-2">
                 {isSignedIn ? (
@@ -211,7 +203,7 @@ const Navbar = () => {
                     </div>
                     <Link
                       to="/dashboard"
-                      className="block text-sm font-medium py-2 px-3 rounded-lg text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200"
+                      className="block text-sm font-medium py-2 px-3 rounded-lg text-gray-600 hover:text-black hover:bg-gray-100 transition-all duration-200"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Dashboard
@@ -221,7 +213,7 @@ const Navbar = () => {
                         handleSignOut();
                         setIsMenuOpen(false);
                       }}
-                      className="w-full text-left text-sm font-medium py-2 px-3 rounded-lg text-red-600 hover:bg-red-50 transition-all duration-200 flex items-center space-x-2"
+                      className="w-full text-left text-sm font-medium py-2 px-3 rounded-lg text-gray-800 hover:bg-gray-100 transition-all duration-200 flex items-center space-x-2"
                     >
                       <LogOut size={16} />
                       <span>Sign Out</span>
@@ -234,9 +226,8 @@ const Navbar = () => {
                       setIsMenuOpen(false);
                     }}
                     disabled={isNavigating}
-                    className={`w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-all duration-300 disabled:opacity-50 ${
-                      isNavigating ? 'animate-pulse' : ''
-                    }`}
+                    className={`w-full bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition-all duration-300 disabled:opacity-50 ${isNavigating ? 'animate-pulse' : ''
+                      }`}
                   >
                     {isNavigating ? 'Loading...' : 'Sign Up'}
                   </button>

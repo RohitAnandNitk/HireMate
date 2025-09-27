@@ -191,14 +191,14 @@ const Clients = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
       
       {/* Hero Section */}
       <section className="py-20 px-6">
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-5xl font-bold text-gray-800 mb-6">
             Trusted by{" "}
-            <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-black to-gray-700 bg-clip-text text-transparent">
               Leading Companies
             </span>
           </h1>
@@ -214,25 +214,25 @@ const Clients = () => {
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-4 gap-8 text-center">
             <div className="p-6 transform transition-all duration-500 hover:scale-105">
-              <div className={`text-4xl font-bold text-blue-600 mb-2 transition-all duration-500 ${startAnimation ? 'animate-pulse' : ''}`}>
+              <div className={`text-4xl font-bold text-black mb-2 transition-all duration-500 ${startAnimation ? 'animate-pulse' : ''}`}>
                 {clientsCount}+
               </div>
               <div className="text-gray-600 font-medium">Active Clients</div>
             </div>
             <div className="p-6 transform transition-all duration-500 hover:scale-105">
-              <div className={`text-4xl font-bold text-cyan-600 mb-2 transition-all duration-500 ${startAnimation ? 'animate-pulse' : ''}`}>
+              <div className={`text-4xl font-bold text-gray-700 mb-2 transition-all duration-500 ${startAnimation ? 'animate-pulse' : ''}`}>
                 {resumesCount >= 1000 ? `${Math.floor(resumesCount/1000)}M` : resumesCount}+
               </div>
               <div className="text-gray-600 font-medium">Resumes Processed</div>
             </div>
             <div className="p-6 transform transition-all duration-500 hover:scale-105">
-              <div className={`text-4xl font-bold text-green-600 mb-2 transition-all duration-500 ${startAnimation ? 'animate-pulse' : ''}`}>
+              <div className={`text-4xl font-bold text-gray-800 mb-2 transition-all duration-500 ${startAnimation ? 'animate-pulse' : ''}`}>
                 {retentionCount}%
               </div>
               <div className="text-gray-600 font-medium">Client Retention</div>
             </div>
             <div className="p-6 transform transition-all duration-500 hover:scale-105">
-              <div className={`text-4xl font-bold text-purple-600 mb-2 transition-all duration-500 ${startAnimation ? 'animate-pulse' : ''}`}>
+              <div className={`text-4xl font-bold text-gray-600 mb-2 transition-all duration-500 ${startAnimation ? 'animate-pulse' : ''}`}>
                 {savingsCount}%
               </div>
               <div className="text-gray-600 font-medium">
@@ -266,7 +266,7 @@ const Clients = () => {
                       {testimonial.name}
                     </h3>
                     <p className="text-gray-600 text-sm">{testimonial.title}</p>
-                    <p className="text-blue-600 text-sm font-medium">
+                    <p className="text-black text-sm font-medium">
                       {testimonial.company}
                     </p>
                   </div>
@@ -275,7 +275,7 @@ const Clients = () => {
                       {[...Array(testimonial.rating)].map((_, i) => (
                         <Star
                           key={i}
-                          className="w-5 h-5 text-yellow-400 fill-current"
+                          className="w-5 h-5 text-gray-600 fill-current"
                         />
                       ))}
                     </div>
@@ -289,93 +289,12 @@ const Clients = () => {
         </div>
       </section>
 
-      {/* Client Companies */}
-      <section className="py-16 px-6 bg-gray-50">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-center text-gray-800 mb-16">
-            Our Clients
-          </h2>
-          <div className="grid md:grid-cols-4 gap-6">
-            {companies.map((company, index) => (
-              <div
-                key={index}
-                className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 text-center hover:shadow-md transition-all duration-300 transform hover:-translate-y-1"
-              >
-                <div className="w-16 h-16 bg-gradient-to-r from-blue-100 to-cyan-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <span className="text-blue-600 font-bold text-lg">
-                    {company.logo}
-                  </span>
-                </div>
-                <h3 className="font-semibold text-gray-800 mb-2">
-                  {company.name}
-                </h3>
-                <p className="text-sm text-gray-600">
-                  {company.employees} employees
-                </p>
-                <p className="text-xs text-gray-500">{company.industry}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      
 
-      {/* Case Studies */}
-      <section className="py-16 px-6">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-center text-gray-800 mb-16">
-            Success Stories
-          </h2>
-          <div className="space-y-12">
-            {caseStudies.map((study, index) => (
-              <div
-                key={index}
-                className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300"
-              >
-                <div className="grid lg:grid-cols-3 gap-8">
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-800 mb-4">
-                      {study.company}
-                    </h3>
-                    <div className="mb-6">
-                      <h4 className="font-semibold text-red-600 mb-2">
-                        Challenge
-                      </h4>
-                      <p className="text-gray-700">{study.challenge}</p>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-blue-600 mb-2">
-                        Solution
-                      </h4>
-                      <p className="text-gray-700">{study.solution}</p>
-                    </div>
-                  </div>
-                  <div className="lg:col-span-2">
-                    <h4 className="font-semibold text-green-600 mb-4">
-                      Results
-                    </h4>
-                    <div className="grid md:grid-cols-3 gap-4">
-                      {study.results.map((result, resultIndex) => (
-                        <div
-                          key={resultIndex}
-                          className="bg-green-50 p-4 rounded-xl border border-green-100 hover:bg-green-100 transition-colors duration-300"
-                        >
-                          <TrendingUp className="w-6 h-6 text-green-600 mb-2" />
-                          <p className="text-green-800 font-medium text-sm">
-                            {result}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      
 
       {/* Industry Focus */}
-      <section className="py-16 px-6 bg-gradient-to-r from-blue-600 to-cyan-600">
+      <section className="py-16 px-6 bg-gradient-to-r from-black to-gray-800">
         <div className="max-w-6xl mx-auto text-center">
           <h2 className="text-4xl font-bold text-white mb-8">
             Industries We Serve
@@ -391,7 +310,7 @@ const Clients = () => {
             ].map((industry, index) => (
               <div
                 key={index}
-                className="bg-white bg-opacity-20 p-4 rounded-xl backdrop-blur-sm shadow-lg text-center hover:shadow-2xl hover:bg-opacity-30 transition-all duration-300 transform hover:-translate-y-1"
+                className="bg-white bg-opacity-20 p-4 rounded-xl backdrop-blur-sm shadow-lg text-center hover:shadow-2xl hover:bg-opacity-30 transition-all duration-300 transform hover:-translate-y-1 "
               >
                 <p className="text-black font-semibold">{industry}</p>
               </div>
@@ -400,26 +319,7 @@ const Clients = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-16 px-6 bg-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-gray-800 mb-6">
-            Join Our Success Stories
-          </h2>
-          <p className="text-xl text-gray-600 mb-8">
-            Ready to transform your hiring process? Join hundreds of companies
-            who trust HiRekruit.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-blue-600 text-white px-8 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 hover:shadow-lg">
-              Get Started Today
-            </button>
-            <button className="border-2 border-blue-600 text-blue-600 px-8 py-3 rounded-xl font-semibold hover:bg-blue-600 hover:text-white transition-all duration-300 transform hover:scale-105">
-              View Case Studies
-            </button>
-          </div>
-        </div>
-      </section>
+      
 
       {/* Footer */}
       

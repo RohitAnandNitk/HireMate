@@ -75,10 +75,10 @@ export default function CustomSignIn() {
     if (!errorList || errorList.length === 0) return null;
     
     return (
-      <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+      <div className="mb-4 p-3 bg-gray-50 border border-gray-300 rounded-lg">
         <div className="flex items-start">
-          <AlertCircle className="h-5 w-5 text-red-400 mt-0.5 mr-2" />
-          <div className="text-sm text-red-600">
+          <AlertCircle className="h-5 w-5 text-gray-600 mt-0.5 mr-2" />
+          <div className="text-sm text-gray-700">
             {errorList.map((error, index) => (
               <div key={index} className="mb-1 last:mb-0">
                 {error.message || error.longMessage || "An error occurred"}
@@ -91,12 +91,12 @@ export default function CustomSignIn() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-gray-200 p-4">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-4 -right-4 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
-        <div className="absolute -bottom-8 -left-4 w-72 h-72 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-slate-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
+        <div className="absolute -top-4 -right-4 w-72 h-72 bg-gray-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
+        <div className="absolute -bottom-8 -left-4 w-72 h-72 bg-gray-400 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-gray-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-pulse"></div>
       </div>
 
       <div className="relative w-full max-w-md">
@@ -106,10 +106,10 @@ export default function CustomSignIn() {
         <div className="bg-white/80 backdrop-blur-lg shadow-2xl rounded-3xl p-8 border border-white/20">
           <div className="space-y-6">
             <div className="text-center">
-              <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mb-4">
+              <div className="mx-auto w-16 h-16 bg-gradient-to-r from-black to-gray-700 rounded-full flex items-center justify-center mb-4">
                 <LogIn className="w-8 h-8 text-white" />
               </div>
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-black to-gray-700 bg-clip-text text-transparent">
                 Welcome Back
               </h2>
               <p className="text-gray-600 mt-2">Sign in to your account</p>
@@ -125,7 +125,7 @@ export default function CustomSignIn() {
                 <input
                   type="text"
                   placeholder="Full Name"
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50/50 backdrop-blur-sm"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 bg-gray-50/50 backdrop-blur-sm"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   onKeyPress={handleKeyPress}
@@ -140,7 +140,7 @@ export default function CustomSignIn() {
                 <input
                   type="email"
                   placeholder="Email Address"
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50/50 backdrop-blur-sm"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 bg-gray-50/50 backdrop-blur-sm"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   onKeyPress={handleKeyPress}
@@ -150,7 +150,7 @@ export default function CustomSignIn() {
 
               <div className="relative">
                 <select
-                  className="block w-full px-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50/50 backdrop-blur-sm appearance-none"
+                  className="block w-full px-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 bg-gray-50/50 backdrop-blur-sm appearance-none"
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
                 >
@@ -172,7 +172,7 @@ export default function CustomSignIn() {
                 <input
                   type="text"
                   placeholder="Company Name"
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50/50 backdrop-blur-sm"
+                  className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 bg-gray-50/50 backdrop-blur-sm"
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
                   onKeyPress={handleKeyPress}
@@ -187,7 +187,7 @@ export default function CustomSignIn() {
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="Password"
-                  className="block w-full pl-10 pr-10 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50/50 backdrop-blur-sm"
+                  className="block w-full pl-10 pr-10 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all duration-200 bg-gray-50/50 backdrop-blur-sm"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   onKeyPress={handleKeyPress}
@@ -212,7 +212,7 @@ export default function CustomSignIn() {
                     id="remember-me"
                     name="remember-me"
                     type="checkbox"
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-black focus:ring-black border-gray-300 rounded"
                   />
                   <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-600">
                     Remember me
@@ -220,7 +220,7 @@ export default function CustomSignIn() {
                 </div>
 
                 <div className="text-sm">
-                  <button className="font-medium text-blue-600 hover:text-blue-500 transition-colors">
+                  <button className="font-medium text-black hover:text-gray-700 transition-colors">
                     Forgot password?
                   </button>
                 </div>
@@ -229,7 +229,7 @@ export default function CustomSignIn() {
               <button
                 onClick={handleSignIn}
                 disabled={isLoading || !name || !email || !companyName || !password}
-                className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:scale-100 shadow-lg hover:shadow-xl"
+                className="w-full bg-gradient-to-r from-black to-gray-700 hover:from-gray-800 hover:to-gray-800 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:scale-100 shadow-lg hover:shadow-xl"
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center">
@@ -246,7 +246,7 @@ export default function CustomSignIn() {
             <div className="text-center">
               <p className="text-sm text-gray-600">
                 Don't have an account?{" "}
-                <button className="font-medium text-blue-600 hover:text-blue-500 transition-colors cursor-pointer hover:underline" onClick={() => navigate("/signup")}>
+                <button className="font-medium text-black hover:text-gray-700 transition-colors cursor-pointer hover:underline" onClick={() => navigate("/signup")}>
                   Sign up
                 </button>
               </p>

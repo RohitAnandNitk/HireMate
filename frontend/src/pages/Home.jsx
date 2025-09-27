@@ -40,9 +40,9 @@ const Home = () => {
     typewriterWords[Math.floor(typewriterIndex / 50) % typewriterWords.length];
 
   const stats = [
-    { value: "95%", label: "Faster Screening", color: "text-blue-600" },
-    { value: "50K+", label: "Candidates Processed", color: "text-cyan-600" },
-    { value: "99.8%", label: "Accuracy Rate", color: "text-blue-700" },
+    { value: "95%", label: "Faster Screening", color: "text-black" },
+    { value: "50K+", label: "Candidates Processed", color: "text-gray-800" },
+    { value: "99.8%", label: "Accuracy Rate", color: "text-gray-900" },
   ];
 
   // Typewriter effect
@@ -93,7 +93,7 @@ const Home = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-white via-gray-100 to-gray-200 relative overflow-hidden">
       {/* Custom CSS for animations */}
       <style jsx>{`
         @keyframes scroll-left {
@@ -138,31 +138,31 @@ const Home = () => {
                 animationDuration: "3s",
               }}
             >
-              <IconComponent size={24} className="text-blue-600" />
+              <IconComponent size={24} className="text-black" />
             </div>
           );
         })}
 
         {/* Animated Gradient Orbs */}
-        <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-r from-blue-400/20 to-cyan-400/20 rounded-full animate-pulse"></div>
+        <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-r from-gray-400/20 to-gray-600/20 rounded-full animate-pulse"></div>
         <div
-          className="absolute top-40 right-20 w-24 h-24 bg-gradient-to-r from-indigo-400/20 to-blue-400/20 rounded-full animate-pulse"
+          className="absolute top-40 right-20 w-24 h-24 bg-gradient-to-r from-gray-500/20 to-black/20 rounded-full animate-pulse"
           style={{ animationDelay: "1s" }}
         ></div>
         <div
-          className="absolute bottom-40 left-1/4 w-20 h-20 bg-gradient-to-r from-cyan-400/20 to-blue-400/20 rounded-full animate-pulse"
+          className="absolute bottom-40 left-1/4 w-20 h-20 bg-gradient-to-r from-gray-300/20 to-gray-500/20 rounded-full animate-pulse"
           style={{ animationDelay: "2s" }}
         ></div>
 
         {/* Moving Background Lines */}
         <div className="absolute inset-0">
-          <div className="absolute top-1/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-300/30 to-transparent animate-pulse"></div>
+          <div className="absolute top-1/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-gray-400/30 to-transparent animate-pulse"></div>
           <div
-            className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-cyan-300/30 to-transparent animate-pulse"
+            className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-gray-500/30 to-transparent animate-pulse"
             style={{ animationDelay: "1.5s" }}
           ></div>
           <div
-            className="absolute top-3/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-indigo-300/30 to-transparent animate-pulse"
+            className="absolute top-3/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-gray-600/30 to-transparent animate-pulse"
             style={{ animationDelay: "3s" }}
           ></div>
         </div>
@@ -174,8 +174,8 @@ const Home = () => {
           {/* Left Content */}
           <div className="space-y-6">
             {/* Typewriter Badge */}
-            <div className="inline-flex items-center space-x-2 bg-blue-100 text-blue-700 px-3 py-2 rounded-full text-sm font-medium">
-              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+            <div className="inline-flex items-center space-x-2 bg-gray-200 text-gray-800 px-3 py-2 rounded-full text-sm font-medium">
+              <div className="w-2 h-2 bg-black rounded-full animate-pulse"></div>
               <span className="min-w-44">
                 {typewriterText}
                 <span
@@ -192,7 +192,7 @@ const Home = () => {
             <div className="space-y-3">
               <h1 className="text-3xl lg:text-4xl font-bold leading-tight">
                 Transform Your{" "}
-                <span className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-700 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-black via-gray-700 to-gray-900 bg-clip-text text-transparent">
                   Hiring Process
                 </span>{" "}
                 with AI
@@ -229,11 +229,11 @@ const Home = () => {
             <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={() => navigate("/job-creation")}
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 text-sm transform hover:scale-105 duration-200"
+                className="bg-black text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 text-sm transform hover:scale-105 duration-200"
               >
                 <span>Get Started Free</span>
               </button>
-              <button className="border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:border-blue-300 hover:text-blue-600 transition-colors flex items-center justify-center space-x-2 text-sm transform hover:scale-105 duration-200">
+              <button className="border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:border-gray-600 hover:text-black transition-colors flex items-center justify-center space-x-2 text-sm transform hover:scale-105 duration-200">
                 <Play size={16} />
                 <span>Watch Demo</span>
               </button>
@@ -241,15 +241,15 @@ const Home = () => {
 
             {/* Trust Indicators */}
             <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200">
-              <div className="flex items-center space-x-2 text-green-600 text-sm">
+              <div className="flex items-center space-x-2 text-gray-800 text-sm">
                 <CheckCircle size={16} />
                 <span className="font-medium">No Credit Card Required</span>
               </div>
-              <div className="flex items-center space-x-2 text-green-600 text-sm">
+              <div className="flex items-center space-x-2 text-gray-800 text-sm">
                 <Clock size={16} />
                 <span className="font-medium">14-Day Free Trial</span>
               </div>
-              <div className="flex items-center space-x-2 text-green-600 text-sm">
+              <div className="flex items-center space-x-2 text-gray-800 text-sm">
                 <X size={16} />
                 <span className="font-medium">Cancel Anytime</span>
               </div>
@@ -263,9 +263,9 @@ const Home = () => {
               {/* Browser Bar */}
               <div className="bg-gray-100 px-3 py-2 flex items-center space-x-2 border-b">
                 <div className="flex space-x-1">
-                  <div className="w-2 h-2 bg-red-400 rounded-full"></div>
-                  <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
-                  <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                  <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
+                  <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-gray-600 rounded-full"></div>
                 </div>
                 <div className="flex-1 bg-white rounded px-2 py-1 text-xs text-gray-500 mx-3">
                   dashboard.aihiring.com
@@ -273,7 +273,7 @@ const Home = () => {
               </div>
 
               {/* Dashboard Content */}
-              <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50">
+              <div className="p-4 bg-gradient-to-br from-gray-50 to-gray-100">
                 {/* Header */}
                 <div className="flex justify-between items-center mb-4">
                   <div>
@@ -283,8 +283,8 @@ const Home = () => {
                     <p className="text-xs text-gray-600">Today's Overview</p>
                   </div>
                   <div className="flex space-x-2">
-                    <div className="w-6 h-6 bg-blue-100 rounded-md flex items-center justify-center">
-                      <BarChart3 size={12} className="text-blue-600" />
+                    <div className="w-6 h-6 bg-gray-200 rounded-md flex items-center justify-center">
+                      <BarChart3 size={12} className="text-black" />
                     </div>
                     <div className="w-6 h-6 bg-gray-100 rounded-md flex items-center justify-center">
                       <Users size={12} className="text-gray-600" />
@@ -299,10 +299,10 @@ const Home = () => {
                       <span className="text-xs font-medium text-gray-600">
                         Active Jobs
                       </span>
-                      <Target size={12} className="text-blue-500" />
+                      <Target size={12} className="text-black" />
                     </div>
                     <div className="text-lg font-bold text-gray-900">24</div>
-                    <div className="text-xs text-green-600 flex items-center">
+                    <div className="text-xs text-gray-700 flex items-center">
                       <TrendingUp size={8} className="mr-1" />
                       +12% from last week
                     </div>
@@ -312,10 +312,10 @@ const Home = () => {
                       <span className="text-xs font-medium text-gray-600">
                         Interviews
                       </span>
-                      <Calendar size={12} className="text-cyan-500" />
+                      <Calendar size={12} className="text-gray-800" />
                     </div>
                     <div className="text-lg font-bold text-gray-900">142</div>
-                    <div className="text-xs text-green-600 flex items-center">
+                    <div className="text-xs text-gray-700 flex items-center">
                       <TrendingUp size={8} className="mr-1" />
                       +8% from last week
                     </div>
@@ -329,18 +329,18 @@ const Home = () => {
                       Hiring Pipeline
                     </span>
                     <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                      <div className="w-2 h-2 bg-black rounded-full animate-pulse"></div>
                       <div
-                        className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse"
+                        className="w-2 h-2 bg-gray-600 rounded-full animate-pulse"
                         style={{ animationDelay: "0.5s" }}
                       ></div>
                       <div
-                        className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"
+                        className="w-2 h-2 bg-gray-800 rounded-full animate-pulse"
                         style={{ animationDelay: "1s" }}
                       ></div>
                     </div>
                   </div>
-                  <div className="h-16 bg-gradient-to-r from-blue-400 via-cyan-400 to-indigo-400 rounded-md opacity-70 animate-pulse"></div>
+                  <div className="h-16 bg-gradient-to-r from-gray-400 via-gray-600 to-black rounded-md opacity-70 animate-pulse"></div>
                 </div>
 
                 {/* Recent Candidates */}
@@ -367,9 +367,9 @@ const Home = () => {
                     ].map((candidate, index) => (
                       <div
                         key={index}
-                        className="flex items-center space-x-2 hover:bg-blue-50 p-1 rounded transition-colors"
+                        className="flex items-center space-x-2 hover:bg-gray-50 p-1 rounded transition-colors"
                       >
-                        <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center text-xs">
+                        <div className="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center text-xs">
                           {candidate.avatar}
                         </div>
                         <div className="flex-1">
@@ -385,7 +385,7 @@ const Home = () => {
                             <Star
                               key={i}
                               size={8}
-                              className="text-yellow-400 fill-current"
+                              className="text-gray-400 fill-current"
                             />
                           ))}
                         </div>
@@ -397,13 +397,13 @@ const Home = () => {
             </div>
 
             {/* Floating Elements */}
-            <div className="absolute -top-3 -right-3 w-16 h-16 bg-cyan-400 rounded-full opacity-20 animate-bounce"></div>
+            <div className="absolute -top-3 -right-3 w-16 h-16 bg-gray-400 rounded-full opacity-20 animate-bounce"></div>
             <div
-              className="absolute -bottom-4 -left-4 w-12 h-12 bg-blue-400 rounded-full opacity-20 animate-bounce"
+              className="absolute -bottom-4 -left-4 w-12 h-12 bg-black rounded-full opacity-20 animate-bounce"
               style={{ animationDelay: "1s" }}
             ></div>
             <div
-              className="absolute top-1/2 -right-6 w-8 h-8 bg-indigo-400 rounded-full opacity-20 animate-bounce"
+              className="absolute top-1/2 -right-6 w-8 h-8 bg-gray-600 rounded-full opacity-20 animate-bounce"
               style={{ animationDelay: "2s" }}
             ></div>
           </div>
