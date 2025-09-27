@@ -175,7 +175,8 @@ def update_drive_status(drive_id):
         elif new_status == DriveStatus.INTERVIEW_SCHEDULED:
             print("Calling interview scheduling agent...")
             # Call your interview scheduling agent here
-            # interview_scheduling_agent(drive_id)
+            schedule_interviews(drive_id)
+
 
         elif new_status == DriveStatus.SELECTION_EMAIL_SENT:
             print("Calling selection email agent...")

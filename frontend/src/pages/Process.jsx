@@ -10,6 +10,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { useParams } from "react-router-dom";
+import Loader from "../components/Loader";
 
 import config from "../Config/BaseURL";
 const BaseURL = config.BASE_URL;
@@ -185,24 +186,12 @@ const Process = () => {
   // Show loading when currentStep is null (not yet loaded from DB)
   if (loading || currentStep === null) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex justify-center items-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading drive status...</p>
-          <p className="text-sm text-gray-500 mt-2">Drive ID: {driveId}</p>
-          {error && (
-            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-700 text-sm">{error}</p>
-              <button
-                onClick={fetchDriveStatus}
-                className="mt-2 text-sm text-blue-600 hover:text-blue-800 underline"
-              >
-                Retry
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
+      <Loader
+        message="Loading drive status..."
+        subMessage={`Drive ID: ${driveId}`}
+        error={error}
+        onRetry={fetchDriveStatus}
+      />
     );
   }
 

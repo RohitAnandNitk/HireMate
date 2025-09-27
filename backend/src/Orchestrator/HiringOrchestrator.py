@@ -42,12 +42,12 @@ def email_candidates(drive_id):
     # return "Emails sent successfully"
 
 # Scheduling interviews for shortlisted candidates
-def schedule_interviews(shortlisted_candidates):
+def schedule_interviews(drive_id):
     print("Starting interview scheduling process")
     #creating the email service instance
     email_service = EmailService(SMTP_SERVER, SMTP_PORT, EMAIL_USER, EMAIL_PASSWORD)
     interview_scheduling_agent = InterviewSchedulingAgent(email_service)
-    interview_scheduling_agent.schedule_interviews(shortlisted_candidates)
+    interview_scheduling_agent.schedule_interviews(drive_id)
     return "Interviews scheduled successfully"
 
 # Final selection mail to the selected candidates
