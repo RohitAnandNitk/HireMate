@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/clerk-react";
 
 import Dashboard from "./components/Dashboard";
@@ -24,12 +24,27 @@ import Chatbot from "./components/Chatbot";
 import Process from "./pages/Process";
 import CustomSignUp from "./pages/CustomSignUp";
 import CustomSignIn from "./pages/CustomSignIn";
+import { UserProfile } from "@clerk/clerk-react";
 
-import ProtectedRoute from "./components/ProtectedRoute"; // import wrapper
 
-function App() {
+import ProtectedRoute from "./components/ProtectedRoute";
+
+function AppContent() {
+  const location = useLocation();
+
+  // Routes where Chatbot should be hidden
+  const hideChatbotRoutes = [
+    "/mockinterview",
+    "/interview_start"
+  ];
+
+  // Check if current route starts with any path in hideChatbotRoutes
+  const showChatbot = !hideChatbotRoutes.some((path) =>
+    location.pathname.startsWith(path)
+  );
+
   return (
-    <Router>
+    <>
       <Routes>
         {/* Public Routes */}
         <Route element={<LayoutWithNavbar />}>
@@ -39,6 +54,7 @@ function App() {
           <Route path="/clients" element={<Clients />} />
           <Route path="/contact" element={<Contact />} />
         </Route>
+
         <Route path="/signup" element={<CustomSignUp />} />
         <Route path="/signin" element={<CustomSignIn />} />
 
@@ -53,6 +69,16 @@ function App() {
             </ProtectedRoute>
           }
         />
+        {/* profile of user */}
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+                <UserProfile />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/process/:driveId"
           element={
@@ -113,6 +139,8 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* Interview Pages - no Chatbot */}
         <Route
           path="/mockinterview/:id"
           element={
@@ -139,7 +167,15 @@ function App() {
         />
       </Routes>
 
-      <Chatbot />
+      {showChatbot && <Chatbot />}
+    </>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }
