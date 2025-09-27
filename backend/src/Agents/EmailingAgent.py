@@ -2,7 +2,7 @@ import os
 
 from bson import ObjectId
 from src.Utils.EmailService import EmailService
-
+from src.Utils.Database import db
 
 class EmailingAgent:    
     def __init__(self, email_service: EmailService):
@@ -42,7 +42,7 @@ class EmailingAgent:
         company_name = "HiRekruit"
 
         # here we will fetch the candidates from the database based on the drive_id
-        from src.Utils.Database import db
+        
         candidates = list(db.drive_candidates.find({"drive_id": drive_id}))
 
         for person in candidates:
@@ -71,30 +71,58 @@ class EmailingAgent:
         print("Email notifications sent.")
 
     # we will have a method to send the emails to final selected candidates
-    def send_final_decision_email(self,candidate, decision, feedback):
+    def send_final_selection_emails(self, drive_id):
         company_name = "HiRekruit"
-        job_role = "Software Engineer"
-        if decision == "SELECT":
-            subject = f"Congratulations! Job Offer from {company_name}"
-            body = (
-                f"Dear {candidate['name']},\n\n"
-                f"Congratulations! You have been selected for the {job_role} position at {company_name}. "
-                f"We are excited to have you on board and believe your skills will be a great asset to our team.\n\n"
-                "Please check the attached offer letter for details about your role and next steps.\n\n"
-                "Feel free to reach out with any questions.\n\n"
-                f"Best regards,\n{company_name} Recruitment Team"
-            )
-        else:
-            subject = f"Interview Outcome from {company_name}"
-            body = (
-                f"Dear {candidate['name']},\n\n"
-                f"Thank you for participating in the interview process for the {job_role} role at {company_name}. "
-                "After careful consideration, we regret to inform you that we will not be moving forward with your application at this time.\n\n"
-                f"Feedback from the interview:\n{feedback}\n\n"
-                "We appreciate the time and effort you invested in applying and encourage you to apply for future opportunities.\n\n"
-                f"Best regards,\n{company_name} Recruitment Team"
-            )
+        # with the drive_id fetch the job role
+        job_role = db.drives.find_one({"_id": ObjectId(drive_id)}, {"role": 1}).get("role", "the position")
+        
+        # fetch all candidates associated with this drive_id who have been interviewed
+        candidates = list(db.drive_candidates.find({"drive_id": drive_id, "interview_completed": "yes"}))
 
-        # Send the email using the email service
-        self.email_service.send_email(candidate["email"], subject, body)
-        print(f"Decision email sent to {candidate['email']}")
+        for person in candidates:
+            candidate_id = person["candidate_id"]
+            candidate_info = db.candidates.find_one({"_id": ObjectId(candidate_id)})
+            if not candidate_info:
+                print(f"Candidate info not found for ID: {person['candidate_id']}")
+                continue
+
+            # Assuming 'decision' and 'feedback' fields exist in drive_candidates collection
+            decision = person.get("selected", "REJECT")
+            feedback = person.get("feedback", "No feedback provided.")
+
+
+            # Update the database to mark that the final selection email has been sent
+            db.drive_candidates.update_one(
+                {"_id": person["_id"]},
+                {"$set": {"final_selection_email_sent": "yes"}}
+            )
+            if decision == "yes":
+                subject = f"Congratulations! Job Offer from {company_name}"
+                body = (
+                    f"Dear {candidate_info['name']},\n\n"
+                    f"Congratulations! You have been selected for the {job_role} position at {company_name}. "
+                    f"We are excited to have you on board and believe your skills will be a great asset to our team.\n\n"
+                    "Please check the attached offer letter for details about your role and next steps.\n\n"
+                    "Feel free to reach out with any questions.\n\n"
+                    f"Best regards,\n{company_name} Recruitment Team"
+                )
+            else:
+                subject = f"Interview Outcome from {company_name}"
+                body = (
+                    f"Dear {candidate_info['name']},\n\n"
+                    f"Thank you for participating in the interview process for the {job_role} role at {company_name}. "
+                    "After careful consideration, we regret to inform you that we will not be moving forward with your application at this time.\n\n"
+                    f"Feedback from the interview:\n{feedback}\n\n"
+                    "We appreciate the time and effort you invested in applying and encourage you to apply for future opportunities.\n\n"
+                    f"Best regards,\n{company_name} Recruitment Team"
+                )
+
+            # Send the email using the email service
+            self.email_service.send_email(candidate_info["email"], subject, body)
+
+            #update the final_email_sent status in drive_candidates collection
+            db.drive_candidates.update_one(
+                {"_id": person["_id"]},
+                {"$set": {"final_email_sent": "yes"}}
+            )
+            print(f"Decision email sent to {candidate_info['email']}")

@@ -181,7 +181,7 @@ def update_drive_status(drive_id):
         elif new_status == DriveStatus.SELECTION_EMAIL_SENT:
             print("Calling selection email agent...")
             # Call your selection email agent here
-            # selection_email_agent(drive_id)
+            send_final_selection_emails(drive_id)
 
         # Update the drive status
         result = db.drives.update_one(

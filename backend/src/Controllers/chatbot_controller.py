@@ -1,4 +1,4 @@
-from src.Agents.ChatBotAgent import ChatBotAgent
+from src.Agents.ChatBotAgnet import ChatBotAgent
 
 # Create a single instance of ChatBotAgent
 chatbot_agent = ChatBotAgent()
