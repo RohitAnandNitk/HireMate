@@ -65,13 +65,13 @@ const About = () => {
   const accuracyRate = useAnimatedCounter(99.8, 2500, statsVisible, true);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
       {/* Hero Section */}
       <section className="py-20 px-6">
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-5xl font-bold text-gray-800 mb-6">
             About{" "}
-            <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-black to-gray-700 bg-clip-text text-transparent">
               HiRekruit
             </span>
           </h1>
@@ -87,8 +87,8 @@ const About = () => {
       <section className="py-16 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div className="bg-red-50 p-8 rounded-2xl border border-red-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-              <h2 className="text-3xl font-bold text-red-700 mb-6">
+            <div className="bg-gray-100 p-8 rounded-2xl border border-gray-200 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+              <h2 className="text-3xl font-bold text-gray-800 mb-6">
                 The Problem
               </h2>
               <div className="space-y-4 text-gray-700">
@@ -98,27 +98,27 @@ const About = () => {
                 </p>
                 <ul className="space-y-2 pl-6">
                   <li className="flex items-start">
-                    <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span className="w-2 h-2 bg-gray-600 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                     <span>
                       Manual resume screening through hundreds or thousands of
                       applications
                     </span>
                   </li>
                   <li className="flex items-start">
-                    <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span className="w-2 h-2 bg-gray-600 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                     <span>
                       Significant delays and inefficiencies in the hiring
                       process
                     </span>
                   </li>
                   <li className="flex items-start">
-                    <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span className="w-2 h-2 bg-gray-600 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                     <span>
                       Human biases affecting diversity and inclusion efforts
                     </span>
                   </li>
                   <li className="flex items-start">
-                    <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span className="w-2 h-2 bg-gray-600 rounded-full mt-2 mr-3 flex-shrink-0"></span>
                     <span>
                       Missed opportunities due to overwhelming candidate volumes
                     </span>
@@ -127,8 +127,8 @@ const About = () => {
               </div>
             </div>
 
-            <div className="bg-green-50 p-8 rounded-2xl border border-green-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-              <h2 className="text-3xl font-bold text-green-700 mb-6">
+            <div className="bg-gray-50 p-8 rounded-2xl border border-gray-200 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+              <h2 className="text-3xl font-bold text-black mb-6">
                 Our Solution
               </h2>
               <div className="space-y-4 text-gray-700">
@@ -138,24 +138,24 @@ const About = () => {
                 </p>
                 <ul className="space-y-2 pl-6">
                   <li className="flex items-start">
-                    <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span className="w-2 h-2 bg-black rounded-full mt-2 mr-3 flex-shrink-0"></span>
                     <span>
                       Automated resume parsing and candidate information
                       extraction
                     </span>
                   </li>
                   <li className="flex items-start">
-                    <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span className="w-2 h-2 bg-black rounded-full mt-2 mr-3 flex-shrink-0"></span>
                     <span>
                       Smart shortlisting based on role requirements and skills
                     </span>
                   </li>
                   <li className="flex items-start">
-                    <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span className="w-2 h-2 bg-black rounded-full mt-2 mr-3 flex-shrink-0"></span>
                     <span>Real-time tracking and analytics dashboard</span>
                   </li>
                   <li className="flex items-start">
-                    <span className="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                    <span className="w-2 h-2 bg-black rounded-full mt-2 mr-3 flex-shrink-0"></span>
                     <span>
                       Bias elimination through objective AI-assisted evaluation
                     </span>
@@ -175,8 +175,8 @@ const About = () => {
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="text-center group">
-              <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 transition-all duration-300 group-hover:scale-110">
-                <Zap className="w-8 h-8 text-blue-600" />
+              <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-gray-200 transition-all duration-300 group-hover:scale-110">
+                <Zap className="w-8 h-8 text-black" />
               </div>
               <h3 className="text-xl font-semibold text-gray-800 mb-3">
                 Innovation
@@ -188,8 +188,8 @@ const About = () => {
             </div>
 
             <div className="text-center group">
-              <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-green-200 transition-all duration-300 group-hover:scale-110">
-                <Target className="w-8 h-8 text-green-600" />
+              <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-gray-200 transition-all duration-300 group-hover:scale-110">
+                <Target className="w-8 h-8 text-gray-700" />
               </div>
               <h3 className="text-xl font-semibold text-gray-800 mb-3">
                 Precision
@@ -201,8 +201,8 @@ const About = () => {
             </div>
 
             <div className="text-center group">
-              <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-purple-200 transition-all duration-300 group-hover:scale-110">
-                <Users className="w-8 h-8 text-purple-600" />
+              <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-gray-200 transition-all duration-300 group-hover:scale-110">
+                <Users className="w-8 h-8 text-gray-800" />
               </div>
               <h3 className="text-xl font-semibold text-gray-800 mb-3">
                 Inclusivity
@@ -214,8 +214,8 @@ const About = () => {
             </div>
 
             <div className="text-center group">
-              <div className="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-200 transition-all duration-300 group-hover:scale-110">
-                <Award className="w-8 h-8 text-orange-600" />
+              <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-gray-200 transition-all duration-300 group-hover:scale-110">
+                <Award className="w-8 h-8 text-gray-600" />
               </div>
               <h3 className="text-xl font-semibold text-gray-800 mb-3">
                 Excellence
@@ -233,8 +233,8 @@ const About = () => {
       <section className="py-16 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12">
-            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-8 rounded-2xl border border-blue-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-              <h2 className="text-3xl font-bold text-blue-700 mb-6">
+            <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-8 rounded-2xl border border-gray-200 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+              <h2 className="text-3xl font-bold text-black mb-6">
                 Our Mission
               </h2>
               <p className="text-gray-700 text-lg leading-relaxed">
@@ -245,8 +245,8 @@ const About = () => {
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-8 rounded-2xl border border-purple-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
-              <h2 className="text-3xl font-bold text-purple-700 mb-6">
+            <div className="bg-gradient-to-br from-gray-100 to-gray-200 p-8 rounded-2xl border border-gray-300 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+              <h2 className="text-3xl font-bold text-gray-800 mb-6">
                 Our Vision
               </h2>
               <p className="text-gray-700 text-lg leading-relaxed">
@@ -268,13 +268,13 @@ const About = () => {
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-              <div className={`text-4xl font-bold text-blue-600 mb-2 transition-all duration-500 ${statsVisible ? 'animate-pulse' : ''}`}>
+              <div className={`text-4xl font-bold text-black mb-2 transition-all duration-500 ${statsVisible ? 'animate-pulse' : ''}`}>
                 {screeningSpeed}%
               </div>
               <div className="text-gray-600 font-medium">Faster Screening</div>
             </div>
             <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-              <div className={`text-4xl font-bold text-cyan-600 mb-2 transition-all duration-500 ${statsVisible ? 'animate-pulse' : ''}`}>
+              <div className={`text-4xl font-bold text-gray-700 mb-2 transition-all duration-500 ${statsVisible ? 'animate-pulse' : ''}`}>
                 {candidatesCount}K+
               </div>
               <div className="text-gray-600 font-medium">
@@ -282,7 +282,7 @@ const About = () => {
               </div>
             </div>
             <div className="bg-white p-8 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-              <div className={`text-4xl font-bold text-green-600 mb-2 transition-all duration-500 ${statsVisible ? 'animate-pulse' : ''}`}>
+              <div className={`text-4xl font-bold text-gray-800 mb-2 transition-all duration-500 ${statsVisible ? 'animate-pulse' : ''}`}>
                 {accuracyRate}%
               </div>
               <div className="text-gray-600 font-medium">Accuracy Rate</div>

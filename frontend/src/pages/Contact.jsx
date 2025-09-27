@@ -129,35 +129,16 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
     },
   ];
 
-  const officeLocations = [
-    {
-      city: "San Francisco",
-      address: "123 Innovation Drive, CA 94105",
-      phone: "+1 (555) 123-4567",
-      type: "Headquarters",
-    },
-    {
-      city: "New York",
-      address: "456 Business Ave, NY 10001",
-      phone: "+1 (555) 234-5678",
-      type: "East Coast Office",
-    },
-    {
-      city: "London",
-      address: "789 Tech Street, London EC1A 1BB",
-      phone: "+44 20 7946 0958",
-      type: "European Office",
-    },
-  ];
+  
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
       {/* Hero Section */}
       <section className="py-20 px-6">
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-5xl font-bold text-gray-800 mb-6">
             Get in{" "}
-            <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-black to-gray-700 bg-clip-text text-transparent">
               Touch
             </span>
           </h1>
@@ -181,7 +162,7 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
               {isSubmitted ? (
                 <div className="text-center py-12">
-                  <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                  <CheckCircle className="w-16 h-16 text-gray-700 mx-auto mb-4" />
                   <h3 className="text-xl font-semibold text-gray-800 mb-2">
                     Message Sent Successfully!
                   </h3>
@@ -192,9 +173,9 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
               ) : (
                 <>
                   {submitError && (
-                    <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center">
-                      <AlertCircle className="w-5 h-5 text-red-500 mr-3" />
-                      <p className="text-red-700">{submitError}</p>
+                    <div className="mb-6 p-4 bg-gray-50 border border-gray-300 rounded-lg flex items-center">
+                      <AlertCircle className="w-5 h-5 text-gray-600 mr-3" />
+                      <p className="text-gray-700">{submitError}</p>
                     </div>
                   )}
                   
@@ -211,7 +192,7 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
                           value={formData.user_name}
                           onChange={handleInputChange}
                           disabled={isSubmitting}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                           placeholder="Your full name"
                         />
                       </div>
@@ -226,7 +207,7 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
                           value={formData.user_email}
                           onChange={handleInputChange}
                           disabled={isSubmitting}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                           placeholder="your.email@company.com"
                         />
                       </div>
@@ -243,7 +224,7 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
                           value={formData.company}
                           onChange={handleInputChange}
                           disabled={isSubmitting}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                           placeholder="Your company name"
                         />
                       </div>
@@ -257,7 +238,7 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
                           value={formData.phone}
                           onChange={handleInputChange}
                           disabled={isSubmitting}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                           placeholder="+1 (555) 123-4567"
                         />
                       </div>
@@ -272,7 +253,7 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
                         value={formData.inquiryType}
                         onChange={handleInputChange}
                         disabled={isSubmitting}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                       >
                         <option value="general">General Inquiry</option>
                         <option value="demo">Request Demo</option>
@@ -294,7 +275,7 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
                         value={formData.message}
                         onChange={handleInputChange}
                         disabled={isSubmitting}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                         placeholder="Tell us about your needs and how we can help..."
                       />
                     </div>
@@ -302,7 +283,7 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-blue-700 hover:to-cyan-700 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full bg-gradient-to-r from-black to-gray-800 text-white py-3 px-6 rounded-lg font-semibold hover:from-gray-800 hover:to-gray-900 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isSubmitting ? (
                         <>
@@ -330,14 +311,14 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
                 <div className="space-y-6">
                   {contactInfo.map((info, index) => (
                     <div key={index} className="flex items-start">
-                      <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
-                        <info.icon className="w-6 h-6 text-blue-600" />
+                      <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mr-4 flex-shrink-0">
+                        <info.icon className="w-6 h-6 text-black" />
                       </div>
                       <div>
                         <h3 className="font-semibold text-gray-800">
                           {info.title}
                         </h3>
-                        <p className="text-blue-600 font-medium">
+                        <p className="text-black font-medium">
                           {info.details}
                         </p>
                         <p className="text-gray-600 text-sm">
@@ -350,7 +331,7 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
               </div>
 
               {/* Support Options */}
-              <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-8 rounded-2xl border border-blue-100">
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-8 rounded-2xl border border-gray-200">
                 <h3 className="text-2xl font-bold text-gray-800 mb-6">
                   Support Options
                 </h3>
@@ -360,7 +341,7 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
                       key={index}
                       className="flex items-center p-4 bg-white rounded-lg"
                     >
-                      <option.icon className="w-8 h-8 text-blue-600 mr-4" />
+                      <option.icon className="w-8 h-8 text-black mr-4" />
                       <div>
                         <h4 className="font-semibold text-gray-800">
                           {option.title}
@@ -368,7 +349,7 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
                         <p className="text-gray-600 text-sm">
                           {option.description}
                         </p>
-                        <p className="text-blue-600 text-xs">
+                        <p className="text-black text-xs">
                           {option.availability}
                         </p>
                       </div>
@@ -383,41 +364,7 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
         </div>
       </section>
 
-      {/* Office Locations */}
-      <section className="py-16 px-6 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-center text-gray-800 mb-16">
-            Our Offices
-          </h2>
-          <div className="grid lg:grid-cols-3 gap-8">
-            {officeLocations.map((office, index) => (
-              <div
-                key={index}
-                className="bg-gray-50 p-8 rounded-2xl border border-gray-100 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
-              >
-                <div className="mb-4">
-                  <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
-                    {office.type}
-                  </span>
-                </div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-4">
-                  {office.city}
-                </h3>
-                <div className="space-y-3">
-                  <div className="flex items-start">
-                    <MapPin className="w-5 h-5 text-gray-500 mr-3 mt-0.5 flex-shrink-0" />
-                    <p className="text-gray-600">{office.address}</p>
-                  </div>
-                  <div className="flex items-center">
-                    <Phone className="w-5 h-5 text-gray-500 mr-3 flex-shrink-0" />
-                    <p className="text-blue-600 font-medium">{office.phone}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      
 
       {/* FAQ Section */}
       <section className="py-16 px-6 bg-gray-50">
@@ -496,20 +443,20 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 px-6 bg-gradient-to-r from-blue-600 to-cyan-600">
+      <section className="py-16 px-6 bg-gradient-to-r from-black to-gray-800">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl font-bold text-white mb-6">
             Ready to Get Started?
           </h2>
-          <p className="text-xl text-blue-100 mb-8">
+          <p className="text-xl text-gray-300 mb-8">
             Join thousands of companies who have transformed their hiring
             process with HiRekruit.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-blue-600 px-8 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-colors">
+            <button className="bg-white text-black px-8 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-colors">
               Start Free Trial
             </button>
-            <button className="border-2 border-white text-white px-8 py-3 rounded-xl font-semibold hover:bg-white hover:text-blue-600 transition-colors">
+            <button className="border-2 border-white text-white px-8 py-3 rounded-xl font-semibold hover:bg-white hover:text-black transition-colors">
               Schedule Demo
             </button>
           </div>

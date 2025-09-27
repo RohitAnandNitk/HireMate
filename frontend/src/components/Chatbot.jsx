@@ -139,7 +139,7 @@ const Chatbot = () => {
     >
       {/* Chat window */}
       <div
-        className={`mb-1 w-80 max-w-[92vw] h-[520px] bg-white rounded-2xl shadow-2xl border border-blue-100 overflow-hidden transition-all duration-300 ease-out transform
+        className={`mb-1 w-80 max-w-[92vw] h-[520px] bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden transition-all duration-300 ease-out transform
           ${
             isOpen
               ? "translate-y-0 opacity-100 pointer-events-auto"
@@ -147,7 +147,7 @@ const Chatbot = () => {
           }`}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 flex items-center justify-between">
+        <div className="bg-gradient-to-r from-black to-gray-800 text-white p-4 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center overflow-hidden">
               <img
@@ -158,7 +158,7 @@ const Chatbot = () => {
             </div>
             <div>
               <h3 className="font-semibold text-lg">Saarthi</h3>
-              <p className="text-blue-100 text-sm">HireKruit Assistant</p>
+              <p className="text-gray-300 text-sm">HireKruit Assistant</p>
             </div>
           </div>
           <button onClick={() => setIsOpen(false)} className="p-2 rounded-full">
@@ -167,7 +167,7 @@ const Chatbot = () => {
         </div>
 
         {/* Messages */}
-        <div className="flex-1 p-4 space-y-4 overflow-y-auto h-[340px] bg-gradient-to-b from-blue-50 to-white">
+        <div className="flex-1 p-4 space-y-4 overflow-y-auto h-[340px] bg-gradient-to-b from-gray-50 to-white">
           {messages.map((message) => (
             <div
               key={message.id}
@@ -186,21 +186,21 @@ const Chatbot = () => {
                 <div
                   className={`flex items-center justify-center overflow-hidden ${
                     message.sender === "user"
-                      ? "w-6 h-6 rounded-full bg-blue-600 text-white"
+                      ? "w-6 h-6 rounded-full bg-black text-white"
                       : "w-10 h-4 rounded-full bg-white"
                   }`}
                 >
                   {message.sender === "user" ? (
                     <User className="w-4 h-4" />
                   ) : (
-                    <ShipWheel className="w-8 h-8 text-blue-600" />
+                    <ShipWheel className="w-8 h-8 text-black" />
                   )}
                 </div>
                 <div
                   className={`px-4 py-2 rounded-2xl ${
                     message.sender === "user"
-                      ? "bg-blue-600 text-white rounded-br-md"
-                      : "bg-white text-gray-800 border border-blue-100 rounded-bl-md shadow-sm"
+                      ? "bg-black text-white rounded-br-md"
+                      : "bg-white text-gray-800 border border-gray-200 rounded-bl-md shadow-sm"
                   }`}
                 >
                   <p className="text-sm">{message.text}</p>
@@ -215,14 +215,14 @@ const Chatbot = () => {
           {isLoading && (
             <div className="flex justify-start">
               <div className="flex items-start space-x-2">
-                <div className="w-8 h-8 rounded-full bg-white border border-blue-200 flex items-center justify-center overflow-hidden">
-                  <ShipWheel className="w-8 h-8 text-blue-600 animate-pulse" />
+                <div className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center overflow-hidden">
+                  <ShipWheel className="w-8 h-8 text-black animate-pulse" />
                 </div>
-                <div className="bg-white border border-blue-100 rounded-2xl px-4 py-2 shadow-sm">
+                <div className="bg-white border border-gray-200 rounded-2xl px-4 py-2 shadow-sm">
                   <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" />
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce delay-100" />
-                    <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce delay-200" />
+                    <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce" />
+                    <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce delay-100" />
+                    <div className="w-2 h-2 bg-gray-600 rounded-full animate-bounce delay-200" />
                   </div>
                 </div>
               </div>
@@ -232,21 +232,21 @@ const Chatbot = () => {
         </div>
 
         {/* Input */}
-        <div className="p-4 border-t border-blue-100 bg-white">
+        <div className="p-4 border-t border-gray-200 bg-white">
           <div className="flex space-x-2">
             <textarea
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Type your message..."
-              className="flex-1 px-4 py-2 border border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 resize-none min-h-[44px] text-sm"
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black resize-none min-h-[44px] text-sm"
               rows={1}
               disabled={isLoading}
             />
             <button
               onClick={handleSendMessage}
               disabled={!inputMessage.trim() || isLoading}
-              className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50"
+              className="px-4 py-2 bg-black text-white rounded-xl hover:bg-gray-800 disabled:opacity-50"
             >
               <Send className="w-5 h-5" />
             </button>
@@ -269,10 +269,10 @@ const Chatbot = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="absolute right-16 bg-white shadow-lg border border-blue-100 rounded-xl px-4 py-2 text-sm text-gray-700 whitespace-nowrap pointer-events-auto"
+            className="absolute right-16 bg-white shadow-lg border border-gray-200 rounded-xl px-4 py-2 text-sm text-gray-700 whitespace-nowrap pointer-events-auto"
           >
-            👋 Hi, I’m Saarthi! How can I help you?
-            <div className="absolute top-1/2 -right-2 w-3 h-3 bg-white border-t border-r border-blue-100 rotate-45 -translate-y-1/2"></div>
+            👋 Hi, I'm Saarthi! How can I help you?
+            <div className="absolute top-1/2 -right-2 w-3 h-3 bg-white border-t border-r border-gray-200 rotate-45 -translate-y-1/2"></div>
           </motion.div>
         )}
 
@@ -282,7 +282,7 @@ const Chatbot = () => {
             ${
               isOpen
                 ? "bg-gray-600 rotate-45"
-                : "bg-gradient-to-r from-blue-600 to-blue-700"
+                : "bg-gradient-to-r from-black to-gray-800"
             }`}
           animate={{ rotate: 360 }}
           transition={{ repeat: Infinity, duration: 12, ease: "linear" }}
@@ -313,3 +313,4 @@ const Chatbot = () => {
 };
 
 export default Chatbot;
+
