@@ -137,7 +137,7 @@ const Services = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-cyan-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
       {/* Navigation */}
       
 
@@ -146,7 +146,7 @@ const Services = () => {
         <div className="max-w-6xl mx-auto text-center">
           <h1 className="text-5xl font-bold text-gray-800 mb-6">
             Our{" "}
-            <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-black to-gray-700 bg-clip-text text-transparent">
               Services
             </span>
           </h1>
@@ -170,8 +170,8 @@ const Services = () => {
                 key={index}
                 className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
               >
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-100 to-cyan-100 rounded-xl flex items-center justify-center mb-6">
-                  <feature.icon className="w-6 h-6 text-blue-600" />
+                <div className="w-12 h-12 bg-gradient-to-r from-gray-100 to-gray-200 rounded-xl flex items-center justify-center mb-6">
+                  <feature.icon className="w-6 h-6 text-black" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-800 mb-4">
                   {feature.title}
@@ -180,7 +180,7 @@ const Services = () => {
                 <div className="space-y-3">
                   {feature.benefits.map((benefit, benefitIndex) => (
                     <div key={benefitIndex} className="flex items-center">
-                      <CheckCircle className="w-4 h-4 text-green-500 mr-3 flex-shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-gray-700 mr-3 flex-shrink-0" />
                       <span className="text-sm text-gray-700">{benefit}</span>
                     </div>
                   ))}
@@ -199,7 +199,7 @@ const Services = () => {
           </h2>
           <div className="grid md:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mx-auto mb-6">
                 <span className="text-white font-bold text-xl">1</span>
               </div>
               <h3 className="text-lg font-semibold text-gray-800 mb-3">
@@ -212,7 +212,7 @@ const Services = () => {
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-cyan-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
                 <span className="text-white font-bold text-xl">2</span>
               </div>
               <h3 className="text-lg font-semibold text-gray-800 mb-3">
@@ -225,7 +225,7 @@ const Services = () => {
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mx-auto mb-6">
                 <span className="text-white font-bold text-xl">3</span>
               </div>
               <h3 className="text-lg font-semibold text-gray-800 mb-3">
@@ -238,7 +238,7 @@ const Services = () => {
             </div>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-cyan-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
                 <span className="text-white font-bold text-xl">4</span>
               </div>
               <h3 className="text-lg font-semibold text-gray-800 mb-3">
@@ -271,13 +271,13 @@ const Services = () => {
                 key={index}
                 className={`relative p-8 rounded-2xl border-2 ${
                   pkg.popular
-                    ? "border-blue-500 bg-blue-50"
+                    ? "border-black bg-gray-50"
                     : "border-gray-200 bg-white"
                 }`}
               >
                 {pkg.popular && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium">
+                    <span className="bg-black text-white px-4 py-2 rounded-full text-sm font-medium">
                       Most Popular
                     </span>
                   </div>
@@ -299,7 +299,7 @@ const Services = () => {
                 <div className="space-y-4 mb-8">
                   {pkg.features.map((feature, featureIndex) => (
                     <div key={featureIndex} className="flex items-center">
-                      <CheckCircle className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
+                      <CheckCircle className="w-5 h-5 text-gray-700 mr-3 flex-shrink-0" />
                       <span className="text-gray-700">{feature}</span>
                     </div>
                   ))}
@@ -308,7 +308,7 @@ const Services = () => {
                 <button
                   className={`w-full py-3 px-6 rounded-xl font-semibold flex items-center justify-center transition-colors ${
                     pkg.popular
-                      ? "bg-blue-600 text-white hover:bg-blue-700"
+                      ? "bg-black text-white hover:bg-gray-800"
                       : "bg-gray-800 text-white hover:bg-gray-900"
                   }`}
                 >
@@ -322,20 +322,20 @@ const Services = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 px-6 bg-gradient-to-r from-blue-600 to-cyan-600">
+      <section className="py-16 px-6 bg-gradient-to-r from-black to-gray-800">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl font-bold text-white mb-6">
             Ready to Transform Your Hiring?
           </h2>
-          <p className="text-xl text-blue-100 mb-8">
+          <p className="text-xl text-gray-300 mb-8">
             Join thousands of companies who have revolutionized their
             recruitment process with HiRekruit.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-blue-600 px-8 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-colors">
+            <button className="bg-white text-black px-8 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-colors">
               Start Free Trial
             </button>
-            <button className="border-2 border-white text-white px-8 py-3 rounded-xl font-semibold hover:bg-white hover:text-blue-600 transition-colors">
+            <button className="border-2 border-white text-white px-8 py-3 rounded-xl font-semibold hover:bg-white hover:text-black transition-colors">
               Schedule Demo
             </button>
           </div>
@@ -348,4 +348,4 @@ const Services = () => {
   );
 };
 
-export default Services;
+export default Services;  

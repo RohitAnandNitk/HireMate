@@ -112,10 +112,10 @@ export default function CustomSignUp() {
     if (!errorList || errorList.length === 0) return null;
 
     return (
-      <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+      <div className="mb-4 p-3 bg-gray-50 border border-gray-300 rounded-lg">
         <div className="flex items-start">
-          <AlertCircle className="h-5 w-5 text-red-400 mt-0.5 mr-2" />
-          <div className="text-sm text-red-600">
+          <AlertCircle className="h-5 w-5 text-gray-600 mt-0.5 mr-2" />
+          <div className="text-sm text-gray-700">
             {errorList.map((error, index) => (
               <div key={index} className="mb-1 last:mb-0">
                 {error.message || error.longMessage || "An error occurred"}
@@ -128,20 +128,20 @@ export default function CustomSignUp() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white via-white to-blue-50 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white via-white to-gray-100 p-4">
       <div className="relative w-full max-w-md">
         {/* CAPTCHA container - required for Clerk */}
         <div id="clerk-captcha" className="mb-4"></div>
 
-        <div className="bg-white/90 backdrop-blur-lg shadow-2xl rounded-3xl p-8 border border-blue-100">
+        <div className="bg-white/90 backdrop-blur-lg shadow-2xl rounded-3xl p-8 border border-gray-200">
           {!pendingVerification ? (
             // Step 1: Sign Up Form
             <div className="space-y-6">
               <div className="text-center">
-                <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full flex items-center justify-center mb-4">
+                <div className="mx-auto w-16 h-16 bg-gradient-to-r from-black to-gray-700 rounded-full flex items-center justify-center mb-4">
                   <UserCheck className="w-8 h-8 text-white" />
                 </div>
-                <h2 className="text-3xl font-bold text-blue-700">Create Account</h2>
+                <h2 className="text-3xl font-bold text-black">Create Account</h2>
                 <p className="text-gray-600 mt-2">Join us and get started today</p>
               </div>
 
@@ -153,7 +153,7 @@ export default function CustomSignUp() {
                   <input
                     type="text"
                     placeholder="Full Name"
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 bg-gray-50"
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black bg-gray-50"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     onKeyPress={(e) => handleKeyPress(e, handleSignUp)}
@@ -166,7 +166,7 @@ export default function CustomSignUp() {
                   <input
                     type="text"
                     placeholder="Company Name"
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 bg-gray-50"
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black bg-gray-50"
                     value={companyName}
                     onChange={(e) => setCompanyName(e.target.value)}
                     onKeyPress={(e) => handleKeyPress(e, handleSignUp)}
@@ -175,7 +175,7 @@ export default function CustomSignUp() {
                 </div>
 
                 <select
-                  className="block w-full px-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 bg-gray-50"
+                  className="block w-full px-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black bg-gray-50"
                   value={role}
                   onChange={(e) => setRole(e.target.value)}
                 >
@@ -189,7 +189,7 @@ export default function CustomSignUp() {
                   <input
                     type="email"
                     placeholder="Email Address"
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 bg-gray-50"
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black bg-gray-50"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     onKeyPress={(e) => handleKeyPress(e, handleSignUp)}
@@ -202,7 +202,7 @@ export default function CustomSignUp() {
                   <input
                     type={showPassword ? "text" : "password"}
                     placeholder="Password"
-                    className="block w-full pl-10 pr-10 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 bg-gray-50"
+                    className="block w-full pl-10 pr-10 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black bg-gray-50"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     onKeyPress={(e) => handleKeyPress(e, handleSignUp)}
@@ -224,14 +224,14 @@ export default function CustomSignUp() {
                 <button
                   onClick={handleSignUp}
                   disabled={isLoading || !name || !companyName || !email || !password}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300 disabled:opacity-50 shadow-lg"
+                  className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300 disabled:opacity-50 shadow-lg"
                 >
                   {isLoading ? "Creating Account..." : "Create Account"}
                 </button>
 
                 <p className="text-center text-sm text-gray-600 mt-3">
                   Already have an account?{" "}
-                  <a href="/signin" className="text-blue-600 font-medium hover:underline">
+                  <a href="/signin" className="text-black font-medium hover:underline">
                     Sign in
                   </a>
                 </p>
@@ -241,10 +241,10 @@ export default function CustomSignUp() {
             // Step 2: Email Verification Form
             <div className="space-y-6">
               <div className="text-center">
-                <div className="mx-auto w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mb-4">
+                <div className="mx-auto w-16 h-16 bg-black rounded-full flex items-center justify-center mb-4">
                   <Mail className="w-8 h-8 text-white" />
                 </div>
-                <h2 className="text-3xl font-bold text-blue-700">Verify Email</h2>
+                <h2 className="text-3xl font-bold text-black">Verify Email</h2>
                 <p className="text-gray-600 mt-2">
                   We've sent a verification code to <br />
                   <span className="font-medium text-gray-800">{email}</span>
@@ -256,7 +256,7 @@ export default function CustomSignUp() {
               <input
                 type="text"
                 placeholder="Enter 6-digit code"
-                className="block w-full px-4 py-3 text-center text-2xl font-mono border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 bg-gray-50"
+                className="block w-full px-4 py-3 text-center text-2xl font-mono border border-gray-200 rounded-xl focus:ring-2 focus:ring-black bg-gray-50"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 onKeyPress={(e) => handleKeyPress(e, handleVerify)}
@@ -267,7 +267,7 @@ export default function CustomSignUp() {
               <button
                 onClick={handleVerify}
                 disabled={isLoading || !code}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300 disabled:opacity-50 shadow-lg"
+                className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300 disabled:opacity-50 shadow-lg"
               >
                 {isLoading ? "Verifying..." : "Verify & Continue"}
               </button>
@@ -277,7 +277,7 @@ export default function CustomSignUp() {
                   Didn't receive the code?{" "}
                   <button
                     onClick={resendVerificationCode}
-                    className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
+                    className="font-medium text-black hover:text-gray-700 transition-colors"
                     disabled={isLoading}
                   >
                     Resend
@@ -291,3 +291,4 @@ export default function CustomSignUp() {
     </div>
   );
 }
+
