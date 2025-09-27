@@ -14,6 +14,7 @@ import Drives from "./components/Drives";
 
 import VapiInterviewPage from "./pages/VapiInterviewPage";
 import InterviewStartPage from "./pages/InterviewStartPage";
+import InterviewCompletionPage from "./pages/InterviewCompletionPage";
 
 import About from "./pages/About";
 import Services from "./pages/Services";
@@ -139,31 +140,15 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
-
-        {/* Interview Pages - no Chatbot */}
+        <Route path="/mockinterview/:driveId" element={<InterviewPage />} />
+        <Route path="/mockinterview/test" element={<VapiInterviewPage />} />
         <Route
-          path="/mockinterview/:id"
-          element={
-            <ProtectedRoute>
-              <InterviewPage />
-            </ProtectedRoute>
-          }
+          path="/start-interview/:driveId"
+          element={<InterviewStartPage />}
         />
         <Route
-          path="/mockinterview/test"
-          element={
-            <ProtectedRoute>
-              <VapiInterviewPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/interview_start"
-          element={
-            <ProtectedRoute>
-              <InterviewStartPage />
-            </ProtectedRoute>
-          }
+          path="/interview-completion"
+          element={<InterviewCompletionPage />}
         />
       </Routes>
 

@@ -18,10 +18,10 @@ def evaluate_interview():
     if not data or "resumeText" not in data or "transcript" not in data:
         return {"error": "Missing resumeText or transcript"}, 400
     return interview_controller.evaluate_interview_controller(
-        data["resumeText"], data["transcript"]
+        data["resumeText"], data["transcript"], data["driveId"]
     )
 #   
-@interview_bp.route("/candidate/<string:candidate_id>", methods=["GET"])
-def get_candidate(candidate_id):
-    return interview_controller.get_candidate_info(candidate_id)
+@interview_bp.route("/candidate/<string:drive_candidate_id>", methods=["GET"])
+def get_candidate(drive_candidate_id):
+    return interview_controller.get_candidate_info(drive_candidate_id)
 

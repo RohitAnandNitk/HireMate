@@ -5,14 +5,15 @@ import { motion } from "framer-motion";
 import { getMockInterviewPrompt } from "../Prompts/MockInterviewPrompt";
 import config from "../Config/BaseURL";
 const BASE_URL = config.BASE_URL;
+import { useParams } from "react-router-dom";
 
 const InterviewStartPage = () => {
   const navigate = useNavigate();
-  const [resumeData, setResumeData] = useState(null);
+  const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const candidateId = "68c0651ef460c079cb7ee2b9"; // Example hardcoded ID
+  const { driveId } = useParams();
+  const drive_candidate_id = driveId;
 
   // Fetch candidate data
   useEffect(() => {
@@ -22,7 +23,7 @@ const InterviewStartPage = () => {
         setError(null);
 
         const response = await fetch(
-          `${BASE_URL}/api/interview/candidate/${candidateId}`
+          `${BASE_URL}/api/interview/candidate/${drive_candidate_id}`
         );
 
         if (!response.ok) {
@@ -30,7 +31,7 @@ const InterviewStartPage = () => {
         }
 
         const data = await response.json();
-        setResumeData(data);
+        setUserData(data.candidate_info);
         console.log("Fetched candidate data:", data);
       } catch (error) {
         console.error("Error fetching candidate data:", error);
@@ -41,16 +42,16 @@ const InterviewStartPage = () => {
     };
 
     fetchCandidateData();
-  }, [candidateId]);
+  }, [drive_candidate_id]);
 
   // Handle start interview and navigate
   const handleStartInterview = () => {
-    if (resumeData && resumeData.resume_content) {
-      const prompt = getMockInterviewPrompt(resumeData.resume_content);
+    if (userData && userData.resume_content) {
+      const prompt = getMockInterviewPrompt(userData.resume_content);
 
       // Navigate to /mockinterview/:id and pass state
-      navigate(`/mockinterview/${candidateId}`, {
-        state: { resumeData, prompt },
+      navigate(`/mockinterview/${drive_candidate_id}`, {
+        state: { userData: userData, prompt },
       });
     }
   };
@@ -119,7 +120,7 @@ const InterviewStartPage = () => {
         )}
 
         {/* Candidate Info & Start */}
-        {!isLoading && !error && resumeData && (
+        {!isLoading && !error && userData && (
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -134,24 +135,24 @@ const InterviewStartPage = () => {
                 </div>
                 <div className="flex-1">
                   <h2 className="text-xl font-semibold text-gray-900 mb-1">
-                    {resumeData.name || "Candidate"}
+                    {userData.name || "Candidate"}
                   </h2>
-                  <p className="text-gray-600 mb-3">{resumeData.email}</p>
+                  <p className="text-gray-600 mb-3">{userData.email}</p>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="flex items-center gap-2">
                       <FileText className="w-4 h-4 text-gray-500" />
                       <span className="text-sm text-gray-600">
                         Resume:{" "}
-                        {resumeData.resume_content ? "Loaded" : "Not available"}
+                        {userData.resume_content ? "Loaded" : "Not available"}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4 text-gray-500" />
                       <span className="text-sm text-gray-600">
                         Created:{" "}
-                        {resumeData.created_at
-                          ? new Date(resumeData.created_at).toLocaleDateString()
+                        {userData.created_at
+                          ? new Date(userData.created_at).toLocaleDateString()
                           : "Unknown"}
                       </span>
                     </div>
@@ -169,7 +170,7 @@ const InterviewStartPage = () => {
             </div>
 
             {/* Resume Preview */}
-            {resumeData.resume_content && (
+            {/* {userData.resume_content && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -181,15 +182,15 @@ const InterviewStartPage = () => {
                 </h3>
                 <div className="bg-gray-50 rounded-lg p-4 max-h-40 overflow-y-auto">
                   <p className="text-sm text-gray-700 whitespace-pre-wrap">
-                    {resumeData.resume_content.substring(0, 500)}
-                    {resumeData.resume_content.length > 500 && "..."}
+                    {userData.resume_content.substring(0, 500)}
+                    {userData.resume_content.length > 500 && "..."}
                   </p>
                 </div>
                 <div className="mt-2 text-sm text-gray-600">
-                  Total characters: {resumeData.resume_content.length}
+                  Total characters: {userData.resume_content.length}
                 </div>
               </motion.div>
-            )}
+            )} */}
 
             {/* Start Interview Section */}
             <motion.div
@@ -203,17 +204,17 @@ const InterviewStartPage = () => {
               </h3>
               <motion.button
                 onClick={handleStartInterview}
-                disabled={!resumeData.resume_content}
+                disabled={!userData.resume_content}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className={`px-8 py-4 rounded-lg font-semibold flex items-center gap-3 mx-auto transition-all ${
-                  resumeData.resume_content
+                  userData.resume_content
                     ? "bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl"
                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
                 }`}
               >
                 <Play className="w-6 h-6" />
-                Start AI Interview
+                Start Interview
               </motion.button>
             </motion.div>
           </motion.div>
