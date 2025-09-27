@@ -12,6 +12,7 @@ import Drives from "./components/Drives";
 
 import VapiInterviewPage from "./pages/VapiInterviewPage";
 import InterviewStartPage from "./pages/InterviewStartPage";
+import InterviewCompletionPage from "./pages/InterviewCompletionPage";
 
 import About from "./pages/About";
 import Services from "./pages/Services";
@@ -95,8 +96,16 @@ function App() {
             </Layout>
           }
         />
-        <Route path="/mockinterview/:id" element={<InterviewPage />} />
+        <Route path="/mockinterview/:driveId" element={<InterviewPage />} />
         <Route path="/mockinterview/test" element={<VapiInterviewPage />} />
+        <Route
+          path="/start-interview/:driveId"
+          element={<InterviewStartPage />}
+        />
+        <Route
+          path="/interview-completion"
+          element={<InterviewCompletionPage />}
+        />
       </Routes>
 
       <Chatbot />

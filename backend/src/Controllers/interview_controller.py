@@ -62,7 +62,7 @@ def upload_resume_controller(file):
         return jsonify({"error": str(e)}), 500
 
 
-def evaluate_interview_controller(resume_text, transcript, candidate_email):
+def evaluate_interview_controller(resume_text, transcript, driveId):
     print("Evaluating interview Controller ...")
 
     try:
@@ -83,27 +83,27 @@ def evaluate_interview_controller(resume_text, transcript, candidate_email):
         decision = result.get("decision", "REJECT")
         feedback = result.get("feedback", "No feedback provided")
 
-        # Find the candidate in DB
-        candidate = db.candidates.find_one({"email": candidate_email})
-        if not candidate:
-            return jsonify({"error": "Candidate not found"}), 404
+        # here we will update drive candidate and update the interview_completed and selected field status in db
+        if driveId:
+            drive_candidate = db.drive_candidates.find_one({"_id": ObjectId(driveId)}, sort=[("created_at", -1)])
+            if drive_candidate:
+                db.drive_candidates.update_one(
+                    {"_id": drive_candidate["_id"]},
+                    {
+                        "$set": {
+                            "interview_completed": "yes",
+                            "selected": "yes" if decision == "SELECT" else "no",
+                            "feedback": feedback,
+                            "updated_at": datetime.utcnow()
+                        }
+                    }
+                )
+            else:
+                print(f"No drive candidate found for driveId: {driveId}")
+        else:
+            print("No driveId provided; skipping database update and email notification.")
 
-        # Update candidate record
-        update_data = {
-            "interview_completed": "yes",
-            "selected": decision,
-            "updated_at": datetime.utcnow()
-        }
-
-        if decision == "REJECT":
-            update_data["feedback"] = feedback
-
-        db.candidates.update_one({"email": candidate_email}, {"$set": update_data})
-        print("Candidate updated in database.")
-
-        # Send email based on decision
-        emailing_agent.send_final_decision_email(candidate, decision, feedback)
-        print("Final decision email sent.")
+       
         return jsonify(result)
 
     except Exception as e:
@@ -112,12 +112,16 @@ def evaluate_interview_controller(resume_text, transcript, candidate_email):
 
 from bson import ObjectId
 
-def get_candidate_info(candidate_id):
+def get_candidate_info(drive_candidate_id):
     try:
-        candidate = db["candidates"].find_one({"_id": ObjectId(candidate_id)}, {"_id": 0})
-        if not candidate:
-            return jsonify({"error": "Candidate not found"}), 404
-        return jsonify(candidate), 200
+        # here we fetch drive_candidate using drive_candidate_id
+        drive_candidate = db.drive_candidates.find_one({"_id": ObjectId(drive_candidate_id)}, {"_id": 0})
+        # we need the candidte details as well
+        candidate_info = db.candidates.find_one({"_id": ObjectId(drive_candidate['candidate_id'])}, {"_id": 0, "password": 0})
+        drive_candidate['candidate_info'] = candidate_info
+        if not drive_candidate:
+            return jsonify({"error": "Drive Candidate not found"}), 404
+        return jsonify(drive_candidate), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
