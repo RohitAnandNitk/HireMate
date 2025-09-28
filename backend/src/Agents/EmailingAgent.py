@@ -41,32 +41,47 @@ class EmailingAgent:
 
         company_name = "HiRekruit"
 
-        # here we will fetch the candidates from the database based on the drive_id
-        
+        # Get all candidates for this drive
         candidates = list(db.drive_candidates.find({"drive_id": drive_id}))
 
+        # Extract all candidate IDs
+        candidate_ids = [ObjectId(person["candidate_id"]) for person in candidates]
+
+        # Fetch all candidate info in one query
+        candidate_info_map = {
+            str(c["_id"]): c
+            for c in db.candidates.find({"_id": {"$in": candidate_ids}})
+        }
+
         for person in candidates:
-            # here we first get info of candiddate then we need their email and name
             candidate_id = person["candidate_id"]
-            candidate_info = db.candidates.find_one({"_id": ObjectId(candidate_id)})
-            # print("Processing candidate:", candidate_info)
+            candidate_info = candidate_info_map.get(candidate_id)
+
             if not candidate_info:
-                print(f"Candidate info not found for ID: {person['candidate_id']}")
+                print(f"Candidate info not found for ID: {candidate_id}")
                 continue
 
+            # Prepare email
             if person["resume_shortlisted"] == "yes":
-                body = templates["shortlisted"].format(name=candidate_info["name"], company_name=company_name)
-                self.email_service.send_email(candidate_info["email"], "Shortlist Notification", body)
+                body = templates["shortlisted"].format(
+                    name=candidate_info["name"], company_name=company_name
+                )
+                self.email_service.send_email(
+                    candidate_info["email"], "Shortlist Notification", body
+                )
             elif person["resume_shortlisted"] == "no":
-                body = templates["not_shortlisted"].format(name=candidate_info["name"], company_name=company_name)
-                self.email_service.send_email(candidate_info["email"], "Application Status", body)
+                body = templates["not_shortlisted"].format(
+                    name=candidate_info["name"], company_name=company_name
+                )
+                self.email_service.send_email(
+                    candidate_info["email"], "Application Status", body
+                )
 
-            # now we will update the email_sent status in drive_candidates collection
+            # Update email_sent status
             db.drive_candidates.update_one(
                 {"_id": person["_id"]},
                 {"$set": {"email_sent": "yes"}}
             )
-
 
         print("Email notifications sent.")
 
