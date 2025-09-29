@@ -133,7 +133,7 @@ const Dashboard = () => {
 
       {/* Show job details if job data exists */}
       {jobData && (
-        <div className="bg-white rounded-lg shadow-sm border p-4 mb-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-300 p-4 mb-6">
           <h2 className="text-lg font-medium text-gray-900 mb-3">
             Job Details
           </h2>

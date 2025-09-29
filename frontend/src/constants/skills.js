@@ -103,7 +103,6 @@ const PRESET_SKILLS = [
   "Ubuntu",
 
   // Data Science & AI/ML
-  "Python",
   "R",
   "Pandas",
   "NumPy",

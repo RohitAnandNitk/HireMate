@@ -101,9 +101,9 @@ const DriveCard = ({ drive, onView }) => {
   const daysRemaining = getDaysRemaining();
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border hover:shadow-md transition-shadow duration-200">
+    <div className="bg-white rounded-lg shadow-lg border border-gray-300 hover:shadow-md transition-shadow duration-200">
       {/* Header */}
-      <div className="p-4 border-b">
+      <div className="p-4 border-b border-gray-300">
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
@@ -201,7 +201,7 @@ const DriveCard = ({ drive, onView }) => {
       </div>
 
       {/* Footer */}
-      <div className="px-4 py-3 bg-gray-50 rounded-b-lg border-t">
+      <div className="px-4 py-3 bg-gray-50 rounded-b-lg border border-gray-300">
         <div className="text-xs text-gray-500">
           Created on {formatDate(created_at)}
         </div>

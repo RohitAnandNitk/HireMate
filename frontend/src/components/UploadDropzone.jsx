@@ -99,7 +99,7 @@ const UploadDropzone = ({ onAddFiles }) => {
       onDrop={onDrop}
       onDragOver={onDragOver}
       onDragLeave={onDragLeave}
-      className={`rounded-xl border-2 border-dashed ${
+      className={`rounded-xl border-2 border-dashed border-gray-400 ${
         dragging
           ? "border-emerald-400 bg-emerald-50"
           : "border-gray-200 bg-white"
