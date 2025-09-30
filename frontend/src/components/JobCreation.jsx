@@ -10,6 +10,8 @@ const BASE_URL = config.BASE_URL;
 const JobCreation = () => {
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(false); // ✅ added loading state
+
   const [jobData, setJobData] = useState({
     company_id: "comp_01",
     job_id: "",
@@ -56,6 +58,9 @@ const JobCreation = () => {
   };
 
   const handleSubmit = async () => {
+    if (loading) return; // ✅ prevent multiple clicks
+    setLoading(true);
+
     console.log("Inside submission");
 
     // Validate required fields
@@ -68,18 +73,22 @@ const JobCreation = () => {
       !end_date ||
       !location?.trim()
     ) {
-      return toast.error("Please fill in all required fields", {
+      toast.error("Please fill in all required fields", {
         position: "top-right",
         autoClose: 3000,
       });
+      setLoading(false);
+      return;
     }
 
     // Validate rounds
     if (rounds.some((round) => !round.type?.trim())) {
-      return toast.error("Please specify type for all rounds", {
+      toast.error("Please specify type for all rounds", {
         position: "top-right",
         autoClose: 3000,
       });
+      setLoading(false);
+      return;
     }
 
     console.log("Submitting job data:", jobData);
@@ -116,6 +125,8 @@ const JobCreation = () => {
           autoClose: 3000,
         }
       );
+    } finally {
+      setLoading(false); // ✅ reset loading in both success/error
     }
   };
 
@@ -138,7 +149,7 @@ const JobCreation = () => {
         </h1>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border p-6 space-y-6">
+      <div className="bg-white rounded-lg shadow-lg  border border-gray-300 p-6 space-y-6">
         {/* Job ID */}
         <div>
           <label className="block text-gray-700 mb-2 font-medium">
@@ -149,7 +160,7 @@ const JobCreation = () => {
             value={jobData.job_id}
             onChange={(e) => handleInputChange("job_id", e.target.value)}
             placeholder="Enter unique job ID, e.g., JOB-2024-001"
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-black"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
           />
         </div>
 
@@ -163,7 +174,7 @@ const JobCreation = () => {
             value={jobData.role}
             onChange={(e) => handleInputChange("role", e.target.value)}
             placeholder="Enter role, e.g., Software Engineer"
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-black"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
           />
         </div>
 
@@ -175,7 +186,7 @@ const JobCreation = () => {
           <SkillFilter
             skills={jobData.skills}
             setSkills={(skills) => handleInputChange("skills", skills)}
-            className="mb-2 rounded-md border ring-1 focus:ring-black"
+            className="mb-2 rounded-md border border-gray-300 ring-1 focus:ring-black"
           />
         </div>
 
@@ -197,7 +208,7 @@ const JobCreation = () => {
             {jobData.rounds.map((round, index) => (
               <div
                 key={index}
-                className="flex gap-3 items-center p-3 border rounded-md bg-gray-50"
+                className="flex gap-3 items-center p-3 border border-gray-300 rounded-md bg-gray-50"
               >
                 <div className="flex-1">
                   <label className="block text-sm text-gray-600 mb-1">
@@ -208,7 +219,7 @@ const JobCreation = () => {
                     onChange={(e) =>
                       handleRoundChange(index, "type", e.target.value)
                     }
-                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-black"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
                   >
                     {roundTypes.map((type) => (
                       <option key={type} value={type}>
@@ -228,7 +239,7 @@ const JobCreation = () => {
                       handleRoundChange(index, "description", e.target.value)
                     }
                     placeholder="Brief description of the round"
-                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-black"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
                   />
                 </div>
                 {jobData.rounds.length > 1 && (
@@ -254,7 +265,7 @@ const JobCreation = () => {
               type="date"
               value={jobData.start_date}
               onChange={(e) => handleInputChange("start_date", e.target.value)}
-              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-black"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
             />
           </div>
           <div>
@@ -266,7 +277,7 @@ const JobCreation = () => {
               value={jobData.end_date}
               onChange={(e) => handleInputChange("end_date", e.target.value)}
               min={jobData.start_date}
-              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-black"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
             />
           </div>
         </div>
@@ -281,7 +292,7 @@ const JobCreation = () => {
             value={jobData.location}
             onChange={(e) => handleInputChange("location", e.target.value)}
             placeholder="Enter location, e.g., Bangalore, Remote, Hybrid"
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-black"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
           />
         </div>
 
@@ -289,9 +300,12 @@ const JobCreation = () => {
         <div className="flex justify-end pt-4">
           <button
             onClick={handleSubmit}
-            className="px-6 py-2 bg-gray-900 text-white rounded-md hover:bg-black focus:outline-none focus:ring-2 focus:ring-gray-500"
+            disabled={loading} // ✅ disable when loading
+            className={`px-6 py-2 bg-gray-900 text-white rounded-md hover:bg-black focus:outline-none focus:ring-2 focus:ring-gray-500 ${
+              loading ? "opacity-70 cursor-not-allowed" : ""
+            }`}
           >
-            Create Drive & Continue to Dashboard
+            {loading ? "Creating..." : "Create Drive"}
           </button>
         </div>
       </div>

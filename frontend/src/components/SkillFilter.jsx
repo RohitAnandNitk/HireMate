@@ -67,12 +67,12 @@ const SkillFilter = ({ skills, setSkills }) => {
             {skills.map((skill) => (
               <span
                 key={skill}
-                className="inline-flex items-center gap-2 text-sm bg-emerald-100 text-emerald-800 border border-emerald-200 px-3 py-1.5 rounded-full shadow-sm hover:shadow-md transition-all duration-200"
+                className="inline-flex items-center gap-2 text-sm bg-black text-white border  px-3 py-1.5 rounded-full shadow-sm hover:shadow-md transition-all duration-200"
               >
                 <span className="font-medium">{skill}</span>
                 <button
                   onClick={() => removeSkill(skill)}
-                  className="text-emerald-600 hover:text-emerald-800 hover:bg-emerald-200 rounded-full w-4 h-4 flex items-center justify-center text-xs font-bold transition-all duration-150"
+                  className="text-white hover:text-black hover:bg-white  rounded-full w-4 h-4 flex items-center justify-center text-xs font-bold transition-all duration-150"
                 >
                   ×
                 </button>

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Plus, Search, Filter, Briefcase } from "lucide-react";
 import DriveCard from "./DriveCard";
 import Loader from "./Loader";
-import {toast , ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useUser } from "@clerk/clerk-react";
 
@@ -85,7 +85,7 @@ const Drives = () => {
       } catch (err) {
         console.error("Error fetching drives:", err.message);
         //use toast here
-          toast.error("Could not load drives. Please try again.");
+        toast.error("Could not load drives. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -158,7 +158,7 @@ const Drives = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-white rounded-lg shadow-sm border p-4">
+        <div className="bg-white rounded-lg shadow-lg border border-gray-300 p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Total Drives</p>
@@ -171,7 +171,7 @@ const Drives = () => {
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-sm border p-4">
+        <div className="bg-white rounded-lg shadow-lg border border-gray-300 p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Ongoing Drives</p>
@@ -186,7 +186,7 @@ const Drives = () => {
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-lg shadow-sm border p-4">
+        <div className="bg-white rounded-lg shadow-lg border border-gray-300 p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-600">Completed Drives</p>
@@ -215,7 +215,7 @@ const Drives = () => {
             placeholder="Search drives by role, job ID, or location..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
           />
         </div>
         <div className="flex items-center gap-2">
@@ -223,7 +223,7 @@ const Drives = () => {
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
+            className="px-4 py-2 border border-gray-300  rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
           >
             <option value="all">All Status</option>
             {/* here we have to handle more caase like resumeuplaoded , emailsent and others how can we */}
