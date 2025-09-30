@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Plus, Search, Filter, Briefcase } from "lucide-react";
 import DriveCard from "./DriveCard";
 import Loader from "./Loader";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useUser } from "@clerk/clerk-react";
 
@@ -12,15 +12,14 @@ const BASE_URL = config.BASE_URL;
 
 const Drives = () => {
   const { user } = useUser(); 
-  console.log("Email",user.emailAddresses[0]?.emailAddress);
   const navigate = useNavigate();
   const [drives, setDrives] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all"); // all, ongoing, finished
   const [loading, setLoading] = useState(true);
 
-  // we have to bring the company id form the current user(hr)
-  const [companyId, setCompanyId] = useState("comp_01");
+  // company id will be fetched dynamically for the HR
+  const [companyId, setCompanyId] = useState(null);
 
   // Fetch HR info when component mounts
   useEffect(() => {
@@ -43,18 +42,17 @@ const Drives = () => {
         const hrData = await response.json();
         console.log("=".repeat(50));
         console.log("HR INFO FROM FRONTEND:");
-        console.log("=".repeat(50));
         console.log("Full HR Data:", hrData);
         console.log("Email:", hrData.email);
         console.log("Name:", hrData.name);
         console.log("Company ID:", hrData.company_id);
         console.log("Role:", hrData.role);
-        console.log("All fields:", Object.keys(hrData));
         console.log("=".repeat(50));
 
         // Update companyId if available in HR info
         if (hrData.company_id) {
           setCompanyId(hrData.company_id);
+          console.log("Set companyId to:", hrData.company_id);
         }
       } catch (err) {
         console.error("Error fetching HR info:", err.message);
@@ -72,6 +70,7 @@ const Drives = () => {
       try {
         setLoading(true);
 
+        if (!companyId) return; // wait until companyId is set
         const response = await fetch(
           `${BASE_URL}/api/drive/company/${companyId}`
         );
@@ -84,14 +83,15 @@ const Drives = () => {
         setDrives(data.drives); // assuming API returns array of drives
       } catch (err) {
         console.error("Error fetching drives:", err.message);
-        //use toast here
         toast.error("Could not load drives. Please try again.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchDrives();
+    if (companyId) {
+      fetchDrives();
+    }
   }, [companyId]);
 
   // Filter drives based on search and status
@@ -101,24 +101,21 @@ const Drives = () => {
       drive.job_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       drive.location.toLowerCase().includes(searchTerm.toLowerCase());
 
+    const ongoingStatuses = ["resumeUploaded", "resumeShortlisted", "emailSent", "InterviewScheduled"];
     const matchesStatus =
-      filterStatus === "all" || drive.status === filterStatus;
+      filterStatus === "all" || 
+      (filterStatus === "ongoing" && ongoingStatuses.includes(drive.status)) ||
+      drive.status === filterStatus;
 
     return matchesSearch && matchesStatus;
   });
 
   const handleCreateNewDrive = () => {
-    // here we have to navigate to the progress page.....
     navigate("/job-creation");
   };
 
   const handleViewDrive = (driveId) => {
-    // Navigate to drive details or dashboard with drive data
     console.log("Viewing drive:", driveId);
-    // You can navigate to a specific drive dashboard or details page
-    // navigate(`/drive/${driveId}`);
-
-    //for testing purpose we are navigating to process (currently dont have drive id)
     navigate(`/process/${driveId}`);
   };
 
@@ -226,7 +223,6 @@ const Drives = () => {
             className="px-4 py-2 border border-gray-300  rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
           >
             <option value="all">All Status</option>
-            {/* here we have to handle more caase like resumeuplaoded , emailsent and others how can we */}
             <option
               value={
                 "resumeUploaded" ||
