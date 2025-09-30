@@ -5,11 +5,14 @@ import DriveCard from "./DriveCard";
 import Loader from "./Loader";
 import {toast , ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useUser } from "@clerk/clerk-react";
 
 import config from "../Config/BaseURL";
 const BASE_URL = config.BASE_URL;
 
 const Drives = () => {
+  const { user } = useUser(); 
+  console.log("Email",user.emailAddresses[0]?.emailAddress);
   const navigate = useNavigate();
   const [drives, setDrives] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -18,6 +21,51 @@ const Drives = () => {
 
   // we have to bring the company id form the current user(hr)
   const [companyId, setCompanyId] = useState("comp_01");
+
+  // Fetch HR info when component mounts
+  useEffect(() => {
+    const fetchHRInfo = async () => {
+      try {
+        const email = user?.emailAddresses[0]?.emailAddress;
+        if (!email) {
+          console.log("No email found for user");
+          return;
+        }
+
+        const response = await fetch(
+          `${BASE_URL}/api/drive/hr-info?email=${encodeURIComponent(email)}`
+        );
+        
+        if (!response.ok) {
+          throw new Error("Failed to fetch HR info");
+        }
+
+        const hrData = await response.json();
+        console.log("=".repeat(50));
+        console.log("HR INFO FROM FRONTEND:");
+        console.log("=".repeat(50));
+        console.log("Full HR Data:", hrData);
+        console.log("Email:", hrData.email);
+        console.log("Name:", hrData.name);
+        console.log("Company ID:", hrData.company_id);
+        console.log("Role:", hrData.role);
+        console.log("All fields:", Object.keys(hrData));
+        console.log("=".repeat(50));
+
+        // Update companyId if available in HR info
+        if (hrData.company_id) {
+          setCompanyId(hrData.company_id);
+        }
+      } catch (err) {
+        console.error("Error fetching HR info:", err.message);
+        toast.error("Could not load HR information.");
+      }
+    };
+
+    if (user) {
+      fetchHRInfo();
+    }
+  }, [user]);
 
   useEffect(() => {
     const fetchDrives = async () => {
@@ -44,7 +92,7 @@ const Drives = () => {
     };
 
     fetchDrives();
-  }, []);
+  }, [companyId]);
 
   // Filter drives based on search and status
   const filteredDrives = drives.filter((drive) => {

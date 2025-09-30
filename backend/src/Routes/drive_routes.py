@@ -1,12 +1,13 @@
 # Updated drive_routes.py
 
-from flask import Blueprint
+from flask import Blueprint, jsonify, request  # Add jsonify and request imports
 from src.Controllers.drive_controller import (
     create_drive_controller, 
     get_drives_by_company, 
     update_drive_status,
-    get_drive_by_id,      # Add this import
-    get_all_drives        # Add this import (optional)
+    get_drive_by_id,
+    get_all_drives,
+    get_hr_info  # Add this import if get_hr_info is in drive_controller
 )
 
 drive_bp = Blueprint("drive_bp", __name__, url_prefix="/api/drive")
@@ -46,3 +47,15 @@ def get_drive_status(driveId):
         }, 200
     else:
         return response, status_code
+    
+@drive_bp.route("/hr-info", methods=["GET"])
+def hr_info_route():
+    email = request.args.get("email")
+    if not email:
+        return jsonify({"error": "Email is required"}), 400
+
+    hr_info = get_hr_info(email)
+    if not hr_info:
+        return jsonify({"error": "HR not found"}), 404
+
+    return jsonify(hr_info), 200

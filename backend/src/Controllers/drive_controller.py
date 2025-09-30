@@ -204,3 +204,22 @@ def update_drive_status(drive_id):
     except Exception as e:
         print(f"Error in update_drive_status: {str(e)}")
         return jsonify({"error": f"Server error: {str(e)}"}), 500
+
+def get_hr_info(hr_mail):
+    """
+    Fetch HR info from the User collection by email.
+    """
+    try:
+        user = db.users.find_one({"email": hr_mail})  # Query MongoDB
+
+        if not user:
+            return None
+        
+        # Convert ObjectId to string for JSON serialization
+        user["_id"] = str(user["_id"])
+        return user
+
+    except Exception as e:
+        print(f"Error fetching HR info: {str(e)}")
+        return None
+    
