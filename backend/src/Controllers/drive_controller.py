@@ -11,6 +11,8 @@ from src.Orchestrator.HiringOrchestrator import (
     send_final_selection_emails
 )
 
+from src.Tasks.tasks import email_candidates_task, send_final_selection_emails_task, schedule_interviews_task
+
 # Cretate a new drive
 def create_drive_controller():
     print("Create Drive Controller called.")
@@ -135,8 +137,6 @@ def update_drive_status(drive_id):
         data = request.get_json()
         new_status = data.get("status")
 
-        # print(f"New status: {new_status}")
-
         # Validate status
         if new_status not in DriveStatus._value2member_map_:
             return jsonify({
@@ -148,40 +148,34 @@ def update_drive_status(drive_id):
         if not drive:
             return jsonify({"error": "Drive not found"}), 404
         
-        # Here we first fetch the drive details with driveid(role and skills).
+        # Fetch drive details
         drive_details = db.drives.find_one({"_id": object_id}, {"role": 1, "skills": 1})
         job_role = drive_details.get("role", "")
         keywords = drive_details.get("skills", [])
 
-        # print(f"Drive details - Role: {job_role}, Skills: {keywords}")
-
-        # now fetch all the candidates associated with this driveid
+        # Fetch candidates
         candidates = list(db.drive_candidates.find({"drive_id": drive_id}))
-        # print("Found candidates for this drive:", candidates)
 
-        # Here for different status we need to call the Agents for the respective tasks then update the status
-
+        # Handle different statuses
         if new_status == DriveStatus.RESUME_SHORTLISTED:
             print("Calling shortlisting agent...")
-            # Call your shortlisting agent here
             shortlist_result = shortlist_candidates(candidates, keywords, job_role)
-            # print(f"Shortlisting result: {shortlist_result}")
 
         elif new_status == DriveStatus.EMAIL_SENT:
-            print("Calling email sending agent...")
-            # Call your email sending agent here
-            email_candidates(drive_id)
+            print("Queueing email sending task...")
+            # Call task asynchronously
+            task_result = email_candidates_task.delay(drive_id)
+            print(f"Task queued with ID: {task_result.id}")
 
         elif new_status == DriveStatus.INTERVIEW_SCHEDULED:
-            print("Calling interview scheduling agent...")
-            # Call your interview scheduling agent here
-            schedule_interviews(drive_id)
-
+            print("Queueing interview scheduling task...")
+            task_result = schedule_interviews_task.delay(drive_id)
+            print(f"Task queued with ID: {task_result.id}")
 
         elif new_status == DriveStatus.SELECTION_EMAIL_SENT:
-            print("Calling selection email agent...")
-            # Call your selection email agent here
-            send_final_selection_emails(drive_id)
+            print("Queueing final selection emails task...")
+            task_result = send_final_selection_emails_task.delay(drive_id)
+            print(f"Task queued with ID: {task_result.id}")
 
         # Update the drive status
         result = db.drives.update_one(
@@ -203,4 +197,6 @@ def update_drive_status(drive_id):
         
     except Exception as e:
         print(f"Error in update_drive_status: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return jsonify({"error": f"Server error: {str(e)}"}), 500
