@@ -1,27 +1,85 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useUser } from "@clerk/clerk-react";
 
 import config from "../Config/BaseURL";
 import SkillFilter from "./SkillFilter";
 const BASE_URL = config.BASE_URL;
 
 const JobCreation = () => {
+  const { user } = useUser();
   const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(false); // ✅ added loading state
+  const [loading, setLoading] = useState(false);
+  const [companyId, setCompanyId] = useState(null);
+  const [fetchingHRInfo, setFetchingHRInfo] = useState(true);
 
   const [jobData, setJobData] = useState({
-    company_id: "comp_01",
+    company_id: "",
     job_id: "",
     role: "",
     rounds: [{ type: "Technical", description: "" }],
     start_date: "",
     end_date: "",
     location: "",
-    skills: "", // Added skills field as string
+    skills: "",
   });
+
+  // Fetch HR info when component mounts
+  useEffect(() => {
+    const fetchHRInfo = async () => {
+      try {
+        const email = user?.emailAddresses[0]?.emailAddress;
+        if (!email) {
+          console.log("No email found for user");
+          toast.error("Unable to fetch user information");
+          setFetchingHRInfo(false);
+          return;
+        }
+
+        const response = await fetch(
+          `${BASE_URL}/api/drive/hr-info?email=${encodeURIComponent(email)}`
+        );
+        
+        if (!response.ok) {
+          throw new Error("Failed to fetch HR info");
+        }
+
+        const hrData = await response.json();
+        console.log("=".repeat(50));
+        console.log("HR INFO FROM JOB CREATION:");
+        console.log("Full HR Data:", hrData);
+        console.log("Email:", hrData.email);
+        console.log("Name:", hrData.name);
+        console.log("Company ID:", hrData.company_id);
+        console.log("Role:", hrData.role);
+        console.log("=".repeat(50));
+
+        // Update companyId and jobData if available in HR info
+        if (hrData.company_id) {
+          setCompanyId(hrData.company_id);
+          setJobData((prev) => ({
+            ...prev,
+            company_id: hrData.company_id,
+          }));
+          console.log("Set companyId to:", hrData.company_id);
+        } else {
+          toast.error("Company ID not found in HR information");
+        }
+      } catch (err) {
+        console.error("Error fetching HR info:", err.message);
+        toast.error("Could not load HR information.");
+      } finally {
+        setFetchingHRInfo(false);
+      }
+    };
+
+    if (user) {
+      fetchHRInfo();
+    }
+  }, [user]);
 
   const handleInputChange = (field, value) => {
     setJobData((prev) => ({
@@ -58,10 +116,20 @@ const JobCreation = () => {
   };
 
   const handleSubmit = async () => {
-    if (loading) return; // ✅ prevent multiple clicks
+    if (loading) return;
     setLoading(true);
 
     console.log("Inside submission");
+
+    // Validate company_id
+    if (!jobData.company_id) {
+      toast.error("Company ID is missing. Please try refreshing the page.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      setLoading(false);
+      return;
+    }
 
     // Validate required fields
     const { job_id, role, start_date, end_date, location, rounds } = jobData;
@@ -97,7 +165,7 @@ const JobCreation = () => {
       const response = await fetch(`${BASE_URL}/api/drive/create`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(jobData), // This now includes the skills field
+        body: JSON.stringify(jobData),
       });
 
       if (!response.ok) {
@@ -126,7 +194,7 @@ const JobCreation = () => {
         }
       );
     } finally {
-      setLoading(false); // ✅ reset loading in both success/error
+      setLoading(false);
     }
   };
 
@@ -140,16 +208,44 @@ const JobCreation = () => {
     "Final",
   ];
 
+  // Show loading state while fetching HR info
+  if (fetchingHRInfo) {
+    return (
+      <div className="max-w-4xl mx-auto">
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error if company ID couldn't be loaded
+  if (!companyId) {
+    return (
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+          <p className="text-red-800 font-medium">Unable to load company information</p>
+          <p className="text-red-600 text-sm mt-2">Please try refreshing the page or contact support</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-4xl mx-auto">
       <ToastContainer />
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-xl font-semibold text-gray-900">
-          Create New Drive
-        </h1>
+        <div>
+          <h1 className="text-xl font-semibold text-gray-900">
+            Create New Drive
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">
+            Company ID: {companyId}
+          </p>
+        </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-lg  border border-gray-300 p-6 space-y-6">
+      <div className="bg-white rounded-lg shadow-lg border border-gray-300 p-6 space-y-6">
         {/* Job ID */}
         <div>
           <label className="block text-gray-700 mb-2 font-medium">
@@ -300,7 +396,7 @@ const JobCreation = () => {
         <div className="flex justify-end pt-4">
           <button
             onClick={handleSubmit}
-            disabled={loading} // ✅ disable when loading
+            disabled={loading}
             className={`px-6 py-2 bg-gray-900 text-white rounded-md hover:bg-black focus:outline-none focus:ring-2 focus:ring-gray-500 ${
               loading ? "opacity-70 cursor-not-allowed" : ""
             }`}

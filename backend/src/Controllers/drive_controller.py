@@ -13,7 +13,7 @@ from src.Orchestrator.HiringOrchestrator import (
 
 from src.Tasks.tasks import email_candidates_task, send_final_selection_emails_task, schedule_interviews_task
 
-# Cretate a new drive
+# Create a new drive
 def create_drive_controller():
     print("Create Drive Controller called.")
     data = request.get_json()
@@ -26,6 +26,9 @@ def create_drive_controller():
     rounds = data.get("rounds", [])
     job_id = data.get("job_id")
     skills = data.get("skills", [])
+
+    if not company_id:
+        return jsonify({"error": "company_id is required"}), 400
 
     if not job_id:
         return jsonify({"error": "job_id is required"}), 400
@@ -45,21 +48,35 @@ def create_drive_controller():
 
     # Convert _id to string before returning
     drive["_id"] = str(result.inserted_id)
-    print("Drive created successfully.")
+    print("Drive created successfully with company_id:", company_id)
     return jsonify({
         "message": "Drive created successfully",
         "drive": drive
     }), 201
 
-# Get drives by company id
+
 def get_drives_by_company(company_id):
     """
-    Get all drives for a company
+    Get all drives for a specific company.
+    company_id is expected to be a STRING (e.g., "comp_01"), not an ObjectId
     """
-    drives = list(db.drives.find({"company_id": company_id}))
-    for drive in drives:
-        drive["_id"] = str(drive["_id"])  # Convert ObjectId to string for JSON
-    return jsonify({"drives": drives}), 200
+    try:
+        print(f"Fetching drives for company_id: {company_id}")
+        
+        # Query using company_id as a STRING, not ObjectId
+        drives = list(db.drives.find({"company_id": company_id}))
+        
+        print(f"Found {len(drives)} drives for company {company_id}")
+        
+        # Convert _id to string for JSON serialization
+        for drive in drives:
+            drive["_id"] = str(drive["_id"])
+            # company_id is already a string, no need to convert
+        
+        return jsonify({"drives": drives}), 200
+    except Exception as e:
+        print(f"Error in get_drives_by_company: {str(e)}")
+        return jsonify({"error": str(e)}), 400
 
 
 # Get drive by id
@@ -96,7 +113,8 @@ def get_drive_by_id(drive_id):
         print(f"Error in get_drive_by_id: {str(e)}")
         return jsonify({"error": f"Server error: {str(e)}"}), 500
 
-#gel all drives
+
+# Get all drives
 def get_all_drives():
     """
     Get all drives (optional - for admin purposes)
@@ -123,7 +141,7 @@ def get_all_drives():
         return jsonify({"error": f"Server error: {str(e)}"}), 500
 
 
-# Update your existing update_drive_status function to fix ObjectId handling
+# Update drive status
 def update_drive_status(drive_id):
     try:
         print(f"Updating status for drive ID: {drive_id}")
@@ -163,7 +181,6 @@ def update_drive_status(drive_id):
 
         elif new_status == DriveStatus.EMAIL_SENT:
             print("Queueing email sending task...")
-            # Call task asynchronously
             task_result = email_candidates_task.delay(drive_id)
             print(f"Task queued with ID: {task_result.id}")
 
@@ -200,3 +217,26 @@ def update_drive_status(drive_id):
         import traceback
         traceback.print_exc()
         return jsonify({"error": f"Server error: {str(e)}"}), 500
+
+
+def get_hr_info(hr_mail):
+    """
+    Fetch HR info from the User collection by email.
+    """
+    try:
+        print(f"Fetching HR info for email: {hr_mail}")
+        user = db.users.find_one({"email": hr_mail})
+
+        if not user:
+            print(f"No user found with email: {hr_mail}")
+            return None
+        
+        # Convert ObjectId to string for JSON serialization
+        user["_id"] = str(user["_id"])
+        
+        print(f"Found user: {user.get('name', 'Unknown')} with company_id: {user.get('company_id', 'None')}")
+        return user
+
+    except Exception as e:
+        print(f"Error fetching HR info: {str(e)}")
+        return None
