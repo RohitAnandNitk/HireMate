@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import emailjs from '@emailjs/browser';
+import emailjs from "@emailjs/browser";
 import {
   Mail,
   Phone,
@@ -13,6 +13,7 @@ import {
   Globe,
   AlertCircle,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Contact = () => {
   const form = useRef();
@@ -25,15 +26,16 @@ const Contact = () => {
     message: "",
   });
 
+  const navigate = useNavigate();
+
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
   // EmailJS credentials
-const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
-
+  const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+  const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+  const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
   const handleInputChange = (e) => {
     setFormData({
@@ -56,10 +58,10 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
         form.current,
         PUBLIC_KEY
       );
-      
-      console.log('Email sent successfully:', result.text);
+
+      console.log("Email sent successfully:", result.text);
       setIsSubmitted(true);
-      
+
       // Reset form
       setFormData({
         user_name: "",
@@ -69,13 +71,14 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
         inquiryType: "general",
         message: "",
       });
-      
+
       // Hide success message after 5 seconds
       setTimeout(() => setIsSubmitted(false), 5000);
-      
     } catch (error) {
-      console.error('Email send failed:', error);
-      setSubmitError("Failed to send message. Please try again or contact us directly.");
+      console.error("Email send failed:", error);
+      setSubmitError(
+        "Failed to send message. Please try again or contact us directly."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -129,8 +132,6 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
     },
   ];
 
-  
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
       {/* Hero Section */}
@@ -167,7 +168,8 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
                     Message Sent Successfully!
                   </h3>
                   <p className="text-gray-600">
-                    Thank you for contacting us. We'll get back to you within 24 hours.
+                    Thank you for contacting us. We'll get back to you within 24
+                    hours.
                   </p>
                 </div>
               ) : (
@@ -178,8 +180,12 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
                       <p className="text-gray-700">{submitError}</p>
                     </div>
                   )}
-                  
-                  <form ref={form} onSubmit={handleSubmit} className="space-y-6">
+
+                  <form
+                    ref={form}
+                    onSubmit={handleSubmit}
+                    className="space-y-6"
+                  >
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -318,9 +324,7 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
                         <h3 className="font-semibold text-gray-800">
                           {info.title}
                         </h3>
-                        <p className="text-black font-medium">
-                          {info.details}
-                        </p>
+                        <p className="text-black font-medium">{info.details}</p>
                         <p className="text-gray-600 text-sm">
                           {info.description}
                         </p>
@@ -357,14 +361,10 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
                   ))}
                 </div>
               </div>
-
-              
             </div>
           </div>
         </div>
       </section>
-
-      
 
       {/* FAQ Section */}
       <section className="py-16 px-6 bg-gray-50">
@@ -389,9 +389,9 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
                 What file formats does HiRekruit support?
               </h3>
               <p className="text-gray-600">
-                HiRekruit supports all major resume formats including PDF, DOCX,
-                DOC, TXT, and RTF. Our AI can extract information from any
-                structured document format.
+                HiRekruit supports PDF resume formats as of now. We are
+                continuously working to add support for additional formats like
+                DOCX and TXT in the near future.
               </p>
             </div>
 
@@ -411,9 +411,12 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
                 Can HiRekruit integrate with our existing HR tools?
               </h3>
               <p className="text-gray-600">
-                Yes, HiRekruit offers seamless integrations with popular HR
+                {/* Yes, HiRekruit offers seamless integrations with popular HR
                 platforms like Workday, BambooHR, Greenhouse, and many others.
-                We also provide API access for custom integrations.
+                We also provide API access for custom integrations. */}
+                Not yet, but we are actively working on adding integrations with
+                popular HR platforms. Please contact us for the latest updates
+                and custom integration options.
               </p>
             </div>
 
@@ -443,22 +446,26 @@ const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 px-6 bg-gradient-to-r from-black to-gray-800">
+      <section className="py-16 px-6 bg-gradient-to-r from-gray-900 to-gray-800">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl font-bold text-white mb-6">
             Ready to Get Started?
           </h2>
           <p className="text-xl text-gray-300 mb-8">
-            Join thousands of companies who have transformed their hiring
-            process with HiRekruit.
+            Join hundreds of companies transforming their hiring with HiRekruit.
           </p>
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-black px-8 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-colors">
-              Start Free Trial
+            {/* here navigate this button to sign up */}
+            <button
+              onClick={() => navigate("/signup")}
+              className="bg-white text-black px-8 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-colors"
+            >
+              Start Your Drive Now
             </button>
-            <button className="border-2 border-white text-white px-8 py-3 rounded-xl font-semibold hover:bg-white hover:text-black transition-colors">
+            {/* <button className="border-2 border-white text-white px-8 py-3 rounded-xl font-semibold hover:bg-white hover:text-black transition-colors">
               Schedule Demo
-            </button>
+            </button> */}
           </div>
         </div>
       </section>
