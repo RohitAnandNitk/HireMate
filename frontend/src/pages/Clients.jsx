@@ -14,7 +14,7 @@ const useAnimatedCounter = (end, duration = 2000, startAnimation = false) => {
     const animateCount = (timestamp) => {
       if (!startTime) startTime = timestamp;
       const progress = timestamp - startTime;
-      
+
       if (progress < duration) {
         const currentCount = Math.floor((progress / duration) * end);
         setCount(currentCount);
@@ -50,59 +50,59 @@ const Clients = () => {
 
   const testimonials = [
     {
-      name: "Sarah Johnson",
-      title: "HR Director",
-      company: "TechFlow Solutions",
+      name: "Shikha Gupta",
+      title: "HR",
+      company: "StackCart",
       image:
-        "https://images.unsplash.com/photo-1494790108755-2616b612b742?w=150&h=150&fit=crop&crop=face",
+        "https://media.licdn.com/dms/image/v2/D5603AQGXfMpfklh_jg/profile-displayphoto-shrink_800_800/B56ZZPzFlfHoAc-/0/1745095515416?e=1762387200&v=beta&t=lkJ9BemC9rMZnFsJltEqBnGBR-l346uy0r-t6sqvSsY",
       rating: 5,
       text: "HiRekruit has completely transformed our recruitment process. We've reduced our time-to-hire by 60% and the quality of candidates has significantly improved. The AI-powered matching is incredibly accurate.",
     },
     {
-      name: "Michael Chen",
-      title: "Talent Acquisition Manager",
-      company: "InnovateHub",
+      name: "Heena H.",
+      title: "Human Resources",
+      company: "Hirekruit",
       image:
-        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
+        "https://media.licdn.com/dms/image/v2/D4E03AQFrIssKyQD6Qg/profile-displayphoto-crop_800_800/B4EZmeDmI1HEAI-/0/1759293367596?e=1762387200&v=beta&t=NqQd0hkQ4RwTu137PTjKlrqKrrygaKu8YPtvXbjYHQo",
       rating: 5,
       text: "The bulk upload feature alone has saved us countless hours. What used to take our team days now happens in minutes. The analytics dashboard gives us insights we never had before.",
     },
-    {
-      name: "Emily Rodriguez",
-      title: "Head of People",
-      company: "GrowthLab",
-      image:
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
-      rating: 5,
-      text: "We've seen a 40% increase in diversity in our candidate pool since implementing HiRekruit. The bias-free screening has been a game-changer for our inclusive hiring initiatives.",
-    },
-    {
-      name: "David Park",
-      title: "Recruitment Lead",
-      company: "NextGen Dynamics",
-      image:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
-      rating: 5,
-      text: "The ROI on HiRekruit has been exceptional. We've reduced our recruitment costs by 45% while dramatically improving our hiring success rate. It's an indispensable tool for any modern HR team.",
-    },
-    {
-      name: "Lisa Thompson",
-      title: "VP of Human Resources",
-      company: "ScaleTech",
-      image:
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face",
-      rating: 5,
-      text: "HiRekruit's collaborative features have revolutionized how our distributed team works together. The integration with our existing tools was seamless and the support team was exceptional.",
-    },
-    {
-      name: "James Wilson",
-      title: "Chief People Officer",
-      company: "FutureVision Corp",
-      image:
-        "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&crop=face",
-      rating: 5,
-      text: "We process over 10,000 resumes monthly and HiRekruit handles it effortlessly. The accuracy and speed are unmatched. Our recruiters can now focus on building relationships instead of manual screening.",
-    },
+    // {
+    //   name: "Emily Rodriguez",
+    //   title: "Head of People",
+    //   company: "GrowthLab",
+    //   image:
+    //     "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
+    //   rating: 5,
+    //   text: "We've seen a 40% increase in diversity in our candidate pool since implementing HiRekruit. The bias-free screening has been a game-changer for our inclusive hiring initiatives.",
+    // },
+    // {
+    //   name: "David Park",
+    //   title: "Recruitment Lead",
+    //   company: "NextGen Dynamics",
+    //   image:
+    //     "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+    //   rating: 5,
+    //   text: "The ROI on HiRekruit has been exceptional. We've reduced our recruitment costs by 45% while dramatically improving our hiring success rate. It's an indispensable tool for any modern HR team.",
+    // },
+    // {
+    //   name: "Lisa Thompson",
+    //   title: "VP of Human Resources",
+    //   company: "ScaleTech",
+    //   image:
+    //     "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face",
+    //   rating: 5,
+    //   text: "HiRekruit's collaborative features have revolutionized how our distributed team works together. The integration with our existing tools was seamless and the support team was exceptional.",
+    // },
+    // {
+    //   name: "James Wilson",
+    //   title: "Chief People Officer",
+    //   company: "FutureVision Corp",
+    //   image:
+    //     "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&h=150&fit=crop&crop=face",
+    //   rating: 5,
+    //   text: "We process over 10,000 resumes monthly and HiRekruit handles it effortlessly. The accuracy and speed are unmatched. Our recruiters can now focus on building relationships instead of manual screening.",
+    // },
   ];
 
   const companies = [
@@ -192,7 +192,6 @@ const Clients = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
-      
       {/* Hero Section */}
       <section className="py-20 px-6">
         <div className="max-w-6xl mx-auto text-center">
@@ -210,7 +209,7 @@ const Clients = () => {
       </section>
 
       {/* Client Stats */}
-      <section className="py-16 px-6 bg-white">
+      {/* <section className="py-16 px-6 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-4 gap-8 text-center">
             <div className="p-6 transform transition-all duration-500 hover:scale-105">
@@ -240,8 +239,8 @@ const Clients = () => {
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </div>      
+      </section> */}
 
       {/* Client Testimonials */}
       <section className="py-16 px-6">
@@ -289,10 +288,6 @@ const Clients = () => {
         </div>
       </section>
 
-      
-
-      
-
       {/* Industry Focus */}
       <section className="py-16 px-6 bg-gradient-to-r from-black to-gray-800">
         <div className="max-w-6xl mx-auto text-center">
@@ -319,10 +314,7 @@ const Clients = () => {
         </div>
       </section>
 
-      
-
       {/* Footer */}
-      
     </div>
   );
 };
