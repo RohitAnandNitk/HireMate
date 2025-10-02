@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FileText,
   Filter,
@@ -11,15 +12,16 @@ import {
 } from "lucide-react";
 
 const Services = () => {
+  const navigate = useNavigate();
   const features = [
     {
       icon: FileText,
       title: "Resume Intelligence",
       description:
-        "Automatically extract key candidate details from multiple formats (PDF, DOCX, TXT, etc.)",
+        "Automatically extract key candidate details from their resumes with high accuracy",
       benefits: [
         "Instant data extraction",
-        "Multiple format support",
+        // "Multiple format support",
         "Structured candidate profiles",
         "Error-free parsing",
       ],
@@ -28,11 +30,10 @@ const Services = () => {
       icon: Upload,
       title: "Bulk Uploads",
       description:
-        "Upload entire folders of resumes in a few clicks without worrying about file formats or structure",
+        "Upload entire folders of resumes in a few clicks without worrying about structure",
       benefits: [
         "Mass resume processing",
         "Drag-and-drop interface",
-        "Format flexibility",
         "Time-saving automation",
       ],
     },
@@ -68,7 +69,7 @@ const Services = () => {
       benefits: [
         "Local processing",
         "GDPR compliant",
-        "Data encryption",
+        // "Data encryption",
         "Privacy protection",
       ],
     },
@@ -79,7 +80,7 @@ const Services = () => {
         "Seamlessly integrate with existing HR tools and workflows for team collaboration",
       benefits: [
         "Team collaboration",
-        "HR tool integration",
+        // "HR tool integration",
         "Workflow automation",
         "Multi-user access",
       ],
@@ -89,31 +90,28 @@ const Services = () => {
   const packages = [
     {
       name: "Starter",
-      price: "$99",
+      price: "₹999",
       period: "/month",
       description: "Perfect for small businesses and startups",
       features: [
-        "Up to 100 resume scans/month",
-        "Basic filtering options",
-        "Standard analytics",
-        "Email support",
-        "2 user accounts",
+        "Up to 50 candidates/month",
+        "AI-powered shortlisting",
+        "Automated Email notifications",
+        "AI agent interviews",
       ],
       popular: false,
     },
     {
       name: "Professional",
-      price: "$299",
+      price: "₹9,999",
       period: "/month",
       description: "Ideal for growing companies",
       features: [
-        "Up to 1,000 resume scans/month",
-        "Advanced filtering & matching",
+        "Up to 500 candidates/month",
+        "AI-powered shortlisting",
+        "AI agent interviews",
+        "Automated email communication",
         "Comprehensive analytics",
-        "Priority support",
-        "10 user accounts",
-        "API access",
-        "Custom integrations",
       ],
       popular: true,
     },
@@ -123,14 +121,10 @@ const Services = () => {
       period: "pricing",
       description: "For large organizations with complex needs",
       features: [
-        "Unlimited resume scans",
-        "AI-powered recommendations",
+        "Unlimited candidates",
+        "Full AI automation pipeline",
+        "Custom drive workflows",
         "Custom analytics & reporting",
-        "Dedicated account manager",
-        "Unlimited user accounts",
-        "Advanced API access",
-        "Custom workflows",
-        "On-premise deployment",
       ],
       popular: false,
     },
@@ -139,7 +133,6 @@ const Services = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
       {/* Navigation */}
-      
 
       {/* Hero Section */}
       <section className="py-20 px-6">
@@ -192,131 +185,231 @@ const Services = () => {
       </section>
 
       {/* How It Works */}
-      <section className="py-16 px-6 bg-gray-50">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-center text-gray-800 mb-16">
-            How It Works
-          </h2>
-          <div className="grid md:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-white font-bold text-xl">1</span>
+      <section className="py-20 px-6 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4">
+              How It Works
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              From resume upload to final decision — fully automated in 4 simple
+              steps
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Step 1 */}
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gray-900 rounded-3xl blur-xl opacity-5 group-hover:opacity-10 transition-opacity duration-500"></div>
+              <div className="relative bg-white p-8 rounded-3xl border-2 border-gray-200 hover:border-gray-900 transition-all duration-500 hover:shadow-xl text-center">
+                <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <span className="text-white font-bold text-2xl">1</span>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  Upload & Define
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Bulk upload resumes and define the role requirements, skills,
+                  and job description in one click.
+                </p>
               </div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                Upload Resumes
-              </h3>
-              <p className="text-gray-600">
-                Bulk upload resumes in any format - PDF, DOCX, TXT, or entire
-                folders at once.
-              </p>
             </div>
 
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-white font-bold text-xl">2</span>
+            {/* Step 2 */}
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gray-900 rounded-3xl blur-xl opacity-5 group-hover:opacity-10 transition-opacity duration-500"></div>
+              <div className="relative bg-white p-8 rounded-3xl border-2 border-gray-200 hover:border-gray-900 transition-all duration-500 hover:shadow-xl text-center">
+                <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <span className="text-white font-bold text-2xl">2</span>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  AI Screening
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  AI instantly screens all resumes, ranks candidates, and sends
+                  personalized shortlist/rejection emails automatically.
+                </p>
               </div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                AI Processing
-              </h3>
-              <p className="text-gray-600">
-                Our AI instantly extracts and structures candidate information
-                with 99.8% accuracy.
-              </p>
             </div>
 
-            <div className="text-center">
-              <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-white font-bold text-xl">3</span>
+            {/* Step 3 */}
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gray-900 rounded-3xl blur-xl opacity-5 group-hover:opacity-10 transition-opacity duration-500"></div>
+              <div className="relative bg-white p-8 rounded-3xl border-2 border-gray-200 hover:border-gray-900 transition-all duration-500 hover:shadow-xl text-center">
+                <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <span className="text-white font-bold text-2xl">3</span>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  AI Agent Interviews
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Shortlisted candidates are automatically interviewed by AI
+                  agents with consistent, unbiased evaluation.
+                </p>
               </div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                Smart Filtering
-              </h3>
-              <p className="text-gray-600">
-                Filter and rank candidates based on skills, experience, and job
-                requirements.
-              </p>
             </div>
 
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-white font-bold text-xl">4</span>
+            {/* Step 4 */}
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gray-900 rounded-3xl blur-xl opacity-5 group-hover:opacity-10 transition-opacity duration-500"></div>
+              <div className="relative bg-white p-8 rounded-3xl border-2 border-gray-200 hover:border-gray-900 transition-all duration-500 hover:shadow-xl text-center">
+                <div className="w-16 h-16 bg-gray-900 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <span className="text-white font-bold text-2xl">4</span>
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">
+                  Results & Closing
+                </h3>
+                <p className="text-gray-600 leading-relaxed">
+                  Get detailed analytics, final candidate rankings, and
+                  automated closing emails — all delivered seamlessly.
+                </p>
               </div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                Make Decisions
-              </h3>
-              <p className="text-gray-600">
-                Access detailed analytics and insights to make data-driven
-                hiring decisions.
-              </p>
             </div>
+          </div>
+
+          {/* Optional: Add connecting line or flow indicator */}
+          <div className="mt-12 text-center">
+            <p className="text-gray-500 italic text-lg">
+              Complete automation from start to finish — with some clicks
+            </p>
           </div>
         </div>
       </section>
 
       {/* Pricing Plans */}
-      <section className="py-16 px-6">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-center text-gray-800 mb-4">
-            Choose Your Plan
-          </h2>
-          <p className="text-gray-600 text-center mb-16 max-w-2xl mx-auto">
-            Select the perfect plan for your organization's needs. All plans
-            include our core AI features with varying levels of usage and
-            support.
-          </p>
+      <section className="py-20 px-6 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4">
+              Choose Your Plan
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              End-to-end AI recruitment automation at every scale. Start
+              automating your hiring today.
+            </p>
+          </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
             {packages.map((pkg, index) => (
-              <div
-                key={index}
-                className={`relative p-8 rounded-2xl border-2 ${
-                  pkg.popular
-                    ? "border-black bg-gray-50"
-                    : "border-gray-200 bg-white"
-                }`}
-              >
-                {pkg.popular && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <span className="bg-black text-white px-4 py-2 rounded-full text-sm font-medium">
-                      Most Popular
-                    </span>
-                  </div>
-                )}
+              <div key={index} className="relative group">
+                <div
+                  className={`absolute inset-0 rounded-3xl blur-xl opacity-5 group-hover:opacity-10 transition-opacity duration-500 ${
+                    pkg.popular ? "bg-gray-900" : "bg-gray-600"
+                  }`}
+                ></div>
 
-                <div className="text-center mb-8">
-                  <h3 className="text-2xl font-bold text-gray-800 mb-2">
-                    {pkg.name}
-                  </h3>
-                  <div className="mb-4">
-                    <span className="text-4xl font-bold text-gray-800">
-                      {pkg.price}
-                    </span>
-                    <span className="text-gray-600">{pkg.period}</span>
-                  </div>
-                  <p className="text-gray-600">{pkg.description}</p>
-                </div>
-
-                <div className="space-y-4 mb-8">
-                  {pkg.features.map((feature, featureIndex) => (
-                    <div key={featureIndex} className="flex items-center">
-                      <CheckCircle className="w-5 h-5 text-gray-700 mr-3 flex-shrink-0" />
-                      <span className="text-gray-700">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <button
-                  className={`w-full py-3 px-6 rounded-xl font-semibold flex items-center justify-center transition-colors ${
+                <div
+                  className={`relative p-8 md:p-10 rounded-3xl border-2 transition-all duration-500 hover:shadow-2xl ${
                     pkg.popular
-                      ? "bg-black text-white hover:bg-gray-800"
-                      : "bg-gray-800 text-white hover:bg-gray-900"
+                      ? "bg-gray-900 border-gray-800"
+                      : "bg-white border-gray-300 hover:border-gray-400"
                   }`}
                 >
-                  Get Started
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </button>
+                  {pkg.popular && (
+                    <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                      <span className="bg-white text-gray-900 px-6 py-2 rounded-full text-sm font-bold shadow-lg">
+                        Most Popular
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="text-center mb-8">
+                    <h3
+                      className={`text-2xl font-bold mb-4 ${
+                        pkg.popular ? "text-white" : "text-gray-900"
+                      }`}
+                    >
+                      {pkg.name}
+                    </h3>
+                    <div className="mb-4">
+                      <span
+                        className={`text-5xl font-black ${
+                          pkg.popular ? "text-white" : "text-gray-900"
+                        }`}
+                      >
+                        {pkg.price}
+                      </span>
+                      <span
+                        className={`text-lg ${
+                          pkg.popular ? "text-gray-400" : "text-gray-600"
+                        }`}
+                      >
+                        {pkg.period}
+                      </span>
+                    </div>
+                    <p
+                      className={
+                        pkg.popular ? "text-gray-300" : "text-gray-600"
+                      }
+                    >
+                      {pkg.description}
+                    </p>
+                  </div>
+
+                  <div className="space-y-4 mb-8">
+                    {pkg.features.map((feature, featureIndex) => (
+                      <div
+                        key={featureIndex}
+                        className="flex items-start gap-3"
+                      >
+                        <svg
+                          className={`w-6 h-6 flex-shrink-0 mt-0.5 ${
+                            pkg.popular ? "text-white" : "text-gray-900"
+                          }`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                        <span
+                          className={`leading-relaxed ${
+                            pkg.popular ? "text-gray-200" : "text-gray-700"
+                          }`}
+                        >
+                          {feature}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <button
+                    className={`w-full py-4 px-6 rounded-xl font-bold text-lg flex items-center justify-center transition-all duration-300 group/btn ${
+                      pkg.popular
+                        ? "bg-white text-gray-900 hover:bg-gray-100"
+                        : "bg-gray-900 text-white hover:bg-gray-800"
+                    }`}
+                  >
+                    Get Started
+                    <svg
+                      className="w-5 h-5 ml-2 group-hover/btn:translate-x-1 transition-transform duration-300"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 7l5 5m0 0l-5 5m5-5H6"
+                      />
+                    </svg>
+                  </button>
+                </div>
               </div>
             ))}
+          </div>
+
+          <div className="mt-12 text-center">
+            <p className="text-gray-500 text-lg">
+              All plans include our core AI automation features • No setup fees
+              • Cancel anytime
+            </p>
           </div>
         </div>
       </section>
@@ -328,24 +421,21 @@ const Services = () => {
             Ready to Transform Your Hiring?
           </h2>
           <p className="text-xl text-gray-300 mb-8">
-            Join thousands of companies who have revolutionized their
-            recruitment process with HiRekruit.
+            Join hundreds of companies who have transformed their recruitment
+            process with HiRekruit.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-white text-black px-8 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-colors">
-              Start Free Trial
-            </button>
-            <button className="border-2 border-white text-white px-8 py-3 rounded-xl font-semibold hover:bg-white hover:text-black transition-colors">
-              Schedule Demo
+            <button
+              onClick={() => navigate("/job-creation")}
+              className="bg-white text-black px-8 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-colors"
+            >
+              Start Your Drive Now
             </button>
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      
     </div>
   );
 };
 
-export default Services;  
+export default Services;

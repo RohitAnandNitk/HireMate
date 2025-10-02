@@ -411,9 +411,6 @@ const Contact = () => {
                 Can HiRekruit integrate with our existing HR tools?
               </h3>
               <p className="text-gray-600">
-                {/* Yes, HiRekruit offers seamless integrations with popular HR
-                platforms like Workday, BambooHR, Greenhouse, and many others.
-                We also provide API access for custom integrations. */}
                 Not yet, but we are actively working on adding integrations with
                 popular HR platforms. Please contact us for the latest updates
                 and custom integration options.
@@ -458,7 +455,7 @@ const Contact = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             {/* here navigate this button to sign up */}
             <button
-              onClick={() => navigate("/signup")}
+              onClick={() => navigate("/job-creation")}
               className="bg-white text-black px-8 py-3 rounded-xl font-semibold hover:bg-gray-100 transition-colors"
             >
               Start Your Drive Now

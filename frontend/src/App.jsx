@@ -1,5 +1,10 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/clerk-react";
 
 import Dashboard from "./components/Dashboard";
@@ -26,7 +31,7 @@ import Process from "./pages/Process";
 import CustomSignUp from "./pages/CustomSignUp";
 import CustomSignIn from "./pages/CustomSignIn";
 import { UserProfile } from "@clerk/clerk-react";
-
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -34,10 +39,7 @@ function AppContent() {
   const location = useLocation();
 
   // Routes where Chatbot should be hidden
-  const hideChatbotRoutes = [
-    "/mockinterview",
-    "/interview_start"
-  ];
+  const hideChatbotRoutes = ["/mockinterview", "/interview_start"];
 
   // Check if current route starts with any path in hideChatbotRoutes
   const showChatbot = !hideChatbotRoutes.some((path) =>
@@ -54,6 +56,7 @@ function AppContent() {
           <Route path="/services" element={<Services />} />
           <Route path="/clients" element={<Clients />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         </Route>
 
         <Route path="/signup" element={<CustomSignUp />} />
@@ -75,7 +78,7 @@ function AppContent() {
           path="/profile"
           element={
             <ProtectedRoute>
-                <UserProfile />
+              <UserProfile />
             </ProtectedRoute>
           }
         />
