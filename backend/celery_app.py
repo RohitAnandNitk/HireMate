@@ -2,6 +2,14 @@
 import sys
 import os
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
+
+
+
 # Add the project root to Python path
 project_root = os.path.dirname(os.path.abspath(__file__))
 if project_root not in sys.path:
@@ -11,7 +19,7 @@ from celery import Celery
 
 celery = Celery(
     "hiremate",
-    broker="amqp://guest:guest@localhost:5672//",
+    broker=CELERY_BROKER_URL,
     backend="rpc://"
 )
 
