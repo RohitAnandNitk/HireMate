@@ -3,7 +3,7 @@ from datetime import datetime
 from src.Utils.Database import db
 from src.Model.Company import create_company
 from src.Model.User import create_user
-
+from bson import ObjectId
 def register_user():
     """
     Called after successful Clerk signup.
@@ -88,4 +88,36 @@ def login_user():
         "message": "Login successful",
         "user": user,
         "company": company
+    }), 200
+    
+# Get Candidate by ID
+def get_candidate_by_id():
+    """
+    Fetch candidate info by candidate ID.
+    Expects: candidate_id in query params.
+    """
+    candidate_id = request.args.get("candidate_id")
+    if not candidate_id:
+        return jsonify({"error": "candidate_id is required"}), 400
+
+    try:
+        obj_id = ObjectId(candidate_id)
+    except Exception:
+        return jsonify({"error": "Invalid candidate_id"}), 400
+
+    # Fetch candidate from DB
+    candidate = db.candidates.find_one({"_id": obj_id})
+    if not candidate:
+        return jsonify({"error": "Candidate not found"}), 404
+
+    # Convert ObjectId fields to string for JSON serialization
+    candidate["_id"] = str(candidate["_id"])
+    if "drive_id" in candidate:
+        candidate["drive_id"] = str(candidate["drive_id"])
+    if "company_id" in candidate:
+        candidate["company_id"] = str(candidate["company_id"])
+
+    return jsonify({
+        "message": "Candidate fetched successfully",
+        "candidate": candidate
     }), 200

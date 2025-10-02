@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { Search, FileText } from "lucide-react";
 
 import config from "../Config/BaseURL";
@@ -7,79 +7,131 @@ import Loader from "../components/Loader";
 const BASE_URL = config.BASE_URL;
 
 const ResumeLibrary = () => {
-  const [resumes, setResumes] = useState([]);
+  const [candidates, setCandidates] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-
-  const [selectedHiring, setSelectedHiring] = useState("current");
   const [jobId, setJobId] = useState("");
 
-  const resumesPerPage = 5;
+  const candidatesPerPage = 5;
 
-  // Fetch resumes from API
-  useEffect(() => {
-    const fetchResumes = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/api/resume/all`);
-        if (!response.ok) throw new Error("Failed to fetch resumes");
+  // Fetch candidates based on job ID
+  const fetchCandidates = async (jobIdValue) => {
+    if (!jobIdValue.trim()) {
+      setCandidates([]);
+      return;
+    }
 
-        const data = await response.json();
-        setResumes(data.data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Step 1: Get drive_id from job_id
+      const jobResponse = await fetch(`${BASE_URL}/api/drive/job?job_id=${jobIdValue}`);
+      if (!jobResponse.ok) throw new Error("Failed to fetch job data");
+
+      const jobData = await jobResponse.json();
+      const driveId = jobData.drive_ids?.[0];
+
+      if (!driveId) {
+        throw new Error("No drive ID found for this job");
       }
-    };
 
-    fetchResumes();
-  }, []);
+      // Step 2: Get candidate_ids from drive_id
+      const candidatesResponse = await fetch(`${BASE_URL}/api/drive/${driveId}/candidates`);
+      if (!candidatesResponse.ok) throw new Error("Failed to fetch candidates");
 
-  // Filter resumes
-  const filteredResumes = useMemo(() => {
-    return resumes.filter((r) => {
-      const matchesSearch =
-        r.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        r.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (r.id && r.id.toString().includes(searchTerm));
+      const candidatesData = await candidatesResponse.json();
+      
+      // Handle different response formats
+      let candidateIds = [];
+      if (Array.isArray(candidatesData)) {
+        candidateIds = candidatesData;
+      } else if (candidatesData.candidates && Array.isArray(candidatesData.candidates)) {
+        candidateIds = candidatesData.candidates;
+      } else if (candidatesData.data && Array.isArray(candidatesData.data)) {
+        candidateIds = candidatesData.data;
+      }
 
-      const matchesHiring =
-        selectedHiring === "current"
-          ? r.hiringBatch === "current"
-          : r.hiringBatch === selectedHiring;
+      if (candidateIds.length === 0) {
+        setCandidates([]);
+        setCurrentPage(1);
+        return;
+      }
 
-      const matchesJob = jobId ? r.jobId?.toString() === jobId : true;
+      // Step 3: Fetch candidate details (name and email) for each candidate_id
+      const candidateDetailsPromises = candidateIds.map(async (candidate) => {
+        try {
+          // Extract candidate_id flexibly
+          const candidateId = candidate.candidate_id || candidate._id || candidate.id || candidate;
 
-      return matchesSearch && matchesHiring && matchesJob;
+          if (!candidateId) {
+            throw new Error("No candidate_id found");
+          }
+
+          const response = await fetch(`${BASE_URL}/api/user/candidate?candidate_id=${candidateId}`);
+          if (!response.ok) throw new Error(`Failed to fetch candidate ${candidateId}`);
+
+          const data = await response.json();
+          const candidateInfo = data.candidate || data.data || data;
+
+          return {
+            name: candidateInfo?.name || "N/A",
+            email: candidateInfo?.email || "N/A",
+            id: candidateInfo?._id || candidateId
+          };
+        } catch (err) {
+          console.error(`Error fetching candidate:`, err);
+          return {
+            name: "Error loading",
+            email: "Error loading",
+            id: candidate.candidate_id || "unknown"
+          };
+        }
+      });
+
+      const candidateDetails = await Promise.all(candidateDetailsPromises);
+      setCandidates(candidateDetails);
+      setCurrentPage(1);
+    } catch (err) {
+      setError(err.message);
+      setCandidates([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Filter candidates based on search term
+  const filteredCandidates = useMemo(() => {
+    if (!candidates.length) return [];
+    
+    return candidates.filter((c) => {
+      return (
+        c.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        c.email?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
     });
-  }, [resumes, searchTerm, selectedHiring, jobId]);
+  }, [candidates, searchTerm]);
 
   // Pagination logic
-  const totalPages = Math.ceil(filteredResumes.length / resumesPerPage);
-  const startIndex = (currentPage - 1) * resumesPerPage;
-  const currentResumes = filteredResumes.slice(
+  const totalPages = Math.ceil(filteredCandidates.length / candidatesPerPage);
+  const startIndex = (currentPage - 1) * candidatesPerPage;
+  const currentCandidates = filteredCandidates.slice(
     startIndex,
-    startIndex + resumesPerPage
+    startIndex + candidatesPerPage
   );
 
-  const getInitials = (name) =>
-    name
+  const getInitials = (name) => {
+    if (!name || name === "N/A" || name === "Error loading") return "NA";
+    return name
       .split(" ")
       .map((n) => n[0])
       .join("")
       .toUpperCase();
+  };
 
   if (loading) return <Loader />;
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-red-500">
-        {error}
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -102,7 +154,7 @@ const ResumeLibrary = () => {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             type="text"
-            placeholder="Search by name, email, or ID..."
+            placeholder="Search by name or email..."
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);
@@ -112,71 +164,58 @@ const ResumeLibrary = () => {
           />
         </div>
 
-        {/* Hiring Dropdown */}
-        <select
-          value={selectedHiring}
-          onChange={(e) => {
-            setSelectedHiring(e.target.value);
-            setCurrentPage(1);
-          }}
-          className="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
-        >
-          <option value="current">Current Hiring</option>
-          <option value="prev1">Hiring Cycle-Q1 2025</option>
-          <option value="prev2">Hiring Cycle-Q2 2024</option>
-          <option value="prev3">Hiring Cycle-Q1 2024</option>
-          <option value="prev4">Hiring Cycle-Q1 2023</option>
-        </select>
-
         {/* Job ID Input */}
-        <input
-          type="text"
-          placeholder="Filter by Job ID..."
-          value={jobId}
-          onChange={(e) => {
-            setJobId(e.target.value);
-            setCurrentPage(1);
-          }}
-          className="flex-1 px-3 py-3 rounded-lg border border-gray-300 bg-white focus:ring-1 focus:ring-gray-400 focus:border-gray-400 text-sm transition-colors"
-        />
+        <div className="flex gap-2 flex-1 max-w-md">
+          <input
+            type="text"
+            placeholder="Enter Job ID..."
+            value={jobId}
+            onChange={(e) => setJobId(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                fetchCandidates(jobId);
+              }
+            }}
+            className="flex-1 px-3 py-3 rounded-lg border border-gray-300 bg-white focus:ring-1 focus:ring-gray-400 focus:border-gray-400 text-sm transition-colors"
+          />
+          <button
+            onClick={() => fetchCandidates(jobId)}
+            className="px-6 py-3 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
+          >
+            Search
+          </button>
+        </div>
       </div>
 
-      {/* Resume Cards */}
+      {/* Error Message */}
+      {error && (
+        <div className="max-w-6xl mx-auto px-6 pb-4">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm">
+            {error}
+          </div>
+        </div>
+      )}
+
+      {/* Candidate Cards */}
       <div className="max-w-6xl mx-auto px-6 pb-12">
         <div className="grid gap-4">
-          {currentResumes.map((resume, idx) => (
+          {currentCandidates.map((candidate, idx) => (
             <div
-              key={idx}
+              key={candidate.id || idx}
               className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-sm transition-shadow"
             >
               <div className="flex items-start gap-4">
                 {/* Avatar */}
                 <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 font-medium text-sm flex-shrink-0">
-                  {getInitials(resume.name)}
+                  {getInitials(candidate.name)}
                 </div>
 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                   <h3 className="text-lg font-medium text-gray-900 mb-1">
-                    {resume.name}
+                    {candidate.name}
                   </h3>
-                  <p className="text-gray-600 text-sm">{resume.email}</p>
-
-                  {resume.id && (
-                    <p className="text-xs text-gray-500 mt-1">
-                      ID: {resume.id}
-                    </p>
-                  )}
-                  {resume.jobId && (
-                    <p className="text-xs text-gray-500">
-                      Job ID: {resume.jobId}
-                    </p>
-                  )}
-                  {resume.hiringBatch && (
-                    <p className="text-xs text-gray-400">
-                      Hiring: {resume.hiringBatch}
-                    </p>
-                  )}
+                  <p className="text-gray-600 text-sm">{candidate.email}</p>
                 </div>
               </div>
             </div>
@@ -184,20 +223,20 @@ const ResumeLibrary = () => {
         </div>
 
         {/* Empty State */}
-        {filteredResumes.length === 0 && (
+        {filteredCandidates.length === 0 && !loading && (
           <div className="text-center py-16">
             <FileText className="w-12 h-12 mx-auto mb-4 text-gray-300" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">
-              No resumes found
+              {jobId ? "No candidates found" : "Enter a Job ID to view candidates"}
             </h3>
             <p className="text-gray-500">
-              Try adjusting filters or search.
+              {jobId ? "Try adjusting your search." : "Search for candidates by entering a Job ID above."}
             </p>
           </div>
         )}
 
         {/* Pagination */}
-        {filteredResumes.length > 0 && (
+        {filteredCandidates.length > 0 && (
           <div className="flex justify-center items-center gap-2 mt-8">
             <button
               disabled={currentPage === 1}

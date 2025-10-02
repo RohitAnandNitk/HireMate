@@ -240,3 +240,54 @@ def get_hr_info(hr_mail):
     except Exception as e:
         print(f"Error fetching HR info: {str(e)}")
         return None
+
+def get_drive_candidates(drive_id):
+    """
+    Get all candidates for a specific drive.
+    drive_id is expected to be a STRING (e.g., "64b8f0c2e1b1f5a3c4d2e9b7"), not an ObjectId
+    """
+    try:
+        print(f"Fetching candidates for drive_id: {drive_id}")
+        
+        # Query using drive_id as a STRING, not ObjectId
+        candidates = list(db.drive_candidates.find({"drive_id": drive_id}))
+        
+        print(f"Found {len(candidates)} candidates for drive {drive_id}")
+        
+        # Convert _id to string for JSON serialization
+        for candidate in candidates:
+            candidate["_id"] = str(candidate["_id"])
+            # drive_id is already a string, no need to convert
+        
+        return jsonify({"candidates": candidates}), 200
+    except Exception as e:
+        print(f"Error in get_drive_candidates: {str(e)}")
+        return jsonify({"error": str(e)}), 400
+    
+# testing(rahul)
+def get_drive_id_by_job():
+    job_id = request.args.get("job_id")
+
+    if not job_id:
+        return jsonify({"error": "job_id is required"}), 400
+
+    try:
+        print(f"Fetching drive_id for job_id: {job_id}")
+
+        # Query drives matching job_id
+        drives = list(db.drives.find({"job_id": job_id}, {"_id": 1}))
+
+        if not drives:
+            return jsonify({"message": "No drives found for this job_id"}), 404
+
+        # Extract only drive IDs and convert ObjectId to string
+        drive_ids = [str(d["_id"]) for d in drives]
+
+        print(f"Found drive_ids: {drive_ids}")
+
+        return jsonify({"drive_ids": drive_ids}), 200
+
+    except Exception as e:
+        print(f"Error in get_drive_id_by_job: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+    
