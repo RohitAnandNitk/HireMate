@@ -5,7 +5,9 @@ from src.Controllers.drive_controller import (
     update_drive_status,
     get_drive_by_id,
     get_all_drives,
-    get_hr_info
+    get_hr_info,
+    get_drive_candidates,
+    get_drive_id_by_job
 )
 
 drive_bp = Blueprint("drive_bp", __name__, url_prefix="/api/drive")
@@ -15,6 +17,9 @@ drive_bp.route("/create", methods=["POST"])(create_drive_controller)
 
 # Get all drives for a company
 drive_bp.route("/company/<company_id>", methods=["GET"])(get_drives_by_company)
+
+# Get candidates for a specific drive
+drive_bp.route("/<drive_id>/candidates", methods=["GET"])(get_drive_candidates)
 
 # Get all drives (optional - for admin/debugging)
 drive_bp.route("/all", methods=["GET"])(get_all_drives)
@@ -60,3 +65,6 @@ def hr_info_route():
     print("HR Info from DB:", hr_info)
     
     return jsonify(hr_info), 200
+
+drive_bp.route("/job", methods=["GET"])(get_drive_id_by_job)
+
