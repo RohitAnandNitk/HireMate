@@ -4,13 +4,13 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useUser } from "@clerk/clerk-react";
 
-import config from "../Config/BaseURL";
 import SkillFilter from "./SkillFilter";
-const BASE_URL = config.BASE_URL;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const JobCreation = () => {
   const { user } = useUser();
   const navigate = useNavigate();
+  console.log(BASE_URL);
 
   const [loading, setLoading] = useState(false);
   const [companyId, setCompanyId] = useState(null);
@@ -32,6 +32,7 @@ const JobCreation = () => {
     const fetchHRInfo = async () => {
       try {
         const email = user?.emailAddresses[0]?.emailAddress;
+        console.log("Current HR Email :", email);
         if (!email) {
           console.log("No email found for user");
           toast.error("Unable to fetch user information");
@@ -42,12 +43,13 @@ const JobCreation = () => {
         const response = await fetch(
           `${BASE_URL}/api/drive/hr-info?email=${encodeURIComponent(email)}`
         );
-        
+
         if (!response.ok) {
           throw new Error("Failed to fetch HR info");
         }
 
         const hrData = await response.json();
+        console.log("Respose of HR data", hrData);
         console.log("=".repeat(50));
         console.log("HR INFO FROM JOB CREATION:");
         console.log("Full HR Data:", hrData);
@@ -224,8 +226,12 @@ const JobCreation = () => {
     return (
       <div className="max-w-4xl mx-auto">
         <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-          <p className="text-red-800 font-medium">Unable to load company information</p>
-          <p className="text-red-600 text-sm mt-2">Please try refreshing the page or contact support</p>
+          <p className="text-red-800 font-medium">
+            Unable to load company information
+          </p>
+          <p className="text-red-600 text-sm mt-2">
+            Please try refreshing the page or contact support
+          </p>
         </div>
       </div>
     );
@@ -239,9 +245,7 @@ const JobCreation = () => {
           <h1 className="text-xl font-semibold text-gray-900">
             Create New Drive
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
-            Company ID: {companyId}
-          </p>
+          <p className="text-sm text-gray-500 mt-1">Company ID: {companyId}</p>
         </div>
       </div>
 

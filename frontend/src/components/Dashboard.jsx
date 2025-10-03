@@ -5,11 +5,10 @@ import FileList from "./FileList";
 import SkillFilter from "./SkillFilter";
 import StatsCards from "./StatsCards";
 import Sidebar from "./Sidebar";
-import config from "../Config/BaseURL";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const BASE_URL = config.BASE_URL;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const Dashboard = () => {
   const queryParams = new URLSearchParams(window.location.search);

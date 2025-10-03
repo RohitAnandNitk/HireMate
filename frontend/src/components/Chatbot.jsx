@@ -5,8 +5,7 @@ import { Send, X, User, ShipWheel } from "lucide-react";
 import saarthiImage from "../assets/image.png"; // Saarthi logo
 import { motion } from "framer-motion";
 
-import config from "../Config/BaseURL";
-const BASE_URL = config.BASE_URL;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -313,4 +312,3 @@ const Chatbot = () => {
 };
 
 export default Chatbot;
-

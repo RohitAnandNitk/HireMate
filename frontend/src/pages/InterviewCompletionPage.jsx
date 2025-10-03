@@ -14,8 +14,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 
-import config from "../Config/BaseURL";
-const BASE_URL = config.BASE_URL;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const InterviewCompletionPage = () => {
   const location = useLocation();

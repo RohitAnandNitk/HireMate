@@ -12,8 +12,7 @@ import {
 import { useParams } from "react-router-dom";
 import Loader from "../components/Loader";
 
-import config from "../Config/BaseURL";
-const BaseURL = config.BASE_URL;
+const BaseURL = import.meta.env.VITE_BASE_URL;
 
 const Process = () => {
   const { driveId } = useParams();

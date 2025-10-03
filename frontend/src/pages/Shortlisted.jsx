@@ -1,9 +1,9 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { Search, FileText } from "lucide-react";
-import config from "../Config/BaseURL";
+
 import Loader from "../components/Loader";
 
-const BASE_URL = config.BASE_URL;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const Shortlisted = () => {
   const [resumes, setResumes] = useState([]);
@@ -156,7 +156,9 @@ const Shortlisted = () => {
                   </h3>
                   <p className="text-gray-600 text-sm">{resume.email}</p>
                   {resume.id && (
-                    <p className="text-xs text-gray-500 mt-1">ID: {resume.id}</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      ID: {resume.id}
+                    </p>
                   )}
                   {resume.job_id && (
                     <p className="text-xs text-gray-500 mt-1">

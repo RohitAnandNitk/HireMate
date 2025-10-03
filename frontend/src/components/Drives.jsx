@@ -7,11 +7,10 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useUser } from "@clerk/clerk-react";
 
-import config from "../Config/BaseURL";
-const BASE_URL = config.BASE_URL;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const Drives = () => {
-  const { user } = useUser(); 
+  const { user } = useUser();
   const navigate = useNavigate();
   const [drives, setDrives] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -34,7 +33,7 @@ const Drives = () => {
         const response = await fetch(
           `${BASE_URL}/api/drive/hr-info?email=${encodeURIComponent(email)}`
         );
-        
+
         if (!response.ok) {
           throw new Error("Failed to fetch HR info");
         }
@@ -101,9 +100,14 @@ const Drives = () => {
       drive.job_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
       drive.location.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const ongoingStatuses = ["resumeUploaded", "resumeShortlisted", "emailSent", "InterviewScheduled"];
+    const ongoingStatuses = [
+      "resumeUploaded",
+      "resumeShortlisted",
+      "emailSent",
+      "InterviewScheduled",
+    ];
     const matchesStatus =
-      filterStatus === "all" || 
+      filterStatus === "all" ||
       (filterStatus === "ongoing" && ongoingStatuses.includes(drive.status)) ||
       drive.status === filterStatus;
 

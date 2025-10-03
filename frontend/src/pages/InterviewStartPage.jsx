@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Play, User, FileText, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 import { getMockInterviewPrompt } from "../Prompts/MockInterviewPrompt";
-import config from "../Config/BaseURL";
-const BASE_URL = config.BASE_URL;
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 import { useParams } from "react-router-dom";
 
 const InterviewStartPage = () => {

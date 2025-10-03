@@ -3,9 +3,8 @@ import { Users, CheckCircle, CalendarDays, Send } from "lucide-react";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 
-import config from "../Config/BaseURL";
 import Loader from "../components/Loader";
-const BASE_URL = config.BASE_URL;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -22,7 +21,6 @@ export default function Analytics() {
         if (!response.ok) throw new Error("Failed to fetch resumes");
         const data = await response.json();
         setResumes(data.data);
-
       } catch (err) {
         setError(err.message);
       } finally {
@@ -32,10 +30,7 @@ export default function Analytics() {
     fetchResumes();
   }, []);
 
-  if (loading)
-    return (
-      <Loader />
-    );
+  if (loading) return <Loader />;
   if (error)
     return (
       <div className="min-h-screen flex items-center justify-center text-red-500">

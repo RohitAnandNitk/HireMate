@@ -14,8 +14,7 @@ import {
 
 import Vapi from "@vapi-ai/web";
 
-import config from "../Config/BaseURL";
-const BASE_URL = config.BASE_URL;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const InterviewPage = () => {
   // Get drive ID from URL params

@@ -1,10 +1,9 @@
 import React, { useState, useMemo } from "react";
 import { Search, FileText } from "lucide-react";
 
-import config from "../Config/BaseURL";
 import Loader from "../components/Loader";
 
-const BASE_URL = config.BASE_URL;
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const ResumeLibrary = () => {
   const [candidates, setCandidates] = useState([]);
@@ -28,7 +27,9 @@ const ResumeLibrary = () => {
 
     try {
       // Step 1: Get drive_id from job_id
-      const jobResponse = await fetch(`${BASE_URL}/api/drive/job?job_id=${jobIdValue}`);
+      const jobResponse = await fetch(
+        `${BASE_URL}/api/drive/job?job_id=${jobIdValue}`
+      );
       if (!jobResponse.ok) throw new Error("Failed to fetch job data");
 
       const jobData = await jobResponse.json();
@@ -39,16 +40,21 @@ const ResumeLibrary = () => {
       }
 
       // Step 2: Get candidate_ids from drive_id
-      const candidatesResponse = await fetch(`${BASE_URL}/api/drive/${driveId}/candidates`);
+      const candidatesResponse = await fetch(
+        `${BASE_URL}/api/drive/${driveId}/candidates`
+      );
       if (!candidatesResponse.ok) throw new Error("Failed to fetch candidates");
 
       const candidatesData = await candidatesResponse.json();
-      
+
       // Handle different response formats
       let candidateIds = [];
       if (Array.isArray(candidatesData)) {
         candidateIds = candidatesData;
-      } else if (candidatesData.candidates && Array.isArray(candidatesData.candidates)) {
+      } else if (
+        candidatesData.candidates &&
+        Array.isArray(candidatesData.candidates)
+      ) {
         candidateIds = candidatesData.candidates;
       } else if (candidatesData.data && Array.isArray(candidatesData.data)) {
         candidateIds = candidatesData.data;
@@ -64,14 +70,21 @@ const ResumeLibrary = () => {
       const candidateDetailsPromises = candidateIds.map(async (candidate) => {
         try {
           // Extract candidate_id flexibly
-          const candidateId = candidate.candidate_id || candidate._id || candidate.id || candidate;
+          const candidateId =
+            candidate.candidate_id ||
+            candidate._id ||
+            candidate.id ||
+            candidate;
 
           if (!candidateId) {
             throw new Error("No candidate_id found");
           }
 
-          const response = await fetch(`${BASE_URL}/api/user/candidate?candidate_id=${candidateId}`);
-          if (!response.ok) throw new Error(`Failed to fetch candidate ${candidateId}`);
+          const response = await fetch(
+            `${BASE_URL}/api/user/candidate?candidate_id=${candidateId}`
+          );
+          if (!response.ok)
+            throw new Error(`Failed to fetch candidate ${candidateId}`);
 
           const data = await response.json();
           const candidateInfo = data.candidate || data.data || data;
@@ -79,14 +92,14 @@ const ResumeLibrary = () => {
           return {
             name: candidateInfo?.name || "N/A",
             email: candidateInfo?.email || "N/A",
-            id: candidateInfo?._id || candidateId
+            id: candidateInfo?._id || candidateId,
           };
         } catch (err) {
           console.error(`Error fetching candidate:`, err);
           return {
             name: "Error loading",
             email: "Error loading",
-            id: candidate.candidate_id || "unknown"
+            id: candidate.candidate_id || "unknown",
           };
         }
       });
@@ -105,7 +118,7 @@ const ResumeLibrary = () => {
   // Filter candidates based on search term
   const filteredCandidates = useMemo(() => {
     if (!candidates.length) return [];
-    
+
     return candidates.filter((c) => {
       return (
         c.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -141,9 +154,7 @@ const ResumeLibrary = () => {
           <h1 className="text-3xl font-light text-gray-900 mb-2">
             Resume Library
           </h1>
-          <p className="text-gray-600">
-            Browse and manage candidate resumes
-          </p>
+          <p className="text-gray-600">Browse and manage candidate resumes</p>
         </div>
       </div>
 
@@ -172,7 +183,7 @@ const ResumeLibrary = () => {
             value={jobId}
             onChange={(e) => setJobId(e.target.value)}
             onKeyPress={(e) => {
-              if (e.key === 'Enter') {
+              if (e.key === "Enter") {
                 fetchCandidates(jobId);
               }
             }}
@@ -227,10 +238,14 @@ const ResumeLibrary = () => {
           <div className="text-center py-16">
             <FileText className="w-12 h-12 mx-auto mb-4 text-gray-300" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">
-              {jobId ? "No candidates found" : "Enter a Job ID to view candidates"}
+              {jobId
+                ? "No candidates found"
+                : "Enter a Job ID to view candidates"}
             </h3>
             <p className="text-gray-500">
-              {jobId ? "Try adjusting your search." : "Search for candidates by entering a Job ID above."}
+              {jobId
+                ? "Try adjusting your search."
+                : "Search for candidates by entering a Job ID above."}
             </p>
           </div>
         )}
