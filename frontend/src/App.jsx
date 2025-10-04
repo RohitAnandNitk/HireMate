@@ -34,6 +34,7 @@ import { UserProfile } from "@clerk/clerk-react";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 import ProtectedRoute from "./components/ProtectedRoute";
+import useGTMPageView from "./pages/useGTMPageView";
 
 function AppContent() {
   const location = useLocation();
@@ -45,7 +46,7 @@ function AppContent() {
   const showChatbot = !hideChatbotRoutes.some((path) =>
     location.pathname.startsWith(path)
   );
-
+  useGTMPageView();
   return (
     <>
       <Routes>
