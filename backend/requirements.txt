@@ -30,3 +30,4 @@ flask==3.1.0
 gunicorn==20.1.0
 pdfplumber==0.9.0
 PyMuPDF==1.22.5
+celery==5.3.6
