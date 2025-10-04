@@ -115,6 +115,20 @@ const Home = () => {
     },
   ];
 
+  const handleGetStartedClick = () => {
+    // Push event to GTM dataLayer
+    TagManager.dataLayer({
+      dataLayer: {
+        event: "get_started_click",
+        category: "Navigation",
+        action: "click",
+        label: "Get Started Button",
+      },
+    });
+
+    // Navigate to the Job Creation page
+    navigate("/job-creation");
+  };
   // Typewriter effect
   useEffect(() => {
     const interval = setInterval(() => {
@@ -300,10 +314,10 @@ const Home = () => {
               {/* CTA Buttons */}
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
-                  onClick={() => navigate("/job-creation")}
+                  onClick={handleGetStartedClick}
                   className="bg-black text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 text-sm transform hover:scale-105 duration-200"
                 >
-                  <span>Get Started </span>
+                  <span>Get Started</span>
                 </button>
                 <button className="border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:border-gray-600 hover:text-black transition-colors flex items-center justify-center space-x-2 text-sm transform hover:scale-105 duration-200">
                   <Play size={16} />
