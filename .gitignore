@@ -5,3 +5,5 @@ __pycache__/
 *.pyo
 SampleData/
 node_modules/
+credentials.json 
+token.json
