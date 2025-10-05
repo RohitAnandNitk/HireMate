@@ -1,198 +1,186 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { Search, FileText } from "lucide-react";
 
 import Loader from "../components/Loader";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
-const Shortlisted = () => {
-  const [resumes, setResumes] = useState([]);
+const ShortlistedResumes = () => {
+  const [candidates, setCandidates] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedHiring, setSelectedHiring] = useState("");
   const [jobId, setJobId] = useState("");
 
-  const resumesPerPage = 5;
+  const candidatesPerPage = 5;
 
-  // Fetch resumes from API
-  useEffect(() => {
-    const fetchResumes = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/api/resume/all`);
-        if (!response.ok) throw new Error("Failed to fetch resumes");
-        const data = await response.json();
+  // Fetch shortlisted candidates for a given Job ID
+  const fetchShortlistedCandidates = async (jobIdValue) => {
+    if (!jobIdValue.trim()) {
+      setCandidates([]);
+      return;
+    }
 
-        // Filter only shortlisted resumes
-        const shortlisted = data.data.filter(
-          (resume) => resume.resume_shortlisted === "yes"
-        );
-        setResumes(shortlisted);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Step 1: Fetch shortlisted candidate IDs
+      const response = await fetch(
+        `${BASE_URL}/api/drive/job/shortlisted?job_id=${jobIdValue}`
+      );
+      if (!response.ok) throw new Error("Failed to fetch shortlisted candidates");
+
+      const data = await response.json();
+      const candidateIds = data.candidates?.map(c => c.candidate_id) || [];
+
+      if (candidateIds.length === 0) {
+        setCandidates([]);
+        setCurrentPage(1);
+        return;
       }
-    };
-    fetchResumes();
-  }, []);
 
-  // Filter resumes based on search + dropdown + jobId
-  const filteredResumes = useMemo(() => {
-    return resumes.filter((r) => {
-      const matchesSearch =
-        r.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        r.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (r.id && r.id.toString().includes(searchTerm));
+      // Step 2: Fetch candidate details for each candidate_id
+      const candidateDetailsPromises = candidateIds.map(async (candidateId) => {
+        try {
+          const res = await fetch(`${BASE_URL}/api/user/candidate?candidate_id=${candidateId}`);
+          if (!res.ok) throw new Error(`Failed to fetch candidate ${candidateId}`);
+          const candidateData = await res.json();
+          const candidateInfo = candidateData.candidate || candidateData.data || candidateData;
+          return {
+            id: candidateId,
+            name: candidateInfo?.name || "N/A",
+            email: candidateInfo?.email || "N/A",
+          };
+        } catch (err) {
+          console.error(err);
+          return {
+            id: candidateId,
+            name: "Error loading",
+            email: "Error loading",
+          };
+        }
+      });
 
-      const matchesHiring = selectedHiring
-        ? r.hiring_name === selectedHiring
-        : true;
+      const candidateDetails = await Promise.all(candidateDetailsPromises);
+      setCandidates(candidateDetails);
+      setCurrentPage(1);
+    } catch (err) {
+      setError(err.message);
+      setCandidates([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      const matchesJobId = jobId ? r.job_id?.toString().includes(jobId) : true;
+  // Filter candidates based on search
+  const filteredCandidates = useMemo(() => {
+    return candidates.filter(c => 
+      c.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.email?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [candidates, searchTerm]);
 
-      return matchesSearch && matchesHiring && matchesJobId;
-    });
-  }, [resumes, searchTerm, selectedHiring, jobId]);
+  // Pagination
+  const totalPages = Math.ceil(filteredCandidates.length / candidatesPerPage);
+  const startIndex = (currentPage - 1) * candidatesPerPage;
+  const currentCandidates = filteredCandidates.slice(startIndex, startIndex + candidatesPerPage);
 
-  const totalPages = Math.ceil(filteredResumes.length / resumesPerPage);
-  const startIndex = (currentPage - 1) * resumesPerPage;
-  const currentResumes = filteredResumes.slice(
-    startIndex,
-    startIndex + resumesPerPage
-  );
-
-  const getInitials = (name) =>
-    name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase();
+  const getInitials = (name) => {
+    if (!name || name === "N/A" || name === "Error loading") return "NA";
+    return name.split(" ").map(n => n[0]).join("").toUpperCase();
+  };
 
   if (loading) return <Loader />;
-  if (error)
-    return (
-      <div className="min-h-screen flex items-center justify-center text-red-500">
-        {error}
-      </div>
-    );
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b">
         <div className="max-w-6xl mx-auto px-6 py-8">
-          <h1 className="text-3xl font-light text-gray-900 mb-2">
-            Shortlisted Resumes
-          </h1>
-          <p className="text-gray-600">
-            Browse shortlisted candidates and filter by hiring or Job ID
-          </p>
+          <h1 className="text-3xl font-light text-gray-900 mb-2">Shortlisted Resumes</h1>
+          <p className="text-gray-600">View shortlisted candidates by Job ID</p>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col md:flex-row gap-4 items-start">
-        {/* Search */}
+      <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             type="text"
-            placeholder="Search by name, email, or ID..."
+            placeholder="Search by name or email..."
             value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setCurrentPage(1);
-            }}
+            onChange={e => { setSearchTerm(e.target.value); setCurrentPage(1); }}
             className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 bg-white focus:ring-1 focus:ring-gray-400 focus:border-gray-400 text-sm transition-colors"
           />
         </div>
 
-        {/* Dropdown for current/previous hirings */}
-        <select
-          value={selectedHiring}
-          onChange={(e) => {
-            setSelectedHiring(e.target.value);
-            setCurrentPage(1);
-          }}
-          className="px-3 py-3 rounded-lg border border-gray-300 bg-white focus:ring-1 focus:ring-gray-400 focus:border-gray-400 text-sm transition-colors"
-        >
-          <option value="current">Current Hiring</option>
-          <option value="prev1">Hiring Cycle-Q1 2025</option>
-          <option value="prev2">Hiring Cycle-Q2 2024</option>
-          <option value="prev3">Hiring Cycle-Q1 2024</option>
-          <option value="prev4">Hiring Cycle-Q1 2023</option>
-        </select>
-
-        {/* Job ID input */}
-        <input
-          type="text"
-          placeholder="Filter by Job ID..."
-          value={jobId}
-          onChange={(e) => {
-            setJobId(e.target.value);
-            setCurrentPage(1);
-          }}
-          className="flex-1 px-3 py-3 rounded-lg border border-gray-300 bg-white focus:ring-1 focus:ring-gray-400 focus:border-gray-400 text-sm transition-colors"
-        />
+        <div className="flex gap-2 flex-1 max-w-md">
+          <input
+            type="text"
+            placeholder="Enter Job ID..."
+            value={jobId}
+            onChange={e => setJobId(e.target.value)}
+            onKeyPress={e => { if (e.key === "Enter") fetchShortlistedCandidates(jobId); }}
+            className="flex-1 px-3 py-3 rounded-lg border border-gray-300 bg-white focus:ring-1 focus:ring-gray-400 focus:border-gray-400 text-sm transition-colors"
+          />
+          <button
+            onClick={() => fetchShortlistedCandidates(jobId)}
+            className="px-6 py-3 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
+          >
+            Search
+          </button>
+        </div>
       </div>
 
-      {/* Resume Cards */}
+      {/* Error */}
+      {error && (
+        <div className="max-w-6xl mx-auto px-6 pb-4">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm">
+            {error}
+          </div>
+        </div>
+      )}
+
+      {/* Candidate Cards */}
       <div className="max-w-6xl mx-auto px-6 pb-12">
         <div className="grid gap-4">
-          {currentResumes.map((resume) => (
-            <div
-              key={resume.id}
-              className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-sm transition-shadow"
-            >
+          {currentCandidates.map(candidate => (
+            <div key={candidate.id} className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-sm transition-shadow">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 font-medium text-sm flex-shrink-0">
-                  {getInitials(resume.name)}
+                  {getInitials(candidate.name)}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-lg font-medium text-gray-900 mb-1">
-                    {resume.name}
-                  </h3>
-                  <p className="text-gray-600 text-sm">{resume.email}</p>
-                  {resume.id && (
-                    <p className="text-xs text-gray-500 mt-1">
-                      ID: {resume.id}
-                    </p>
-                  )}
-                  {resume.job_id && (
-                    <p className="text-xs text-gray-500 mt-1">
-                      Job ID: {resume.job_id}
-                    </p>
-                  )}
-                  {resume.hiring_name && (
-                    <p className="text-xs text-gray-500 mt-1">
-                      Hiring: {resume.hiring_name}
-                    </p>
-                  )}
+                  <h3 className="text-lg font-medium text-gray-900 mb-1">{candidate.name}</h3>
+                  <p className="text-gray-600 text-sm">{candidate.email}</p>
                 </div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Empty state */}
-        {filteredResumes.length === 0 && (
+        {/* Empty State */}
+        {filteredCandidates.length === 0 && !loading && (
           <div className="text-center py-16">
             <FileText className="w-12 h-12 mx-auto mb-4 text-gray-300" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">
-              No shortlisted resumes found
+              {jobId ? "No shortlisted candidates found" : "Enter a Job ID to view candidates"}
             </h3>
-            <p className="text-gray-500">Try adjusting your search criteria.</p>
+            <p className="text-gray-500">
+              {jobId ? "Try adjusting your search." : "Search for candidates by entering a Job ID above."}
+            </p>
           </div>
         )}
 
         {/* Pagination */}
-        {filteredResumes.length > 0 && (
+        {filteredCandidates.length > 0 && (
           <div className="flex justify-center items-center gap-2 mt-8">
             <button
               disabled={currentPage === 1}
-              onClick={() => setCurrentPage((p) => p - 1)}
+              onClick={() => setCurrentPage(p => p - 1)}
               className="px-3 py-1 border rounded disabled:opacity-50"
             >
               Prev
@@ -202,9 +190,7 @@ const Shortlisted = () => {
               <button
                 key={i}
                 onClick={() => setCurrentPage(i + 1)}
-                className={`px-3 py-1 border rounded ${
-                  currentPage === i + 1 ? "bg-gray-200 font-medium" : ""
-                }`}
+                className={`px-3 py-1 border rounded ${currentPage === i + 1 ? "bg-gray-200 font-medium" : ""}`}
               >
                 {i + 1}
               </button>
@@ -212,7 +198,7 @@ const Shortlisted = () => {
 
             <button
               disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage((p) => p + 1)}
+              onClick={() => setCurrentPage(p => p + 1)}
               className="px-3 py-1 border rounded disabled:opacity-50"
             >
               Next
@@ -224,4 +210,4 @@ const Shortlisted = () => {
   );
 };
 
-export default Shortlisted;
+export default ShortlistedResumes;

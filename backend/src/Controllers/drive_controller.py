@@ -291,3 +291,59 @@ def get_drive_id_by_job():
         print(f"Error in get_drive_id_by_job: {str(e)}")
         return jsonify({"error": str(e)}), 500
     
+
+
+def get_shortlisted_candidates_by_job():
+    job_id = request.args.get("job_id")
+    if not job_id:
+        return jsonify({"error": "job_id is required"}), 400
+
+    try:
+        # Step 1: Find the drive
+        drive = db.drives.find_one({"job_id": job_id})
+        if not drive:
+            return jsonify({"error": "No drive found for this job_id"}), 404
+
+        drive_id = str(drive["_id"])
+        print(f"Found drive: {drive_id} for job_id: {job_id}")
+
+        # Step 2: Get shortlisted candidates directly
+        drive_candidates = list(
+            db.drive_candidates.find({
+                "drive_id": drive_id,
+                "resume_shortlisted": {"$in": ["yes", "Yes", True, "true"]}
+            })
+        )
+        print(f"Total shortlisted candidates found: {len(drive_candidates)}")
+
+        if not drive_candidates:
+            return jsonify({
+                "job_id": job_id,
+                "drive_id": drive_id,
+                "candidates": []
+            }), 200
+
+        # Step 3: Return info directly from drive_candidates
+        result = []
+        for cand in drive_candidates:
+            result.append({
+                "candidate_id": cand.get("candidate_id"),
+                "resume_shortlisted": cand.get("resume_shortlisted"),
+                "selected": cand.get("selected"),
+                "interview_completed": cand.get("interview_completed"),
+                # Add any other fields stored in drive_candidates
+            })
+
+        print(f"Total candidates returned: {len(result)}")
+
+        return jsonify({
+            "job_id": job_id,
+            "drive_id": drive_id,
+            "candidates": result
+        }), 200
+
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": "Server error"}), 500
