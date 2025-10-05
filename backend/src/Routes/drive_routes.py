@@ -7,13 +7,19 @@ from src.Controllers.drive_controller import (
     get_all_drives,
     get_hr_info,
     get_drive_candidates,
-    get_drive_id_by_job
+    get_drive_id_by_job,
+    get_shortlisted_candidates_by_job
 )
 
 drive_bp = Blueprint("drive_bp", __name__, url_prefix="/api/drive")
 
 # Create a new drive
 drive_bp.route("/create", methods=["POST"])(create_drive_controller)
+
+# get shortlisted candidates for a drive
+@drive_bp.route("/job/shortlisted", methods=["GET"])
+def job_shortlisted_candidates():
+    return get_shortlisted_candidates_by_job()
 
 # Get all drives for a company
 drive_bp.route("/company/<company_id>", methods=["GET"])(get_drives_by_company)
