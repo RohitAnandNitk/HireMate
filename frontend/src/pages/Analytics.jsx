@@ -24,7 +24,10 @@ export default function Analytics() {
       } catch (err) {
         setError(err.message);
       } finally {
-        setLoading(false);
+        // setLoading(false);
+        // Always play loader once on startup (4s)
+        const timer = setTimeout(() => setLoading(false), 3100);
+        return () => clearTimeout(timer);
       }
     };
     fetchResumes();

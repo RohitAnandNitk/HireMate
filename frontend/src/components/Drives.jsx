@@ -84,7 +84,10 @@ const Drives = () => {
         console.error("Error fetching drives:", err.message);
         toast.error("Could not load drives. Please try again.");
       } finally {
-        setLoading(false);
+        // setLoading(false);
+        // Always play loader once on startup (4s)
+        const timer = setTimeout(() => setLoading(false), 3100);
+        return () => clearTimeout(timer);
       }
     };
 

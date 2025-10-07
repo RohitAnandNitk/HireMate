@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useUser } from "@clerk/clerk-react";
-
+import Loader from "./Loader";
 import SkillFilter from "./SkillFilter";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
@@ -67,6 +67,10 @@ const JobCreation = () => {
             company_id: hrData.company_id,
           }));
           console.log("Set companyId to:", hrData.company_id);
+          // setLoading(true);
+          // Always play loader once on startup (4s)
+          const timer = setTimeout(() => setShowLoader(false), 3100);
+          return () => clearTimeout(timer);
         } else {
           toast.error("Company ID not found in HR information");
         }
@@ -212,13 +216,7 @@ const JobCreation = () => {
 
   // Show loading state while fetching HR info
   if (fetchingHRInfo) {
-    return (
-      <div className="max-w-4xl mx-auto">
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-        </div>
-      </div>
-    );
+    return <Loader />;
   }
 
   // Show error if company ID couldn't be loaded

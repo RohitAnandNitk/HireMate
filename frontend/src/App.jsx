@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -16,11 +16,9 @@ import Analytics from "./pages/Analytics";
 import Home from "./pages/Home";
 import JobCreation from "./components/JobCreation";
 import Drives from "./components/Drives";
-
 import VapiInterviewPage from "./pages/VapiInterviewPage";
 import InterviewStartPage from "./pages/InterviewStartPage";
 import InterviewCompletionPage from "./pages/InterviewCompletionPage";
-
 import About from "./pages/About";
 import Services from "./pages/Services";
 import Clients from "./pages/Clients";
@@ -35,6 +33,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import useGTMPageView from "./pages/useGTMPageView";
+import Loader from "./components/Loader";
 
 function AppContent() {
   const location = useLocation();
@@ -46,7 +45,9 @@ function AppContent() {
   const showChatbot = !hideChatbotRoutes.some((path) =>
     location.pathname.startsWith(path)
   );
+
   useGTMPageView();
+
   return (
     <>
       <Routes>
@@ -74,7 +75,8 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
-        {/* profile of user */}
+
+        {/* Profile */}
         <Route
           path="/profile"
           element={
@@ -94,6 +96,7 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/dashboard/:drive_id"
           element={
@@ -104,6 +107,7 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/drives"
           element={
@@ -114,6 +118,7 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/resumes"
           element={
@@ -124,6 +129,7 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/shortlisted"
           element={
@@ -134,6 +140,7 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/analytics"
           element={
@@ -144,6 +151,8 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
+
+        {/* Interview Routes */}
         <Route path="/mockinterview/:driveId" element={<InterviewPage />} />
         <Route path="/mockinterview/test" element={<VapiInterviewPage />} />
         <Route
@@ -162,11 +171,14 @@ function AppContent() {
 }
 
 function App() {
-  return (
-    <Router>
-      <AppContent />
-    </Router>
-  );
+  const [showLoader, setShowLoader] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowLoader(false), 3100);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return <Router>{showLoader ? <Loader /> : <AppContent />}</Router>;
 }
 
 export default App;

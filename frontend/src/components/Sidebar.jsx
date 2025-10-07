@@ -14,7 +14,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import logo from "../assets/HiRekruit.png";
 
 const items = [
-  { label: "Dashboard", icon: LayoutDashboard, path: "/job-creation" },
+  { label: "Create New Drive", icon: LayoutDashboard, path: "/job-creation" },
   { label: "Drives", icon: Briefcase, path: "/drives" },
   { label: "All Resumes", icon: FileText, path: "/resumes" },
   { label: "Shortlisted", icon: Star, path: "/shortlisted" },

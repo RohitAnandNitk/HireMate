@@ -8,7 +8,7 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 const ResumeLibrary = () => {
   const [candidates, setCandidates] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [jobId, setJobId] = useState("");
