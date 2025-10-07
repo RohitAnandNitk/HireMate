@@ -86,7 +86,7 @@ const Drives = () => {
       } finally {
         // setLoading(false);
         // Always play loader once on startup (4s)
-        const timer = setTimeout(() => setLoading(false), 3100);
+        const timer = setTimeout(() => setLoading(false), 3000);
         return () => clearTimeout(timer);
       }
     };

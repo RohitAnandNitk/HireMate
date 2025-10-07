@@ -69,7 +69,7 @@ const JobCreation = () => {
           console.log("Set companyId to:", hrData.company_id);
           // setLoading(true);
           // Always play loader once on startup (4s)
-          const timer = setTimeout(() => setShowLoader(false), 3100);
+          const timer = setTimeout(() => setLoading(false), 3000);
           return () => clearTimeout(timer);
         } else {
           toast.error("Company ID not found in HR information");

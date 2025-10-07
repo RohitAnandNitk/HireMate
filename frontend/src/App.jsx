@@ -174,7 +174,7 @@ function App() {
   const [showLoader, setShowLoader] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => setShowLoader(false), 3100);
+    const timer = setTimeout(() => setShowLoader(false), 3000);
     return () => clearTimeout(timer);
   }, []);
 
