@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
+print("Broker URL :",CELERY_BROKER_URL )
 
 
 

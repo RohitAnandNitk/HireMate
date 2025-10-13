@@ -3,7 +3,8 @@ from werkzeug.utils import secure_filename
 import os
 from src.Orchestrator.HiringOrchestrator import create_driveCandidate
 
-UPLOAD_FOLDER = './uploads/resumes'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_FOLDER = os.path.normpath(os.path.join(BASE_DIR, '..', '..', 'uploads', 'resumes'))
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def upload_resumes():
@@ -25,15 +26,15 @@ def upload_resumes():
 
     for file in files:
         filename = secure_filename(file.filename)
-        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        file_path = os.path.normpath(os.path.join(UPLOAD_FOLDER, filename))
+        print("Saving to:", file_path)
         file.save(file_path)
         saved_files.append(filename)
         file_paths.append(file_path)
 
-    # Pass all info to the orchestrator function
     result = create_driveCandidate(file_paths, skills, job_role, drive_id)
 
     return jsonify({
         "status": "success",
-         "response" : result
+        "response": result
     })
