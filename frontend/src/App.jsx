@@ -35,6 +35,9 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import useGTMPageView from "./pages/useGTMPageView";
 import Loader from "./components/Loader";
 
+import Assessment from "./pages/Assessment";
+import Instructions from "./pages/Instructions";
+
 function AppContent() {
   const location = useLocation();
 
@@ -63,6 +66,9 @@ function AppContent() {
 
         <Route path="/signup" element={<CustomSignUp />} />
         <Route path="/signin" element={<CustomSignIn />} />
+
+        <Route path="/assessment" element={<Assessment />} />
+        <Route path="/start-assessment" element={<Instructions />} />
 
         {/* Protected Routes */}
         <Route
