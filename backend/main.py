@@ -9,6 +9,10 @@ from src.Routes.chatbot_routes import chatbot_bp
 from src.Controllers.allresumes_controller import get_allresumes_controller
 from src.Controllers import interview_controller
 
+# for coding-assessment
+from src.CodingAssessment.Routes.problem_routes import problem_bp
+from src.CodingAssessment.Routes.submission_routes import submission_bp
+
 
 # Import the database to initialize connection
 from src.Utils.Database import db
@@ -38,6 +42,11 @@ app.register_blueprint(resume_bp, url_prefix="/api/resume")
 app.register_blueprint(auth_bp, url_prefix="/api/user")
 app.register_blueprint(drive_bp, url_prefix = "/api/drive")
 app.register_blueprint(chatbot_bp, url_prefix="/api/chatbot")
+
+# for coding-assessment
+app.register_blueprint(problem_bp, url_prefix="/api/coding-assessment/problem")
+app.register_blueprint(submission_bp, url_prefix="/api/coding-assessment/submission")
+
 
 
 

@@ -1,4 +1,5 @@
 import Editor from "@monaco-editor/react";
+import { Loader2 } from "lucide-react";
 
 const LANGUAGES = [
   { name: "python", label: "Python" },
@@ -14,13 +15,21 @@ export default function CodeEditor({
   setLanguage,
   onRun,
   darkMode,
+  isRunning,
 }) {
   const cardBg = darkMode ? "#1a1a1a" : "#ffffff";
   const textColor = darkMode ? "#e0e0e0" : "#1a1a1a";
   const borderColor = darkMode ? "#2a2a2a" : "#d0d0d0";
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        flex: 0.6,
+        overflow: "hidden",
+      }}
+    >
       {/* Language Selector & Run Button */}
       <div
         style={{
@@ -55,6 +64,7 @@ export default function CodeEditor({
 
         <button
           onClick={onRun}
+          disabled={isRunning}
           style={{
             marginLeft: "auto",
             padding: "6px 16px",
@@ -62,19 +72,31 @@ export default function CodeEditor({
             color: textColor,
             border: `1px solid ${borderColor}`,
             borderRadius: "4px",
-            cursor: "pointer",
+            cursor: isRunning ? "not-allowed" : "pointer",
             fontSize: "13px",
             fontWeight: "500",
             transition: "all 0.2s",
+            opacity: isRunning ? 0.6 : 1,
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
           }}
           onMouseEnter={(e) => {
-            e.target.style.backgroundColor = darkMode ? "#3a3a3a" : "#d8d8d8";
+            if (!isRunning) {
+              e.target.style.backgroundColor = darkMode ? "#3a3a3a" : "#d8d8d8";
+            }
           }}
           onMouseLeave={(e) => {
             e.target.style.backgroundColor = darkMode ? "#2a2a2a" : "#e8e8e8";
           }}
         >
-          Run Code
+          {isRunning && (
+            <Loader2
+              size={14}
+              style={{ animation: "spin 1s linear infinite" }}
+            />
+          )}
+          {isRunning ? "Running..." : "Run Code"}
         </button>
       </div>
 
@@ -90,9 +112,17 @@ export default function CodeEditor({
             minimap: { enabled: false },
             fontSize: 13,
             fontFamily: "Monaco, Courier New, monospace",
+            scrollBeyondLastLine: false,
           }}
         />
       </div>
+
+      <style>{`
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 }

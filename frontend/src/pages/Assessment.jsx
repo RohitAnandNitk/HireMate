@@ -7,89 +7,105 @@ import CodeEditor from "../components/CodingAssessment/CodeEditor";
 import Input from "../components/CodingAssessment/Input";
 import Output from "../components/CodingAssessment/Output";
 
-const PROBLEMS = [
-  {
-    id: 1,
-    number: 1,
-    title: "Sum of Two Numbers",
-    description:
-      "Given two integers, return their sum.\n\nExample:\nInput: a = 5, b = 3\nOutput: 8",
-    constraints: "1 ≤ a, b ≤ 10^9",
-    testCases: [
-      { input: "5 3", output: "8" },
-      { input: "10 20", output: "30" },
-      { input: "0 0", output: "0" },
-    ],
-  },
-  {
-    id: 2,
-    number: 2,
-    title: "Reverse String",
-    description:
-      "Reverse the given string.\n\nExample:\nInput: hello\nOutput: olleh",
-    constraints: "1 ≤ length ≤ 10^5",
-    testCases: [
-      { input: "hello", output: "olleh" },
-      { input: "world", output: "dlrow" },
-    ],
-  },
-  {
-    id: 3,
-    number: 3,
-    title: "Check Palindrome",
-    description:
-      "Check if a string is a palindrome.\n\nExample:\nInput: racecar\nOutput: true",
-    constraints: "1 ≤ length ≤ 10^4",
-    testCases: [
-      { input: "racecar", output: "true" },
-      { input: "hello", output: "false" },
-    ],
-  },
-];
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export default function Assessment() {
   const [darkMode, setDarkMode] = useState(true);
   const [assessmentStarted, setAssessmentStarted] = useState(false);
-  const [selectedProblem, setSelectedProblem] = useState(PROBLEMS[0]);
-  const [code, setCode] = useState("");
+  const [problems, setProblems] = useState([]);
+  const [selectedProblem, setSelectedProblem] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isRunning, setIsRunning] = useState(false);
+
+  // Store code for each problem
+  const [problemCode, setProblemCode] = useState({});
   const [language, setLanguage] = useState("python");
   const [customInput, setCustomInput] = useState("");
   const [output, setOutput] = useState("");
+
   const [dividerPos, setDividerPos] = useState(50);
+  const [verticalDividerPos, setVerticalDividerPos] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
+  const [isVerticalDragging, setIsVerticalDragging] = useState(false);
   const containerRef = useRef(null);
+  const verticalContainerRef = useRef(null);
 
-  // Debug: Log when component renders
-  console.log("=== Assessment Component Render ===");
-  console.log("assessmentStarted:", assessmentStarted);
-  console.log("darkMode:", darkMode);
+  // Get current code for selected problem
+  const code = problemCode[selectedProblem?.id] || "";
 
-  // Handler function to start assessment
+  // Update code for current problem
+  const setCode = (newCode) => {
+    if (selectedProblem) {
+      setProblemCode((prev) => ({
+        ...prev,
+        [selectedProblem.id]: newCode,
+      }));
+    }
+  };
+
+  useEffect(() => {
+    if (assessmentStarted && problems.length === 0) {
+      fetchProblems();
+    }
+  }, [assessmentStarted]);
+
+  const fetchProblems = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${BASE_URL}/api/coding-assessment/problem`);
+      if (!response.ok) throw new Error("Failed to fetch problem");
+
+      const data = await response.json();
+      setProblems(data);
+      setSelectedProblem(data[0]);
+    } catch (err) {
+      console.error("Error fetching problems:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleStartAssessment = () => {
-    console.log("handleStartAssessment function called!");
     setAssessmentStarted(true);
   };
 
   const handleRun = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/run", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          code,
-          problem_id: selectedProblem.id,
-          language,
-          input: customInput,
-        }),
-      });
+      setIsRunning(true);
+      setOutput("Running...");
 
-      const data = await response.text();
-      setOutput(data);
+      const response = await fetch(
+        `${BASE_URL}/api/coding-assessment/submission/run`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            code,
+            problem_id: selectedProblem.id,
+            language,
+            input: customInput,
+          }),
+        }
+      );
+
+      const data = await response.json();
+      setOutput(JSON.stringify(data));
     } catch (err) {
-      setOutput("Error running code");
+      console.error("Error running code:", err);
+      setOutput(
+        JSON.stringify({
+          status: { description: "Connection Error", id: -1 },
+          stderr: err.message,
+        })
+      );
+    } finally {
+      setIsRunning(false);
     }
   };
 
+  // Horizontal divider (Problem | Editor)
   const handleMouseDown = () => setIsDragging(true);
 
   useEffect(() => {
@@ -110,9 +126,28 @@ export default function Assessment() {
     };
   }, [isDragging]);
 
-  // CONDITIONAL RENDERING: Show Instructions first
+  // Vertical divider (Input | Output)
+  const handleVerticalMouseDown = () => setIsVerticalDragging(true);
+
+  useEffect(() => {
+    const handleMouseUp = () => setIsVerticalDragging(false);
+    const handleMouseMove = (e) => {
+      if (!isVerticalDragging || !verticalContainerRef.current) return;
+      const container = verticalContainerRef.current;
+      const rect = container.getBoundingClientRect();
+      const newPos = ((e.clientX - rect.left) / rect.width) * 100;
+      if (newPos > 20 && newPos < 80) setVerticalDividerPos(newPos);
+    };
+
+    document.addEventListener("mouseup", handleMouseUp);
+    document.addEventListener("mousemove", handleMouseMove);
+    return () => {
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, [isVerticalDragging]);
+
   if (!assessmentStarted) {
-    console.log("Rendering Instructions page...");
     return (
       <Instructions
         onStartAssessment={handleStartAssessment}
@@ -121,8 +156,59 @@ export default function Assessment() {
     );
   }
 
-  // After assessment starts: Show main assessment interface
-  console.log("Rendering Assessment interface...");
+  if (loading) {
+    const bgColor = darkMode ? "#0d0d0d" : "#f8f9fa";
+    const textColor = darkMode ? "#e0e0e0" : "#1a1a1a";
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          backgroundColor: bgColor,
+          color: textColor,
+        }}
+      >
+        <div style={{ textAlign: "center" }}>
+          <h2>Loading problems...</h2>
+          <p>Please wait while we fetch the assessment questions.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    const bgColor = darkMode ? "#0d0d0d" : "#f8f9fa";
+    const textColor = darkMode ? "#e0e0e0" : "#1a1a1a";
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          backgroundColor: bgColor,
+          color: textColor,
+        }}
+      >
+        <div style={{ textAlign: "center" }}>
+          <h2>Error loading problems</h2>
+          <p>{error}</p>
+          <button
+            onClick={fetchProblems}
+            style={{
+              padding: "10px 20px",
+              marginTop: "20px",
+              cursor: "pointer",
+            }}
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const bgColor = darkMode ? "#0d0d0d" : "#f8f9fa";
   const cardBg = darkMode ? "#1a1a1a" : "#ffffff";
@@ -140,15 +226,13 @@ export default function Assessment() {
         transition: "all 0.3s ease",
       }}
     >
-      {/* Sidebar */}
       <Sidebar
-        problems={PROBLEMS}
+        problems={problems}
         selectedProblem={selectedProblem}
         onSelectProblem={setSelectedProblem}
         darkMode={darkMode}
       />
 
-      {/* Main Content */}
       <div
         style={{
           flex: 1,
@@ -157,7 +241,6 @@ export default function Assessment() {
           overflow: "hidden",
         }}
       >
-        {/* Header */}
         <div
           style={{
             padding: "12px 20px",
@@ -169,7 +252,7 @@ export default function Assessment() {
           }}
         >
           <h2 style={{ margin: 0, fontSize: "18px", fontWeight: "600" }}>
-            Assessment
+            Assessment ({problems.length} Problems)
           </h2>
           <button
             onClick={() => setDarkMode(!darkMode)}
@@ -187,7 +270,6 @@ export default function Assessment() {
           </button>
         </div>
 
-        {/* Content Area with Draggable Divider */}
         <div
           ref={containerRef}
           style={{
@@ -197,7 +279,6 @@ export default function Assessment() {
             position: "relative",
           }}
         >
-          {/* Left: Problem Statement */}
           <div
             style={{
               width: `${dividerPos}%`,
@@ -210,19 +291,17 @@ export default function Assessment() {
             <Problem problem={selectedProblem} darkMode={darkMode} />
           </div>
 
-          {/* Draggable Divider */}
           <div
             onMouseDown={handleMouseDown}
             style={{
               width: "6px",
-              backgroundColor: borderColor,
-              cursor: "col-resize",
-              transition: isDragging ? "none" : "background-color 0.2s",
               backgroundColor: isDragging
                 ? darkMode
                   ? "#444"
                   : "#999"
                 : borderColor,
+              cursor: "col-resize",
+              transition: isDragging ? "none" : "background-color 0.2s",
             }}
             onMouseEnter={(e) => {
               e.target.style.backgroundColor = darkMode ? "#333" : "#bbb";
@@ -232,7 +311,6 @@ export default function Assessment() {
             }}
           />
 
-          {/* Right: Code Editor & I/O */}
           <div
             style={{
               width: `${100 - dividerPos}%`,
@@ -242,7 +320,6 @@ export default function Assessment() {
               backgroundColor: bgColor,
             }}
           >
-            {/* Code Editor */}
             <CodeEditor
               code={code}
               setCode={setCode}
@@ -250,23 +327,60 @@ export default function Assessment() {
               setLanguage={setLanguage}
               onRun={handleRun}
               darkMode={darkMode}
+              isRunning={isRunning}
             />
 
-            {/* Input & Output */}
             <div
+              ref={verticalContainerRef}
               style={{
                 flex: 0.4,
                 display: "flex",
                 borderTop: `1px solid ${borderColor}`,
                 overflow: "hidden",
+                position: "relative",
               }}
             >
-              <Input
-                customInput={customInput}
-                setCustomInput={setCustomInput}
-                darkMode={darkMode}
+              <div
+                style={{ width: `${verticalDividerPos}%`, overflow: "hidden" }}
+              >
+                <Input
+                  customInput={customInput}
+                  setCustomInput={setCustomInput}
+                  darkMode={darkMode}
+                />
+              </div>
+
+              <div
+                onMouseDown={handleVerticalMouseDown}
+                style={{
+                  width: "6px",
+                  backgroundColor: isVerticalDragging
+                    ? darkMode
+                      ? "#444"
+                      : "#999"
+                    : borderColor,
+                  cursor: "col-resize",
+                  transition: isVerticalDragging
+                    ? "none"
+                    : "background-color 0.2s",
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = darkMode ? "#333" : "#bbb";
+                }}
+                onMouseLeave={(e) => {
+                  if (!isVerticalDragging)
+                    e.target.style.backgroundColor = borderColor;
+                }}
               />
-              <Output output={output} darkMode={darkMode} />
+
+              <div
+                style={{
+                  width: `${100 - verticalDividerPos}%`,
+                  overflow: "hidden",
+                }}
+              >
+                <Output output={output} darkMode={darkMode} />
+              </div>
             </div>
           </div>
         </div>

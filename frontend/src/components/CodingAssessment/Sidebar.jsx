@@ -13,7 +13,7 @@ export default function Sidebar({
   return (
     <div
       style={{
-        width: "60px",
+        width: "80px",
         borderRight: `1px solid ${borderColor}`,
         display: "flex",
         flexDirection: "column",
@@ -25,48 +25,67 @@ export default function Sidebar({
         style={{ padding: "16px", borderBottom: `1px solid ${borderColor}` }}
       >
         <h3
-          style={{ margin: "0 0 12px 0", fontSize: "14px", fontWeight: "600" }}
+          style={{
+            margin: 0,
+            fontSize: "12px",
+            fontWeight: "600",
+            textAlign: "center",
+          }}
         >
-          {/* Problems ({problems.length}) */}
+          Problems
         </h3>
       </div>
 
-      {problems.map((problem) => (
-        <button
-          key={problem.id}
-          onClick={() => onSelectProblem(problem)}
+      {problems && problems.length > 0 ? (
+        problems.map((problem, index) => (
+          <button
+            key={problem.id}
+            onClick={() => onSelectProblem(problem)}
+            title={problem.title} // Show title on hover
+            style={{
+              padding: "16px",
+              border: "none",
+              backgroundColor:
+                selectedProblem?.id === problem.id
+                  ? accentColor
+                  : "transparent",
+              color: textColor,
+              textAlign: "center",
+              cursor: "pointer",
+              borderBottom: `1px solid ${borderColor}`,
+              fontSize: "18px",
+              fontWeight: "600",
+              transition: "all 0.2s",
+              borderLeft:
+                selectedProblem?.id === problem.id
+                  ? `3px solid ${darkMode ? "#fff" : "#000"}`
+                  : "3px solid transparent",
+            }}
+            onMouseEnter={(e) => {
+              if (selectedProblem?.id !== problem.id)
+                e.target.style.backgroundColor = hoverBg;
+            }}
+            onMouseLeave={(e) => {
+              if (selectedProblem?.id !== problem.id)
+                e.target.style.backgroundColor = "transparent";
+            }}
+          >
+            {index + 1}
+          </button>
+        ))
+      ) : (
+        <div
           style={{
-            padding: "12px 16px",
-            border: "none",
-            backgroundColor:
-              selectedProblem.id === problem.id ? accentColor : "transparent",
+            padding: "16px",
             color: textColor,
-            textAlign: "left",
-            cursor: "pointer",
-            borderBottom: `1px solid ${borderColor}`,
-            fontSize: "13px",
-            transition: "all 0.2s",
-            borderLeft:
-              selectedProblem.id === problem.id
-                ? `3px solid ${darkMode ? "#fff" : "#000"}`
-                : "3px solid transparent",
-            paddingLeft: selectedProblem.id === problem.id ? "13px" : "16px",
-          }}
-          onMouseEnter={(e) => {
-            if (selectedProblem.id !== problem.id)
-              e.target.style.backgroundColor = hoverBg;
-          }}
-          onMouseLeave={(e) => {
-            if (selectedProblem.id !== problem.id)
-              e.target.style.backgroundColor = "transparent";
+            opacity: 0.7,
+            textAlign: "center",
+            fontSize: "12px",
           }}
         >
-          <div style={{ fontSize: "12px", opacity: 0.7, marginBottom: "4px" }}>
-            Q {problem.number}.
-          </div>
-          {/* <div style={{ fontWeight: "500" }}>{problem.title}</div> */}
-        </button>
-      ))}
+          No problems
+        </div>
+      )}
     </div>
   );
 }

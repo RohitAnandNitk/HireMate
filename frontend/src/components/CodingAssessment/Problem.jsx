@@ -81,10 +81,15 @@ export default function Problem({ problem, darkMode }) {
             fontSize: "14px",
             fontFamily: "monospace",
             color: textColor,
+            whiteSpace: "pre-wrap",
           }}
-        >
-          {problem.constraints}
-        </p>
+          dangerouslySetInnerHTML={{
+            __html: problem.constraints
+              .replace(/â‰¤/g, "≤")
+              .replace(/â‰¥/g, "≥")
+              .replace(/â‰ /g, "≠"),
+          }}
+        />
       </div>
 
       <div>
