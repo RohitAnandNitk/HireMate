@@ -59,14 +59,16 @@ export default function Assessment() {
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef(null);
 
-  if (!assessmentStarted) {
-    return (
-      <Instructions
-        onStartAssessment={() => setAssessmentStarted(true)}
-        darkMode={darkMode}
-      />
-    );
-  }
+  // Debug: Log when component renders
+  console.log("=== Assessment Component Render ===");
+  console.log("assessmentStarted:", assessmentStarted);
+  console.log("darkMode:", darkMode);
+
+  // Handler function to start assessment
+  const handleStartAssessment = () => {
+    console.log("handleStartAssessment function called!");
+    setAssessmentStarted(true);
+  };
 
   const handleRun = async () => {
     try {
@@ -107,6 +109,20 @@ export default function Assessment() {
       document.removeEventListener("mousemove", handleMouseMove);
     };
   }, [isDragging]);
+
+  // CONDITIONAL RENDERING: Show Instructions first
+  if (!assessmentStarted) {
+    console.log("Rendering Instructions page...");
+    return (
+      <Instructions
+        onStartAssessment={handleStartAssessment}
+        darkMode={darkMode}
+      />
+    );
+  }
+
+  // After assessment starts: Show main assessment interface
+  console.log("Rendering Assessment interface...");
 
   const bgColor = darkMode ? "#0d0d0d" : "#f8f9fa";
   const cardBg = darkMode ? "#1a1a1a" : "#ffffff";

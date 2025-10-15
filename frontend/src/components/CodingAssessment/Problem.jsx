@@ -2,6 +2,15 @@ export default function Problem({ problem, darkMode }) {
   const textColor = darkMode ? "#e0e0e0" : "#1a1a1a";
   const accentColor = darkMode ? "#3a3a3a" : "#e8e8e8";
 
+  // Safety check: If problem is not provided, show loading message
+  if (!problem) {
+    return (
+      <div style={{ padding: "20px", color: textColor }}>
+        <p>Loading problem...</p>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div style={{ marginBottom: "24px" }}>
@@ -89,27 +98,33 @@ export default function Problem({ problem, darkMode }) {
         >
           TEST CASES
         </h3>
-        {problem.testCases.map((tc, idx) => (
-          <div
-            key={idx}
-            style={{
-              marginBottom: "12px",
-              padding: "12px",
-              backgroundColor: accentColor,
-              borderRadius: "6px",
-              fontSize: "13px",
-            }}
-          >
-            <div style={{ marginBottom: "6px" }}>
-              <span style={{ opacity: 0.7 }}>Input: </span>
-              <span style={{ fontFamily: "monospace" }}>{tc.input}</span>
+        {problem.testCases && problem.testCases.length > 0 ? (
+          problem.testCases.map((tc, idx) => (
+            <div
+              key={idx}
+              style={{
+                marginBottom: "12px",
+                padding: "12px",
+                backgroundColor: accentColor,
+                borderRadius: "6px",
+                fontSize: "13px",
+              }}
+            >
+              <div style={{ marginBottom: "6px" }}>
+                <span style={{ opacity: 0.7 }}>Input: </span>
+                <span style={{ fontFamily: "monospace" }}>{tc.input}</span>
+              </div>
+              <div>
+                <span style={{ opacity: 0.7 }}>Output: </span>
+                <span style={{ fontFamily: "monospace" }}>{tc.output}</span>
+              </div>
             </div>
-            <div>
-              <span style={{ opacity: 0.7 }}>Output: </span>
-              <span style={{ fontFamily: "monospace" }}>{tc.output}</span>
-            </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p style={{ color: textColor, opacity: 0.7 }}>
+            No test cases available
+          </p>
+        )}
       </div>
     </div>
   );

@@ -7,6 +7,21 @@ export default function Instructions({ onStartAssessment, darkMode }) {
   const borderColor = darkMode ? "#2a2a2a" : "#d0d0d0";
   const accentColor = darkMode ? "#3a3a3a" : "#e8e8e8";
 
+  const handleStartClick = () => {
+    console.log("Start button clicked");
+    console.log("onStartAssessment function:", typeof onStartAssessment);
+
+    if (typeof onStartAssessment === "function") {
+      onStartAssessment();
+      console.log("onStartAssessment called successfully");
+    } else {
+      console.error(
+        "ERROR: onStartAssessment is not a function!",
+        onStartAssessment
+      );
+    }
+  };
+
   return (
     <div
       style={{
@@ -262,7 +277,8 @@ export default function Instructions({ onStartAssessment, darkMode }) {
 
         {/* Start Button */}
         <button
-          onClick={onStartAssessment}
+          onClick={handleStartClick}
+          type="button"
           style={{
             padding: "12px 32px",
             backgroundColor: darkMode ? "#ffffff" : "#000000",

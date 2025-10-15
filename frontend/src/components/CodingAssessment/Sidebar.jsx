@@ -13,7 +13,7 @@ export default function Sidebar({
   return (
     <div
       style={{
-        width: "240px",
+        width: "60px",
         borderRight: `1px solid ${borderColor}`,
         display: "flex",
         flexDirection: "column",
@@ -27,7 +27,7 @@ export default function Sidebar({
         <h3
           style={{ margin: "0 0 12px 0", fontSize: "14px", fontWeight: "600" }}
         >
-          Problems ({problems.length})
+          {/* Problems ({problems.length}) */}
         </h3>
       </div>
 
@@ -62,9 +62,9 @@ export default function Sidebar({
           }}
         >
           <div style={{ fontSize: "12px", opacity: 0.7, marginBottom: "4px" }}>
-            #{problem.number}
+            Q {problem.number}.
           </div>
-          <div style={{ fontWeight: "500" }}>{problem.title}</div>
+          {/* <div style={{ fontWeight: "500" }}>{problem.title}</div> */}
         </button>
       ))}
     </div>
