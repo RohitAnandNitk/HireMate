@@ -1,6 +1,7 @@
 from bson import ObjectId
 from flask import jsonify, request
-from src.Model.Drive import create_drive
+from src.Model.Drive import create_drive, JobType
+from src.Model.CodingQuestion import create_coding_question
 from src.Utils.Database import db
 from datetime import datetime
 from src.Model.Drive import DriveStatus
@@ -13,45 +14,117 @@ from src.Orchestrator.HiringOrchestrator import (
 
 from src.Tasks.tasks import email_candidates_task, send_final_selection_emails_task, schedule_interviews_task
 
-# Create a new drive
+
 def create_drive_controller():
+    """
+    Create a new drive with optional coding questions.
+    """
     print("Create Drive Controller called.")
     data = request.get_json()
     
+    # Extract required fields
     company_id = data.get("company_id")
     role = data.get("role")
     location = data.get("location")
     start_date = data.get("start_date")
     end_date = data.get("end_date")
-    rounds = data.get("rounds", [])
     job_id = data.get("job_id")
+    candidates_to_hire = data.get("candidates_to_hire")
+    
+    # Extract optional fields
+    rounds = data.get("rounds", [])
     skills = data.get("skills", [])
+    job_type = data.get("job_type", JobType.FULL_TIME)
+    internship_duration = data.get("internship_duration")
+    coding_questions = data.get("coding_questions", [])
 
+    # Validation
     if not company_id:
         return jsonify({"error": "company_id is required"}), 400
 
     if not job_id:
         return jsonify({"error": "job_id is required"}), 400
+    
+    if not candidates_to_hire:
+        return jsonify({"error": "candidates_to_hire is required"}), 400
+    
+    try:
+        candidates_to_hire = int(candidates_to_hire)
+        if candidates_to_hire < 1:
+            return jsonify({"error": "candidates_to_hire must be a positive integer"}), 400
+    except (ValueError, TypeError):
+        return jsonify({"error": "candidates_to_hire must be a valid integer"}), 400
 
     # Check if job_id is unique
     existing_drive = db.drives.find_one({"job_id": job_id})
     if existing_drive:
         return jsonify({"error": f"job_id '{job_id}' already exists"}), 400
+    
+    # Validate job type and internship duration
+    if job_type == JobType.INTERNSHIP or job_type == "internship":
+        if not internship_duration:
+            return jsonify({"error": "internship_duration is required for internship job type"}), 400
+
+    # Process coding questions if provided
+    coding_question_ids = []
+    if coding_questions and len(coding_questions) > 0:
+        try:
+            for idx, question in enumerate(coding_questions):
+                # Create coding question document
+                coding_question = create_coding_question(
+                    title=question.get("title"),
+                    description=question.get("description"),
+                    test_cases=question.get("testCases", []),
+                    constraints=question.get("constraints", ""),
+                    difficulty=question.get("difficulty", "medium"),
+                    tags=question.get("tags", []),
+                    time_limit=question.get("time_limit"),
+                    memory_limit=question.get("memory_limit"),
+                    company_id=company_id
+                )
+                
+                # Insert coding question into database
+                result = db.coding_questions.insert_one(coding_question)
+                coding_question_ids.append(str(result.inserted_id))
+                
+            print(f"Created {len(coding_question_ids)} coding questions")
+        except ValueError as e:
+            return jsonify({"error": f"Invalid coding question data: {str(e)}"}), 400
+        except Exception as e:
+            return jsonify({"error": f"Error creating coding questions: {str(e)}"}), 500
 
     # Create drive instance
-    drive = create_drive(company_id, role, location, start_date, end_date)
-    drive["rounds"] = rounds
-    drive["job_id"] = job_id
-    drive["skills"] = skills
+    try:
+        drive = create_drive(
+            company_id=company_id,
+            role=role,
+            location=location,
+            start_date=start_date,
+            end_date=end_date,
+            candidates_to_hire=candidates_to_hire,
+            job_type=job_type,
+            skills=skills,
+            rounds=rounds,
+            job_id=job_id,
+            internship_duration=internship_duration,
+            coding_question_ids=coding_question_ids
+        )
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
 
+    # Insert drive into database
     result = db.drives.insert_one(drive)
 
     # Convert _id to string before returning
     drive["_id"] = str(result.inserted_id)
-    print("Drive created successfully with company_id:", company_id)
+    
+    print(f"Drive created successfully with company_id: {company_id}, job_id: {job_id}")
+    print(f"Number of coding questions: {len(coding_question_ids)}")
+    
     return jsonify({
         "message": "Drive created successfully",
-        "drive": drive
+        "drive": drive,
+        "coding_questions_count": len(coding_question_ids)
     }), 201
 
 

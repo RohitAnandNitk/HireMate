@@ -15,6 +15,7 @@ const JobCreation = () => {
   const [loading, setLoading] = useState(false);
   const [companyId, setCompanyId] = useState(null);
   const [fetchingHRInfo, setFetchingHRInfo] = useState(true);
+  const [showCodingQuestions, setShowCodingQuestions] = useState(false);
 
   const [jobData, setJobData] = useState({
     company_id: "",
@@ -25,6 +26,10 @@ const JobCreation = () => {
     end_date: "",
     location: "",
     skills: "",
+    candidates_to_hire: "",
+    job_type: "full-time",
+    internship_duration: "",
+    coding_questions: [],
   });
 
   // Fetch HR info when component mounts
@@ -59,7 +64,6 @@ const JobCreation = () => {
         console.log("Role:", hrData.role);
         console.log("=".repeat(50));
 
-        // Update companyId and jobData if available in HR info
         if (hrData.company_id) {
           setCompanyId(hrData.company_id);
           setJobData((prev) => ({
@@ -67,8 +71,6 @@ const JobCreation = () => {
             company_id: hrData.company_id,
           }));
           console.log("Set companyId to:", hrData.company_id);
-          // setLoading(true);
-          // Always play loader once on startup (4s)
           const timer = setTimeout(() => setLoading(false), 3000);
           return () => clearTimeout(timer);
         } else {
@@ -86,6 +88,19 @@ const JobCreation = () => {
       fetchHRInfo();
     }
   }, [user]);
+
+  // Check if any round is "Coding" type
+  useEffect(() => {
+    const hasCodingRound = jobData.rounds.some(
+      (round) => round.type === "Coding"
+    );
+    setShowCodingQuestions(hasCodingRound);
+
+    // If no coding round, clear coding questions
+    if (!hasCodingRound) {
+      setJobData((prev) => ({ ...prev, coding_questions: [] }));
+    }
+  }, [jobData.rounds]);
 
   const handleInputChange = (field, value) => {
     setJobData((prev) => ({
@@ -121,13 +136,87 @@ const JobCreation = () => {
     }
   };
 
+  const addCodingQuestion = () => {
+    const newQuestion = {
+      id: Date.now(),
+      number: jobData.coding_questions.length + 1,
+      title: "",
+      description: "",
+      constraints: "",
+      testCases: [{ input: "", output: "" }],
+    };
+
+    setJobData((prev) => ({
+      ...prev,
+      coding_questions: [...prev.coding_questions, newQuestion],
+    }));
+  };
+
+  const removeCodingQuestion = (questionId) => {
+    setJobData((prev) => ({
+      ...prev,
+      coding_questions: prev.coding_questions
+        .filter((q) => q.id !== questionId)
+        .map((q, idx) => ({ ...q, number: idx + 1 })),
+    }));
+  };
+
+  const handleQuestionChange = (questionId, field, value) => {
+    setJobData((prev) => ({
+      ...prev,
+      coding_questions: prev.coding_questions.map((q) =>
+        q.id === questionId ? { ...q, [field]: value } : q
+      ),
+    }));
+  };
+
+  const addTestCase = (questionId) => {
+    setJobData((prev) => ({
+      ...prev,
+      coding_questions: prev.coding_questions.map((q) =>
+        q.id === questionId
+          ? { ...q, testCases: [...q.testCases, { input: "", output: "" }] }
+          : q
+      ),
+    }));
+  };
+
+  const removeTestCase = (questionId, testCaseIndex) => {
+    setJobData((prev) => ({
+      ...prev,
+      coding_questions: prev.coding_questions.map((q) =>
+        q.id === questionId
+          ? {
+              ...q,
+              testCases: q.testCases.filter((_, idx) => idx !== testCaseIndex),
+            }
+          : q
+      ),
+    }));
+  };
+
+  const handleTestCaseChange = (questionId, testCaseIndex, field, value) => {
+    setJobData((prev) => ({
+      ...prev,
+      coding_questions: prev.coding_questions.map((q) =>
+        q.id === questionId
+          ? {
+              ...q,
+              testCases: q.testCases.map((tc, idx) =>
+                idx === testCaseIndex ? { ...tc, [field]: value } : tc
+              ),
+            }
+          : q
+      ),
+    }));
+  };
+
   const handleSubmit = async () => {
     if (loading) return;
     setLoading(true);
 
     console.log("Inside submission");
 
-    // Validate company_id
     if (!jobData.company_id) {
       toast.error("Company ID is missing. Please try refreshing the page.", {
         position: "top-right",
@@ -137,15 +226,25 @@ const JobCreation = () => {
       return;
     }
 
-    // Validate required fields
-    const { job_id, role, start_date, end_date, location, rounds } = jobData;
+    const {
+      job_id,
+      role,
+      start_date,
+      end_date,
+      location,
+      rounds,
+      candidates_to_hire,
+      job_type,
+      internship_duration,
+    } = jobData;
 
     if (
       !job_id?.trim() ||
       !role?.trim() ||
       !start_date ||
       !end_date ||
-      !location?.trim()
+      !location?.trim() ||
+      !candidates_to_hire
     ) {
       toast.error("Please fill in all required fields", {
         position: "top-right",
@@ -155,7 +254,15 @@ const JobCreation = () => {
       return;
     }
 
-    // Validate rounds
+    if (job_type === "internship" && !internship_duration?.trim()) {
+      toast.error("Please specify internship duration", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      setLoading(false);
+      return;
+    }
+
     if (rounds.some((round) => !round.type?.trim())) {
       toast.error("Please specify type for all rounds", {
         position: "top-right",
@@ -165,8 +272,37 @@ const JobCreation = () => {
       return;
     }
 
+    // Validate coding questions if coding round exists
+    if (showCodingQuestions && jobData.coding_questions.length > 0) {
+      for (const question of jobData.coding_questions) {
+        if (!question.title?.trim() || !question.description?.trim()) {
+          toast.error(
+            "Please fill in title and description for all coding questions",
+            {
+              position: "top-right",
+              autoClose: 3000,
+            }
+          );
+          setLoading(false);
+          return;
+        }
+
+        if (
+          question.testCases.some(
+            (tc) => !tc.input?.trim() || !tc.output?.trim()
+          )
+        ) {
+          toast.error("Please fill in all test cases for coding questions", {
+            position: "top-right",
+            autoClose: 3000,
+          });
+          setLoading(false);
+          return;
+        }
+      }
+    }
+
     console.log("Submitting job data:", jobData);
-    localStorage.setItem("currentJobData", JSON.stringify(jobData));
     try {
       const response = await fetch(`${BASE_URL}/api/drive/create`, {
         method: "POST",
@@ -186,7 +322,6 @@ const JobCreation = () => {
         autoClose: 3000,
       });
 
-      // Navigate to dashboard after a short delay so toast is visible
       setTimeout(() => {
         navigate(`/dashboard/${data.drive._id}`);
       }, 1000);
@@ -214,12 +349,10 @@ const JobCreation = () => {
     "Final",
   ];
 
-  // Show loading state while fetching HR info
   if (fetchingHRInfo) {
     return <Loader />;
   }
 
-  // Show error if company ID couldn't be loaded
   if (!companyId) {
     return (
       <div className="max-w-4xl mx-auto">
@@ -275,6 +408,57 @@ const JobCreation = () => {
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
           />
         </div>
+
+        {/* Number of Candidates and Job Type */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-gray-700 mb-2 font-medium">
+              Number of Candidates to Hire{" "}
+              <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              min="1"
+              value={jobData.candidates_to_hire}
+              onChange={(e) =>
+                handleInputChange("candidates_to_hire", e.target.value)
+              }
+              placeholder="e.g., 5"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
+            />
+          </div>
+          <div>
+            <label className="block text-gray-700 mb-2 font-medium">
+              Job Type <span className="text-red-500">*</span>
+            </label>
+            <select
+              value={jobData.job_type}
+              onChange={(e) => handleInputChange("job_type", e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
+            >
+              <option value="full-time">Full-Time</option>
+              <option value="internship">Internship</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Internship Duration (conditional) */}
+        {jobData.job_type === "internship" && (
+          <div>
+            <label className="block text-gray-700 mb-2 font-medium">
+              Internship Duration <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              value={jobData.internship_duration}
+              onChange={(e) =>
+                handleInputChange("internship_duration", e.target.value)
+              }
+              placeholder="e.g., 3 months, 6 months"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
+            />
+          </div>
+        )}
 
         {/* Skills */}
         <div>
@@ -352,6 +536,180 @@ const JobCreation = () => {
             ))}
           </div>
         </div>
+
+        {/* Coding Questions Section (conditional) */}
+        {showCodingQuestions && (
+          <div className="border-t pt-6">
+            <div className="flex justify-between items-center mb-4">
+              <label className="block text-gray-700 font-medium">
+                Coding Questions
+              </label>
+              <button
+                onClick={addCodingQuestion}
+                className="px-3 py-1 text-sm bg-black cursor-pointer text-white rounded-md hover:bg-gray-800"
+              >
+                Add Question
+              </button>
+            </div>
+
+            {jobData.coding_questions.length === 0 ? (
+              <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-md border border-gray-200">
+                No coding questions added yet. Click "Add Question" to create
+                one.
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {jobData.coding_questions.map((question, qIndex) => (
+                  <div
+                    key={question.id}
+                    className="border border-gray-300 rounded-lg p-4 bg-gray-50"
+                  >
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="font-medium text-gray-900">
+                        Question {question.number}
+                      </h3>
+                      <button
+                        onClick={() => removeCodingQuestion(question.id)}
+                        className="px-2 py-1 text-sm text-red-600 hover:bg-red-100 rounded-md"
+                      >
+                        Remove
+                      </button>
+                    </div>
+
+                    <div className="space-y-4">
+                      {/* Title */}
+                      <div>
+                        <label className="block text-sm text-gray-700 mb-1">
+                          Title <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={question.title}
+                          onChange={(e) =>
+                            handleQuestionChange(
+                              question.id,
+                              "title",
+                              e.target.value
+                            )
+                          }
+                          placeholder="e.g., Sum of Two Numbers"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
+                        />
+                      </div>
+
+                      {/* Description */}
+                      <div>
+                        <label className="block text-sm text-gray-700 mb-1">
+                          Description <span className="text-red-500">*</span>
+                        </label>
+                        <textarea
+                          value={question.description}
+                          onChange={(e) =>
+                            handleQuestionChange(
+                              question.id,
+                              "description",
+                              e.target.value
+                            )
+                          }
+                          placeholder="Provide problem description with examples"
+                          rows="4"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
+                        />
+                      </div>
+
+                      {/* Constraints */}
+                      <div>
+                        <label className="block text-sm text-gray-700 mb-1">
+                          Constraints
+                        </label>
+                        <input
+                          type="text"
+                          value={question.constraints}
+                          onChange={(e) =>
+                            handleQuestionChange(
+                              question.id,
+                              "constraints",
+                              e.target.value
+                            )
+                          }
+                          placeholder="e.g., 1 ≤ a, b ≤ 10^9"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black"
+                        />
+                      </div>
+
+                      {/* Test Cases */}
+                      <div>
+                        <div className="flex justify-between items-center mb-2">
+                          <label className="block text-sm text-gray-700 font-medium">
+                            Test Cases <span className="text-red-500">*</span>
+                          </label>
+                          <button
+                            onClick={() => addTestCase(question.id)}
+                            className="px-2 py-1 text-xs bg-gray-700 text-white rounded hover:bg-gray-800"
+                          >
+                            Add Test Case
+                          </button>
+                        </div>
+
+                        <div className="space-y-2">
+                          {question.testCases.map((testCase, tcIndex) => (
+                            <div
+                              key={tcIndex}
+                              className="flex gap-2 items-center bg-white p-2 rounded border border-gray-200"
+                            >
+                              <div className="flex-1">
+                                <input
+                                  type="text"
+                                  value={testCase.input}
+                                  onChange={(e) =>
+                                    handleTestCaseChange(
+                                      question.id,
+                                      tcIndex,
+                                      "input",
+                                      e.target.value
+                                    )
+                                  }
+                                  placeholder="Input"
+                                  className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-black"
+                                />
+                              </div>
+                              <div className="flex-1">
+                                <input
+                                  type="text"
+                                  value={testCase.output}
+                                  onChange={(e) =>
+                                    handleTestCaseChange(
+                                      question.id,
+                                      tcIndex,
+                                      "output",
+                                      e.target.value
+                                    )
+                                  }
+                                  placeholder="Output"
+                                  className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-black"
+                                />
+                              </div>
+                              {question.testCases.length > 1 && (
+                                <button
+                                  onClick={() =>
+                                    removeTestCase(question.id, tcIndex)
+                                  }
+                                  className="px-2 py-1 text-red-600 hover:bg-red-100 rounded text-sm"
+                                >
+                                  ✕
+                                </button>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Date Range */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
