@@ -71,3 +71,56 @@ class InterviewSchedulingAgent:
 
         print(f"Interview emails sent to {len(shortlisted_candidates)} candidates.")
 
+    def schedule_coding_assessments(self, drive_id):
+        """
+        Schedule coding assessments for shortlisted candidates and send email invitations.
+        """
+        # Default: assessment to be completed within next 48 hours
+        deadline = datetime.now() + timedelta(days=2)
+
+        # Base assessment link (can later be unique per candidate)
+        assessment_link = "https://hirekruit.com/start-assessment"
+        # assessment_link = "http://localhost:5173/start-assessment"
+
+        shortlisted_candidates = list(db.drive_candidates.find({
+            "drive_id": drive_id,
+            "resume_shortlisted": "yes"
+        }))
+
+        for candidate in shortlisted_candidates:
+            candidate_id = candidate["candidate_id"]
+            candidate_info = db.candidates.find_one({"_id": ObjectId(candidate_id)})
+
+            if not candidate_info:
+                print(f"⚠️ Candidate info with candidate {candidate_id} not found in database.")
+                continue
+
+            # Unique link for each candidate
+            candidate_assessment_url = f"{assessment_link}/{candidate['_id']}"
+
+            subject = "Coding Assessment Invitation - HiRekruit"
+            body = f"""Dear {candidate_info['name']},
+
+            Congratulations on being shortlisted for the coding assessment round!
+
+            Please complete your coding assessment using the link below:
+
+            🔗 Assessment Link: {candidate_assessment_url}
+            🕒 Deadline: {deadline.strftime('%A, %d %B %Y, %I:%M %p')}
+
+            Make sure to complete your test before the deadline. 
+            Good luck and happy coding!
+
+            Best regards,
+            HR Team
+            """
+
+            print(f"Sending coding assessment email to {candidate_info['email']}...")
+            self.email_service.send_email(candidate_info['email'], subject, body)
+
+            db.drive_candidates.update_one(
+                {"_id": candidate["_id"]},
+                {"$set": {"coding_assessment_sent": "yes", "assessment_deadline": deadline, "updated_at": datetime.utcnow()}}
+            )
+
+        print(f"Coding assessment emails sent to {len(shortlisted_candidates)} candidates.")

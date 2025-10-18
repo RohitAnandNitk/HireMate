@@ -74,3 +74,18 @@ def schedule_interviews_task(self, drive_id):
     except Exception as e:
         print(f"Error in schedule_interviews_task: {str(e)}")
         raise self.retry(exc=e, countdown=60, max_retries=3)
+
+
+@celery.task(name="schedule_coding_assessments_task", bind=True)
+def schedule_coding_assessments_task(self, drive_id):
+    """Schedule coding assessments for shortlisted candidates"""
+    try:
+        print(f"Starting coding assessment scheduling process for drive {drive_id}")
+        email_service = EmailService(SMTP_SERVER, SMTP_PORT, EMAIL_USER, EMAIL_PASSWORD)
+        interview_agent = InterviewSchedulingAgent(email_service)
+        interview_agent.schedule_coding_assessments(drive_id)
+        print(f"Coding assessments scheduled for drive {drive_id}")
+        return {"status": "success", "drive_id": drive_id}
+    except Exception as e:
+        print(f"Error in schedule_coding_assessments_task: {str(e)}")
+        raise self.retry(exc=e, countdown=60, max_retries=3)

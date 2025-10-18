@@ -5,12 +5,37 @@ class DriveStatus(str, Enum):
     RESUME_UPLOADED = "resumeUploaded"
     RESUME_SHORTLISTED = "resumeShortlisted"
     EMAIL_SENT = "emailSent"
-    INTERVIEW_SCHEDULED = "InterviewScheduled"
+    # Dynamic round statuses will be generated based on rounds
     SELECTION_EMAIL_SENT = "selectionEmailSent"
+    COMPLETED = "completed"
 
 class JobType(str, Enum):
     FULL_TIME = "full-time"
     INTERNSHIP = "internship"
+
+class RoundStatus(str, Enum):
+    PENDING = "pending"
+    IN_PROGRESS = "in_progress"
+    COMPLETED = "completed"
+
+
+def generate_round_statuses(rounds):
+    """
+    Generate status fields for each round dynamically.
+    Returns a list of round status objects.
+    """
+    round_statuses = []
+    for idx, round_info in enumerate(rounds):
+        round_statuses.append({
+            "round_number": idx + 1,
+            "round_type": round_info.get("type"),
+            "status": RoundStatus.PENDING,
+            "scheduled": "no",
+            "completed": "no",
+            "created_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow()
+        })
+    return round_statuses
 
 
 def create_drive(
@@ -29,7 +54,7 @@ def create_drive(
     coding_question_ids=None
 ):
     """
-    Create a drive (job posting) document.
+    Create a drive (job posting) document with dynamic round statuses.
     """
     if rounds is None:
         rounds = [{"type": "Technical", "description": ""}]
@@ -51,6 +76,9 @@ def create_drive(
     if not isinstance(candidates_to_hire, int) or candidates_to_hire < 1:
         raise ValueError("candidates_to_hire must be a positive integer")
 
+    # Generate round statuses dynamically
+    round_statuses = generate_round_statuses(rounds)
+
     drive_data = {
         "job_id": job_id,
         "company_id": company_id,
@@ -61,6 +89,8 @@ def create_drive(
         "candidates_to_hire": candidates_to_hire,
         "job_type": job_type,
         "rounds": rounds,
+        "round_statuses": round_statuses,  # Dynamic round tracking
+        "current_round": 0,  # Track which round is currently active
         "status": status,
         "skills": skills or [],
         "coding_question_ids": coding_question_ids or [],
