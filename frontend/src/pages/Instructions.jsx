@@ -1,6 +1,18 @@
-import { CheckCircle, AlertCircle, Clock, BookOpen } from "lucide-react";
+import {
+  CheckCircle,
+  AlertCircle,
+  Clock,
+  BookOpen,
+  Code,
+  Award,
+} from "lucide-react";
 
-export default function Instructions({ onStartAssessment, darkMode }) {
+export default function Instructions({
+  onStartAssessment,
+  darkMode,
+  totalQuestions = 3,
+  timeLimit = 60,
+}) {
   const bgColor = darkMode ? "#0d0d0d" : "#f8f9fa";
   const cardBg = darkMode ? "#1a1a1a" : "#ffffff";
   const textColor = darkMode ? "#e0e0e0" : "#1a1a1a";
@@ -9,8 +21,6 @@ export default function Instructions({ onStartAssessment, darkMode }) {
 
   const handleStartClick = () => {
     console.log("Start button clicked");
-    console.log("onStartAssessment function:", typeof onStartAssessment);
-
     if (typeof onStartAssessment === "function") {
       onStartAssessment();
       console.log("onStartAssessment called successfully");
@@ -67,13 +77,13 @@ export default function Instructions({ onStartAssessment, darkMode }) {
           <div
             style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}
           >
-            <BookOpen size={24} style={{ marginTop: "4px", opacity: 0.7 }} />
+            <Code size={24} style={{ marginTop: "4px", opacity: 0.7 }} />
             <div>
               <div style={{ fontWeight: "600", marginBottom: "4px" }}>
-                Problem-Based
+                Real Coding Problems
               </div>
               <div style={{ fontSize: "14px", opacity: 0.7 }}>
-                Solve real coding problems with multiple test cases
+                Solve actual coding problems with multiple test cases
               </div>
             </div>
           </div>
@@ -87,7 +97,7 @@ export default function Instructions({ onStartAssessment, darkMode }) {
                 Timed Challenge
               </div>
               <div style={{ fontSize: "14px", opacity: 0.7 }}>
-                Complete the assessment within the given time limit
+                Complete all problems within {timeLimit} minutes
               </div>
             </div>
           </div>
@@ -101,7 +111,21 @@ export default function Instructions({ onStartAssessment, darkMode }) {
                 Instant Feedback
               </div>
               <div style={{ fontSize: "14px", opacity: 0.7 }}>
-                Get immediate results and detailed test case outputs
+                Get immediate results with detailed test case outputs
+              </div>
+            </div>
+          </div>
+
+          <div
+            style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}
+          >
+            <Award size={24} style={{ marginTop: "4px", opacity: 0.7 }} />
+            <div>
+              <div style={{ fontWeight: "600", marginBottom: "4px" }}>
+                Auto-graded
+              </div>
+              <div style={{ fontSize: "14px", opacity: 0.7 }}>
+                Solutions are automatically evaluated and scored
               </div>
             </div>
           </div>
@@ -164,7 +188,9 @@ export default function Instructions({ onStartAssessment, darkMode }) {
             >
               Total Questions
             </div>
-            <div style={{ fontSize: "28px", fontWeight: "700" }}>3</div>
+            <div style={{ fontSize: "28px", fontWeight: "700" }}>
+              {totalQuestions}
+            </div>
           </div>
 
           <div
@@ -180,7 +206,9 @@ export default function Instructions({ onStartAssessment, darkMode }) {
             >
               Time Limit
             </div>
-            <div style={{ fontSize: "28px", fontWeight: "700" }}>60 min</div>
+            <div style={{ fontSize: "28px", fontWeight: "700" }}>
+              {timeLimit} min
+            </div>
           </div>
         </div>
 
@@ -201,12 +229,12 @@ export default function Instructions({ onStartAssessment, darkMode }) {
             style={{ display: "flex", flexDirection: "column", gap: "12px" }}
           >
             {[
-              "Read each problem statement carefully before coding",
+              "Read each problem statement and constraints carefully",
               "Write your solution in the code editor using your preferred language",
-              "Test your code with the provided test cases and custom inputs",
-              "Submit your solution when you are confident it's correct",
+              "Click 'Run Code' to test against all test cases",
               "You can switch between problems anytime during the assessment",
-              "All work will be auto-saved as you code",
+              "Submit your complete assessment before time runs out",
+              "All code is auto-saved as you type",
             ].map((instruction, idx) => (
               <div
                 key={idx}
@@ -268,9 +296,9 @@ export default function Instructions({ onStartAssessment, darkMode }) {
               Important
             </div>
             <div style={{ fontSize: "12px", opacity: 0.8, lineHeight: "1.5" }}>
-              Once you start the assessment, the timer will begin. Make sure you
-              have a stable internet connection and close all unnecessary
-              applications.
+              Once you start, the timer begins. Ensure stable internet
+              connection and close unnecessary applications. Your progress is
+              automatically saved.
             </div>
           </div>
         </div>
@@ -280,12 +308,12 @@ export default function Instructions({ onStartAssessment, darkMode }) {
           onClick={handleStartClick}
           type="button"
           style={{
-            padding: "12px 32px",
+            padding: "14px 32px",
             backgroundColor: darkMode ? "#ffffff" : "#000000",
             color: darkMode ? "#000000" : "#ffffff",
             border: "none",
             borderRadius: "6px",
-            fontSize: "14px",
+            fontSize: "15px",
             fontWeight: "600",
             cursor: "pointer",
             transition: "all 0.2s",
@@ -293,9 +321,11 @@ export default function Instructions({ onStartAssessment, darkMode }) {
           }}
           onMouseEnter={(e) => {
             e.target.style.opacity = "0.85";
+            e.target.style.transform = "scale(1.02)";
           }}
           onMouseLeave={(e) => {
             e.target.style.opacity = "1";
+            e.target.style.transform = "scale(1)";
           }}
         >
           Start Assessment
@@ -309,7 +339,7 @@ export default function Instructions({ onStartAssessment, darkMode }) {
             textAlign: "center",
           }}
         >
-          You can review these instructions anytime during the assessment
+          Good luck! Do your best 🚀
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { CheckCircle, XCircle, Clock, Info } from "lucide-react";
+import { CheckCircle, XCircle, Clock, Info, AlertTriangle } from "lucide-react";
 
 export default function Output({ output, darkMode }) {
   const cardBg = darkMode ? "#1a1a1a" : "#ffffff";
@@ -10,18 +10,27 @@ export default function Output({ output, darkMode }) {
   const errorColor = darkMode ? "#f44336" : "#c62828";
   const infoBg = darkMode ? "#1a1a2e" : "#e3f2fd";
   const infoColor = darkMode ? "#2196f3" : "#1565c0";
+  const warningBg = darkMode ? "#2e2a1a" : "#fff3e0";
+  const warningColor = darkMode ? "#ff9800" : "#e65100";
 
   // Parse output if it's JSON
   let parsedOutput = null;
   let isError = false;
   let isSuccess = false;
+  let testResults = null;
 
   try {
     if (output && typeof output === "string" && output.trim().startsWith("{")) {
       parsedOutput = JSON.parse(output);
 
-      // Check if it's an error (status id 11 or stderr exists)
-      if (parsedOutput.status?.id !== 3 || parsedOutput.stderr) {
+      // Check if it's test results from our API
+      if (parsedOutput.success !== undefined) {
+        testResults = parsedOutput;
+        isSuccess = parsedOutput.result === "Accepted";
+        isError = !isSuccess && parsedOutput.result !== undefined;
+      }
+      // Legacy Judge0 format
+      else if (parsedOutput.status?.id !== 3 || parsedOutput.stderr) {
         isError = true;
       } else if (parsedOutput.stdout) {
         isSuccess = true;
@@ -76,8 +85,154 @@ export default function Output({ output, darkMode }) {
               Run your code to see output here
             </p>
           </div>
+        ) : testResults ? (
+          // Test results from our API
+          <div style={{ padding: "12px" }}>
+            {/* Overall Status Badge */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "12px",
+                borderRadius: "6px",
+                marginBottom: "12px",
+                backgroundColor: isSuccess
+                  ? successBg
+                  : isError
+                  ? errorBg
+                  : warningBg,
+                border: `1px solid ${
+                  isSuccess ? successColor : isError ? errorColor : warningColor
+                }`,
+              }}
+            >
+              {isSuccess ? (
+                <CheckCircle size={20} color={successColor} />
+              ) : isError ? (
+                <XCircle size={20} color={errorColor} />
+              ) : (
+                <AlertTriangle size={20} color={warningColor} />
+              )}
+              <div style={{ flex: 1 }}>
+                <div
+                  style={{
+                    fontWeight: "600",
+                    fontSize: "14px",
+                    color: isSuccess
+                      ? successColor
+                      : isError
+                      ? errorColor
+                      : warningColor,
+                  }}
+                >
+                  {testResults.result || "Unknown"}
+                </div>
+                <div
+                  style={{ fontSize: "12px", opacity: 0.8, marginTop: "2px" }}
+                >
+                  Test Cases: {testResults.test_cases_passed || 0} /{" "}
+                  {testResults.total_test_cases || 0} passed
+                </div>
+              </div>
+            </div>
+
+            {/* Individual Test Results */}
+            {testResults.results && testResults.results.length > 0 && (
+              <div style={{ marginBottom: "12px" }}>
+                <div
+                  style={{
+                    fontSize: "11px",
+                    fontWeight: "600",
+                    marginBottom: "8px",
+                    opacity: 0.7,
+                  }}
+                >
+                  TEST CASE RESULTS
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                  }}
+                >
+                  {testResults.results.map((result, idx) => {
+                    const isPassed = result.result === "Accepted";
+                    return (
+                      <div
+                        key={idx}
+                        style={{
+                          padding: "10px",
+                          backgroundColor: isPassed ? successBg : errorBg,
+                          border: `1px solid ${
+                            isPassed ? successColor : errorColor
+                          }`,
+                          borderRadius: "4px",
+                          fontSize: "12px",
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "6px",
+                            marginBottom: "6px",
+                            fontWeight: "600",
+                          }}
+                        >
+                          {isPassed ? (
+                            <CheckCircle size={14} color={successColor} />
+                          ) : (
+                            <XCircle size={14} color={errorColor} />
+                          )}
+                          Test Case {result.test_case_number || idx + 1}
+                        </div>
+                        <div style={{ paddingLeft: "20px" }}>
+                          <div style={{ marginBottom: "4px" }}>
+                            <span style={{ opacity: 0.7 }}>Input: </span>
+                            <span style={{ fontFamily: "monospace" }}>
+                              {result.stdin || "N/A"}
+                            </span>
+                          </div>
+                          <div style={{ marginBottom: "4px" }}>
+                            <span style={{ opacity: 0.7 }}>Expected: </span>
+                            <span style={{ fontFamily: "monospace" }}>
+                              {result.expected || "N/A"}
+                            </span>
+                          </div>
+                          <div>
+                            <span style={{ opacity: 0.7 }}>Output: </span>
+                            <span
+                              style={{
+                                fontFamily: "monospace",
+                                color: isPassed ? successColor : errorColor,
+                              }}
+                            >
+                              {result.stdout || result.stderr || "No output"}
+                            </span>
+                          </div>
+                          {result.time && (
+                            <div
+                              style={{
+                                marginTop: "4px",
+                                fontSize: "10px",
+                                opacity: 0.7,
+                              }}
+                            >
+                              Time: {result.time}s
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
         ) : parsedOutput ? (
-          // Parsed JSON output
+          // Legacy Judge0 output
           <div style={{ padding: "12px" }}>
             {/* Status Badge */}
             <div
@@ -199,7 +354,7 @@ export default function Output({ output, darkMode }) {
               </div>
             )}
 
-            {/* Compile Output (if exists) */}
+            {/* Compile Output */}
             {parsedOutput.compile_output && (
               <div style={{ marginBottom: "12px" }}>
                 <div

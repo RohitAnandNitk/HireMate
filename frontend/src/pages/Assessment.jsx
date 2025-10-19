@@ -6,10 +6,11 @@ import Problem from "../components/CodingAssessment/Problem";
 import CodeEditor from "../components/CodingAssessment/CodeEditor";
 import Input from "../components/CodingAssessment/Input";
 import Output from "../components/CodingAssessment/Output";
-
+import { useParams } from "react-router-dom";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export default function Assessment() {
+  const { driveId: routeDriveId, candidateId: routeCandidateId } = useParams();
   const [darkMode, setDarkMode] = useState(true);
   const [assessmentStarted, setAssessmentStarted] = useState(false);
   const [problems, setProblems] = useState([]);
@@ -18,11 +19,23 @@ export default function Assessment() {
   const [error, setError] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
 
+  // Assessment details
+  const [driveId, setDriveId] = useState(null);
+  const [candidateId, setCandidateId] = useState(null);
+  const [submissionId, setSubmissionId] = useState(null);
+
+  // Timer state
+  const [timeRemaining, setTimeRemaining] = useState(3600); // 60 minutes in seconds
+  const [timerActive, setTimerActive] = useState(false);
+
   // Store code for each problem
   const [problemCode, setProblemCode] = useState({});
   const [language, setLanguage] = useState("python");
   const [customInput, setCustomInput] = useState("");
   const [output, setOutput] = useState("");
+
+  // Track submission status for each problem
+  const [problemStatus, setProblemStatus] = useState({});
 
   const [dividerPos, setDividerPos] = useState(50);
   const [verticalDividerPos, setVerticalDividerPos] = useState(50);
@@ -32,18 +45,37 @@ export default function Assessment() {
   const verticalContainerRef = useRef(null);
 
   // Get current code for selected problem
-  const code = problemCode[selectedProblem?.id] || "";
+  const code = problemCode[selectedProblem?._id] || "";
 
   // Update code for current problem
   const setCode = (newCode) => {
     if (selectedProblem) {
       setProblemCode((prev) => ({
         ...prev,
-        [selectedProblem.id]: newCode,
+        [selectedProblem._id]: newCode,
       }));
     }
   };
 
+  // Timer effect
+  useEffect(() => {
+    if (timerActive && timeRemaining > 0) {
+      const timer = setInterval(() => {
+        setTimeRemaining((prev) => {
+          if (prev <= 1) {
+            setTimerActive(false);
+            handleTimeUp();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [timerActive, timeRemaining]);
+
+  // Fetch problems when assessment starts
   useEffect(() => {
     if (assessmentStarted && problems.length === 0) {
       fetchProblems();
@@ -53,12 +85,84 @@ export default function Assessment() {
   const fetchProblems = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${BASE_URL}/api/coding-assessment/problem`);
-      if (!response.ok) throw new Error("Failed to fetch problem");
 
-      const data = await response.json();
-      setProblems(data);
-      setSelectedProblem(data[0]);
+      // Priority: Route params > Query params > Default values
+      const urlParams = new URLSearchParams(window.location.search);
+      const drive_id = routeDriveId || urlParams.get("drive_id");
+      const candidate_id = routeCandidateId || urlParams.get("candidate_id");
+
+      // Validation
+      if (!drive_id || !candidate_id) {
+        throw new Error(
+          "Drive ID and Candidate ID are required to start the assessment"
+        );
+      }
+
+      setDriveId(drive_id);
+      setCandidateId(candidate_id);
+
+      console.log("Starting assessment for:", { drive_id, candidate_id });
+
+      // Fetch drive details to get coding question IDs
+      const driveResponse = await fetch(`${BASE_URL}/api/drive/${drive_id}`);
+      if (!driveResponse.ok) {
+        if (driveResponse.status === 404) {
+          throw new Error("Drive not found. Please check the assessment link.");
+        }
+        throw new Error("Failed to fetch drive details");
+      }
+
+      const driveData = await driveResponse.json();
+      const codingQuestionIds = driveData.drive.coding_question_ids || [];
+
+      if (codingQuestionIds.length === 0) {
+        throw new Error("No coding questions found for this assessment");
+      }
+
+      // Fetch all coding questions
+      const questionPromises = codingQuestionIds.map(async (questionId) => {
+        const response = await fetch(
+          `${BASE_URL}/api/coding-assessment/problem/${questionId}`
+        );
+        if (!response.ok)
+          throw new Error(`Failed to fetch question ${questionId}`);
+        return response.json();
+      });
+
+      const questions = await Promise.all(questionPromises);
+
+      // Transform questions to match frontend format
+      const transformedQuestions = questions.map((q, index) => ({
+        _id: q._id,
+        id: q._id,
+        number: index + 1,
+        title: q.title,
+        description: q.description,
+        constraints: q.constraints,
+        testCases: q.test_cases.map((tc) => ({
+          input: tc.input,
+          output: tc.output,
+        })),
+        difficulty: q.difficulty,
+        tags: q.tags,
+      }));
+
+      setProblems(transformedQuestions);
+      setSelectedProblem(transformedQuestions[0]);
+
+      // Initialize code storage for each problem
+      const initialCode = {};
+      transformedQuestions.forEach((problem) => {
+        initialCode[problem._id] = getDefaultCode(language);
+      });
+      setProblemCode(initialCode);
+
+      // Create submission
+      await createSubmission(
+        drive_id,
+        candidate_id,
+        driveData.drive.coding_question_ids
+      );
     } catch (err) {
       console.error("Error fetching problems:", err);
       setError(err.message);
@@ -67,31 +171,119 @@ export default function Assessment() {
     }
   };
 
+  const createSubmission = async (
+    drive_id,
+    candidate_id,
+    codingQuestionIds
+  ) => {
+    try {
+      const response = await fetch(`${BASE_URL}/api/submission/create`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          candidate_id: candidate_id,
+          drive_id: drive_id,
+          code_assessment_id: drive_id, // Using drive_id as assessment_id
+          total_questions: codingQuestionIds.length,
+        }),
+      });
+
+      if (!response.ok) throw new Error("Failed to create submission");
+
+      const data = await response.json();
+      setSubmissionId(data.submission._id);
+      console.log("Submission created:", data.submission._id);
+    } catch (err) {
+      console.error("Error creating submission:", err);
+    }
+  };
+
+  const getDefaultCode = (lang) => {
+    const templates = {
+      python: "def solution():\n    # Write your code here\n    pass\n",
+      javascript: "function solution() {\n    // Write your code here\n}\n",
+      java: "public class Solution {\n    public static void main(String[] args) {\n        // Write your code here\n    }\n}\n",
+      cpp: "#include <iostream>\nusing namespace std;\n\nint main() {\n    // Write your code here\n    return 0;\n}\n",
+    };
+    return templates[lang] || "";
+  };
+
   const handleStartAssessment = () => {
     setAssessmentStarted(true);
+    setTimerActive(true);
+  };
+
+  const handleTimeUp = async () => {
+    alert("Time's up! Your assessment has been automatically submitted.");
+    await handleFinalSubmit();
   };
 
   const handleRun = async () => {
+    if (!selectedProblem || !submissionId) {
+      setOutput(
+        JSON.stringify({
+          status: { description: "Error", id: -1 },
+          stderr: "Assessment not properly initialized",
+        })
+      );
+      return;
+    }
+
     try {
       setIsRunning(true);
       setOutput("Running...");
 
+      // Get language ID mapping
+      const languageMap = {
+        python: 71,
+        javascript: 63,
+        java: 62,
+        cpp: 54,
+      };
+
       const response = await fetch(
-        `${BASE_URL}/api/coding-assessment/submission/run`,
+        `${BASE_URL}/api/submission/submit-question`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            code,
-            problem_id: selectedProblem.id,
-            language,
-            input: customInput,
+            submission_id: submissionId,
+            question_id: selectedProblem._id,
+            source_code: code,
+            language: language,
+            time_taken: 0, // Will be tracked by timer
           }),
         }
       );
 
+      if (!response.ok) throw new Error("Failed to submit question");
+
       const data = await response.json();
-      setOutput(JSON.stringify(data));
+
+      // Update problem status
+      setProblemStatus((prev) => ({
+        ...prev,
+        [selectedProblem._id]: {
+          result: data.result,
+          testCasesPassed: data.test_cases_passed,
+          totalTestCases: data.total_test_cases,
+        },
+      }));
+
+      // Format output
+      setOutput(
+        JSON.stringify(
+          {
+            success: data.success,
+            result: data.result,
+            test_cases_passed: data.test_cases_passed,
+            total_test_cases: data.total_test_cases,
+            results: data.results,
+          },
+          null,
+          2
+        )
+      );
     } catch (err) {
       console.error("Error running code:", err);
       setOutput(
@@ -103,6 +295,37 @@ export default function Assessment() {
     } finally {
       setIsRunning(false);
     }
+  };
+
+  const handleFinalSubmit = async () => {
+    if (!submissionId) return;
+
+    try {
+      // Get final submission statistics
+      const response = await fetch(
+        `${BASE_URL}/api/submission/${submissionId}/statistics`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        alert(
+          `Assessment Completed!\n\nQuestions Solved: ${data.statistics.questions_solved}/${data.statistics.total_questions}\nScore: ${data.statistics.score_percentage}%`
+        );
+      }
+    } catch (err) {
+      console.error("Error fetching final statistics:", err);
+    }
+
+    // Navigate to results page or home
+    // window.location.href = "/results";
+  };
+
+  // Format timer display
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, "0")}:${secs
+      .toString()
+      .padStart(2, "0")}`;
   };
 
   // Horizontal divider (Problem | Editor)
@@ -152,6 +375,8 @@ export default function Assessment() {
       <Instructions
         onStartAssessment={handleStartAssessment}
         darkMode={darkMode}
+        totalQuestions={problems.length}
+        timeLimit={60}
       />
     );
   }
@@ -171,8 +396,8 @@ export default function Assessment() {
         }}
       >
         <div style={{ textAlign: "center" }}>
-          <h2>Loading problems...</h2>
-          <p>Please wait while we fetch the assessment questions.</p>
+          <h2>Loading assessment...</h2>
+          <p>Please wait while we fetch your questions.</p>
         </div>
       </div>
     );
@@ -193,7 +418,7 @@ export default function Assessment() {
         }}
       >
         <div style={{ textAlign: "center" }}>
-          <h2>Error loading problems</h2>
+          <h2>Error loading assessment</h2>
           <p>{error}</p>
           <button
             onClick={fetchProblems}
@@ -231,6 +456,7 @@ export default function Assessment() {
         selectedProblem={selectedProblem}
         onSelectProblem={setSelectedProblem}
         darkMode={darkMode}
+        problemStatus={problemStatus}
       />
 
       <div
@@ -254,20 +480,60 @@ export default function Assessment() {
           <h2 style={{ margin: 0, fontSize: "18px", fontWeight: "600" }}>
             Assessment ({problems.length} Problems)
           </h2>
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              padding: "6px",
-              display: "flex",
-              alignItems: "center",
-              color: textColor,
-            }}
-          >
-            {darkMode ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
+
+          <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+            {/* Timer */}
+            <div
+              style={{
+                padding: "6px 12px",
+                backgroundColor:
+                  timeRemaining < 300
+                    ? "#ff4444"
+                    : darkMode
+                    ? "#2a2a2a"
+                    : "#e8e8e8",
+                borderRadius: "6px",
+                fontWeight: "600",
+                fontSize: "16px",
+                fontFamily: "monospace",
+              }}
+            >
+              {formatTime(timeRemaining)}
+            </div>
+
+            {/* Submit Button */}
+            <button
+              onClick={handleFinalSubmit}
+              style={{
+                padding: "6px 16px",
+                backgroundColor: "#4caf50",
+                color: "#fff",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "13px",
+                fontWeight: "600",
+              }}
+            >
+              Submit Assessment
+            </button>
+
+            {/* Theme Toggle */}
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                padding: "6px",
+                display: "flex",
+                alignItems: "center",
+                color: textColor,
+              }}
+            >
+              {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+          </div>
         </div>
 
         <div

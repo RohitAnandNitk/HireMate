@@ -22,24 +22,35 @@ export default function Input({ customInput, setCustomInput, darkMode }) {
           opacity: 0.8,
         }}
       >
-        INPUT
+        CUSTOM INPUT
       </label>
       <textarea
         value={customInput}
         onChange={(e) => setCustomInput(e.target.value)}
-        placeholder="Enter input here..."
+        placeholder="Enter custom input for testing (optional)..."
         style={{
           flex: 1,
-          padding: "8px",
+          padding: "12px",
           border: `1px solid ${borderColor}`,
           borderRadius: "4px",
           backgroundColor: cardBg,
           color: textColor,
-          fontSize: "12px",
+          fontSize: "13px",
           fontFamily: "monospace",
           resize: "none",
+          outline: "none",
         }}
       />
+      <div
+        style={{
+          marginTop: "8px",
+          fontSize: "11px",
+          opacity: 0.6,
+          fontStyle: "italic",
+        }}
+      >
+        Leave empty to use default test cases
+      </div>
     </div>
   );
 }

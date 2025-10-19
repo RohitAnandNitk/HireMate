@@ -358,7 +358,7 @@ def update_drive_status(drive_id):
             
             if round_type == "Coding":
                 print(f"Scheduling coding assessment for round {round_number}...")
-                task_result = schedule_coding_assessments_task.delay(drive_id, round_number)
+                task_result = schedule_coding_assessments_task.delay(drive_id)
                 print(f"Coding assessment task queued with ID: {task_result.id}")
             else:
                 print(f"Scheduling interviews for round {round_number} ({round_type})...")

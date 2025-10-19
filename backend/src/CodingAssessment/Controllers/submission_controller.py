@@ -17,7 +17,7 @@ from src.Model.Submission import (
 from src.Utils.Database import db
 from datetime import datetime
 from src.CodingAssessment.Utils.judge0_client import submit_and_wait
-from src.Model.CodingQuestion import get_coding_question_by_id
+# from src.Model.CodingQuestion import get_coding_question_by_id
 
 
 def create_submission_controller():

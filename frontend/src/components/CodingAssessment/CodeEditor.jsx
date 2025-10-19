@@ -1,11 +1,11 @@
 import Editor from "@monaco-editor/react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Play } from "lucide-react";
 
 const LANGUAGES = [
-  { name: "python", label: "Python" },
-  { name: "javascript", label: "JavaScript" },
-  { name: "java", label: "Java" },
-  { name: "cpp", label: "C++" },
+  { name: "python", label: "Python", monacoName: "python" },
+  { name: "javascript", label: "JavaScript", monacoName: "javascript" },
+  { name: "java", label: "Java", monacoName: "java" },
+  { name: "cpp", label: "C++", monacoName: "cpp" },
 ];
 
 export default function CodeEditor({
@@ -20,6 +20,8 @@ export default function CodeEditor({
   const cardBg = darkMode ? "#1a1a1a" : "#ffffff";
   const textColor = darkMode ? "#e0e0e0" : "#1a1a1a";
   const borderColor = darkMode ? "#2a2a2a" : "#d0d0d0";
+
+  const currentLanguage = LANGUAGES.find((l) => l.name === language);
 
   return (
     <div
@@ -67,14 +69,14 @@ export default function CodeEditor({
           disabled={isRunning}
           style={{
             marginLeft: "auto",
-            padding: "6px 16px",
-            backgroundColor: darkMode ? "#2a2a2a" : "#e8e8e8",
-            color: textColor,
-            border: `1px solid ${borderColor}`,
+            padding: "8px 20px",
+            backgroundColor: darkMode ? "#4caf50" : "#4caf50",
+            color: "#ffffff",
+            border: "none",
             borderRadius: "4px",
             cursor: isRunning ? "not-allowed" : "pointer",
             fontSize: "13px",
-            fontWeight: "500",
+            fontWeight: "600",
             transition: "all 0.2s",
             opacity: isRunning ? 0.6 : 1,
             display: "flex",
@@ -83,20 +85,27 @@ export default function CodeEditor({
           }}
           onMouseEnter={(e) => {
             if (!isRunning) {
-              e.target.style.backgroundColor = darkMode ? "#3a3a3a" : "#d8d8d8";
+              e.target.style.backgroundColor = "#45a049";
             }
           }}
           onMouseLeave={(e) => {
-            e.target.style.backgroundColor = darkMode ? "#2a2a2a" : "#e8e8e8";
+            e.target.style.backgroundColor = "#4caf50";
           }}
         >
-          {isRunning && (
-            <Loader2
-              size={14}
-              style={{ animation: "spin 1s linear infinite" }}
-            />
+          {isRunning ? (
+            <>
+              <Loader2
+                size={14}
+                style={{ animation: "spin 1s linear infinite" }}
+              />
+              Running...
+            </>
+          ) : (
+            <>
+              <Play size={14} />
+              Run Code
+            </>
           )}
-          {isRunning ? "Running..." : "Run Code"}
         </button>
       </div>
 
@@ -105,14 +114,17 @@ export default function CodeEditor({
         <Editor
           height="100%"
           theme={darkMode ? "vs-dark" : "vs-light"}
-          language={language}
+          language={currentLanguage?.monacoName || "python"}
           value={code}
           onChange={(value) => setCode(value || "")}
           options={{
             minimap: { enabled: false },
-            fontSize: 13,
+            fontSize: 14,
             fontFamily: "Monaco, Courier New, monospace",
             scrollBeyondLastLine: false,
+            automaticLayout: true,
+            tabSize: 4,
+            wordWrap: "on",
           }}
         />
       </div>

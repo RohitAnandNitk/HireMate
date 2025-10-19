@@ -45,7 +45,7 @@ function AppContent() {
   const hideChatbotRoutes = [
     "/mockinterview",
     "/interview_start",
-    "/assessment",
+    "/assessment/:candidateId",
     "/start-assessment",
   ];
 
@@ -172,6 +172,12 @@ function AppContent() {
           element={<InterviewCompletionPage />}
         />
 
+        {/* Assessment Routes with parameters */}
+        <Route
+          path="/assessment/:driveId/:candidateId"
+          element={<Assessment />}
+        />
+        <Route path="/assessment/:driveId" element={<Assessment />} />
         <Route path="/assessment" element={<Assessment />} />
         <Route path="/start-assessment" element={<Instructions />} />
       </Routes>

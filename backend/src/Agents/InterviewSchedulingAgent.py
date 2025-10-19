@@ -79,8 +79,8 @@ class InterviewSchedulingAgent:
         deadline = datetime.now() + timedelta(days=2)
 
         # Base assessment link (can later be unique per candidate)
-        assessment_link = "https://hirekruit.com/assessment"
-        # assessment_link = "http://localhost:5173/assessment"
+        # assessment_link = "https://hirekruit.com/assessment"
+        assessment_link = "http://localhost:5173/assessment"
 
         shortlisted_candidates = list(db.drive_candidates.find({
             "drive_id": drive_id,
