@@ -78,14 +78,19 @@ class InterviewSchedulingAgent:
         # Default: assessment to be completed within next 48 hours
         deadline = datetime.now() + timedelta(days=2)
 
-        # Base assessment link (can later be unique per candidate)
-        # assessment_link = "https://hirekruit.com/assessment"
+        # Base assessment link
         assessment_link = "http://localhost:5173/assessment"
+        # meeting_link = "https://hirekruit.com/assessment"
+
 
         shortlisted_candidates = list(db.drive_candidates.find({
             "drive_id": drive_id,
             "resume_shortlisted": "yes"
         }))
+
+        if not shortlisted_candidates:
+            print(f"⚠️ No shortlisted candidates found for drive {drive_id}")
+            return
 
         for candidate in shortlisted_candidates:
             candidate_id = candidate["candidate_id"]
@@ -95,8 +100,8 @@ class InterviewSchedulingAgent:
                 print(f"⚠️ Candidate info with candidate {candidate_id} not found in database.")
                 continue
 
-            # Unique link for each candidate
-            candidate_assessment_url = f"{assessment_link}/{candidate['_id']}"
+            # Unique link for each candidate with BOTH drive_id and candidate_id
+            candidate_assessment_url = f"{assessment_link}/{drive_id}/{candidate_id}"
 
             subject = "Coding Assessment Invitation - HiRekruit"
             body = f"""Dear {candidate_info['name']},
@@ -108,6 +113,12 @@ class InterviewSchedulingAgent:
             🔗 Assessment Link: {candidate_assessment_url}
             🕒 Deadline: {deadline.strftime('%A, %d %B %Y, %I:%M %p')}
 
+            Instructions:
+            • Click the link above to start your assessment
+            • You will have {(deadline - datetime.now()).days * 24} hours to complete the test
+            • Make sure you have a stable internet connection
+            • Your progress will be auto-saved
+
             Make sure to complete your test before the deadline. 
             Good luck and happy coding!
 
@@ -115,12 +126,26 @@ class InterviewSchedulingAgent:
             HR Team
             """
 
-            print(f"Sending coding assessment email to {candidate_info['email']}...")
-            self.email_service.send_email(candidate_info['email'], subject, body)
+            print(f"📧 Sending coding assessment email to {candidate_info['email']}...")
+            print(f"   Assessment URL: {candidate_assessment_url}")
+            
+            try:
+                self.email_service.send_email(candidate_info['email'], subject, body)
+                
+                # Update candidate record with assessment details
+                db.drive_candidates.update_one(
+                    {"_id": candidate["_id"]},
+                    {"$set": {
+                        "coding_assessment_sent": "yes", 
+                        "assessment_deadline": deadline,
+                        "assessment_link": candidate_assessment_url,
+                        "updated_at": datetime.utcnow()
+                    }}
+                )
+                print(f"   ✅ Email sent successfully to {candidate_info['email']}")
+                
+            except Exception as e:
+                print(f"   ❌ Failed to send email to {candidate_info['email']}: {str(e)}")
+                continue
 
-            db.drive_candidates.update_one(
-                {"_id": candidate["_id"]},
-                {"$set": {"coding_assessment_sent": "yes", "assessment_deadline": deadline, "updated_at": datetime.utcnow()}}
-            )
-
-        print(f"Coding assessment emails sent to {len(shortlisted_candidates)} candidates.")
+        print(f"✅ Coding assessment emails sent to {len(shortlisted_candidates)} candidates for drive {drive_id}.")

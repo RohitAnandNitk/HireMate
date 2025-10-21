@@ -103,33 +103,25 @@ export default function Assessment() {
 
       console.log("Starting assessment for:", { drive_id, candidate_id });
 
-      // Fetch drive details to get coding question IDs
-      const driveResponse = await fetch(`${BASE_URL}/api/drive/${drive_id}`);
-      if (!driveResponse.ok) {
-        if (driveResponse.status === 404) {
-          throw new Error("Drive not found. Please check the assessment link.");
+      // Fetch coding questions for this drive directly
+      const questionsResponse = await fetch(
+        `${BASE_URL}/api/coding-assessment/problem?drive_id=${drive_id}`
+      );
+
+      if (!questionsResponse.ok) {
+        if (questionsResponse.status === 404) {
+          throw new Error(
+            "Drive not found or no coding questions assigned to this assessment."
+          );
         }
-        throw new Error("Failed to fetch drive details");
+        throw new Error("Failed to fetch coding questions");
       }
 
-      const driveData = await driveResponse.json();
-      const codingQuestionIds = driveData.drive.coding_question_ids || [];
+      const questions = await questionsResponse.json();
 
-      if (codingQuestionIds.length === 0) {
+      if (!questions || questions.length === 0) {
         throw new Error("No coding questions found for this assessment");
       }
-
-      // Fetch all coding questions
-      const questionPromises = codingQuestionIds.map(async (questionId) => {
-        const response = await fetch(
-          `${BASE_URL}/api/coding-assessment/problem/${questionId}`
-        );
-        if (!response.ok)
-          throw new Error(`Failed to fetch question ${questionId}`);
-        return response.json();
-      });
-
-      const questions = await Promise.all(questionPromises);
 
       // Transform questions to match frontend format
       const transformedQuestions = questions.map((q, index) => ({
@@ -161,7 +153,7 @@ export default function Assessment() {
       await createSubmission(
         drive_id,
         candidate_id,
-        driveData.drive.coding_question_ids
+        transformedQuestions.map((q) => q._id)
       );
     } catch (err) {
       console.error("Error fetching problems:", err);
@@ -183,7 +175,7 @@ export default function Assessment() {
         body: JSON.stringify({
           candidate_id: candidate_id,
           drive_id: drive_id,
-          code_assessment_id: drive_id, // Using drive_id as assessment_id
+          code_assessment_id: drive_id,
           total_questions: codingQuestionIds.length,
         }),
       });
@@ -233,14 +225,6 @@ export default function Assessment() {
       setIsRunning(true);
       setOutput("Running...");
 
-      // Get language ID mapping
-      const languageMap = {
-        python: 71,
-        javascript: 63,
-        java: 62,
-        cpp: 54,
-      };
-
       const response = await fetch(
         `${BASE_URL}/api/submission/submit-question`,
         {
@@ -251,7 +235,7 @@ export default function Assessment() {
             question_id: selectedProblem._id,
             source_code: code,
             language: language,
-            time_taken: 0, // Will be tracked by timer
+            time_taken: 0,
           }),
         }
       );
@@ -301,7 +285,6 @@ export default function Assessment() {
     if (!submissionId) return;
 
     try {
-      // Get final submission statistics
       const response = await fetch(
         `${BASE_URL}/api/submission/${submissionId}/statistics`
       );
@@ -314,9 +297,6 @@ export default function Assessment() {
     } catch (err) {
       console.error("Error fetching final statistics:", err);
     }
-
-    // Navigate to results page or home
-    // window.location.href = "/results";
   };
 
   // Format timer display
@@ -482,7 +462,6 @@ export default function Assessment() {
           </h2>
 
           <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-            {/* Timer */}
             <div
               style={{
                 padding: "6px 12px",
@@ -501,7 +480,6 @@ export default function Assessment() {
               {formatTime(timeRemaining)}
             </div>
 
-            {/* Submit Button */}
             <button
               onClick={handleFinalSubmit}
               style={{
@@ -518,7 +496,6 @@ export default function Assessment() {
               Submit Assessment
             </button>
 
-            {/* Theme Toggle */}
             <button
               onClick={() => setDarkMode(!darkMode)}
               style={{
