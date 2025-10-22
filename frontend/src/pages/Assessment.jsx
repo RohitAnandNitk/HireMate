@@ -1,3 +1,9 @@
+// Key changes in Assessment.jsx
+
+// 1. Remove submissionId state (we'll use candidate_id + drive_id instead)
+// 2. Update handleRun to send candidate_id and drive_id
+// 3. Update handleFinalSubmit to use new /final-submit endpoint
+
 import { useState, useEffect, useRef } from "react";
 import { Sun, Moon } from "lucide-react";
 import Instructions from "./Instructions";
@@ -22,7 +28,6 @@ export default function Assessment() {
   // Assessment details
   const [driveId, setDriveId] = useState(null);
   const [candidateId, setCandidateId] = useState(null);
-  const [submissionId, setSubmissionId] = useState(null);
 
   // Timer state
   const [timeRemaining, setTimeRemaining] = useState(3600); // 60 minutes in seconds
@@ -56,7 +61,8 @@ export default function Assessment() {
       }));
     }
   };
-  // handle the default code when language switch
+
+  // Handle language change
   const handleLanguageChange = (newLanguage) => {
     setLanguage(newLanguage);
 
@@ -69,6 +75,7 @@ export default function Assessment() {
       }));
     }
   };
+
   // Timer effect
   useEffect(() => {
     if (timerActive && timeRemaining > 0) {
@@ -160,45 +167,11 @@ export default function Assessment() {
         initialCode[problem._id] = getDefaultCode(language);
       });
       setProblemCode(initialCode);
-
-      // Create submission
-      await createSubmission(
-        drive_id,
-        candidate_id,
-        transformedQuestions.map((q) => q._id)
-      );
     } catch (err) {
       console.error("Error fetching problems:", err);
       setError(err.message);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const createSubmission = async (
-    drive_id,
-    candidate_id,
-    codingQuestionIds
-  ) => {
-    try {
-      const response = await fetch(`${BASE_URL}/api/submission/create`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          candidate_id: candidate_id,
-          drive_id: drive_id,
-          code_assessment_id: drive_id,
-          total_questions: codingQuestionIds.length,
-        }),
-      });
-
-      if (!response.ok) throw new Error("Failed to create submission");
-
-      const data = await response.json();
-      setSubmissionId(data.submission._id);
-      console.log("Submission created:", data.submission._id);
-    } catch (err) {
-      console.error("Error creating submission:", err);
     }
   };
 
@@ -223,7 +196,7 @@ export default function Assessment() {
   };
 
   const handleRun = async () => {
-    if (!selectedProblem || !submissionId) {
+    if (!selectedProblem || !driveId || !candidateId) {
       setOutput(
         JSON.stringify({
           status: { description: "Error", id: -1 },
@@ -237,22 +210,27 @@ export default function Assessment() {
       setIsRunning(true);
       setOutput("Running...");
 
+      // Send candidate_id and drive_id instead of submission_id
       const response = await fetch(
-        `${BASE_URL}/api/submission/submit-question`,
+        `${BASE_URL}/api/coding-assessment/submission/submit-question`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            submission_id: submissionId,
+            candidate_id: candidateId,
+            drive_id: driveId,
             question_id: selectedProblem._id,
             source_code: code,
             language: language,
-            time_taken: 0,
+            time_taken: 3600 - timeRemaining, // Time spent so far
           }),
         }
       );
 
-      if (!response.ok) throw new Error("Failed to submit question");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to submit question");
+      }
 
       const data = await response.json();
 
@@ -294,20 +272,41 @@ export default function Assessment() {
   };
 
   const handleFinalSubmit = async () => {
-    if (!submissionId) return;
+    if (!driveId || !candidateId) {
+      alert("Assessment not properly initialized");
+      return;
+    }
 
     try {
+      // Call final submit endpoint
       const response = await fetch(
-        `${BASE_URL}/api/submission/${submissionId}/statistics`
+        `${BASE_URL}/api/coding-assessment/submission/final-submit`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            candidate_id: candidateId,
+            drive_id: driveId,
+          }),
+        }
       );
+
       if (response.ok) {
         const data = await response.json();
+        const stats = data.statistics;
         alert(
-          `Assessment Completed!\n\nQuestions Solved: ${data.statistics.questions_solved}/${data.statistics.total_questions}\nScore: ${data.statistics.score_percentage}%`
+          `Assessment Completed!\n\nQuestions Solved: ${stats.questions_solved}/${stats.total_questions}\nScore: ${stats.score_percentage}%\n\nThank you for completing the assessment!`
         );
+
+        // Optionally redirect to a completion page
+        // window.location.href = "/assessment-complete";
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to submit assessment");
       }
     } catch (err) {
-      console.error("Error fetching final statistics:", err);
+      console.error("Error submitting assessment:", err);
+      alert(`Error submitting assessment: ${err.message}`);
     }
   };
 

@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from src.CodingAssessment.Controllers.submission_controller import (
     create_submission_controller,
     submit_question_controller,
+    final_submit_controller,
     get_submission_by_id,
     get_submissions_by_candidate,
     get_submissions_by_drive,
@@ -15,12 +16,12 @@ submission_bp = Blueprint("submission", __name__)
 def create_submission():
     """
     Create a new submission for a code assessment.
+    Called when user clicks "Submit Assessment" (or auto-created on first run).
     
     Payload:
     {
         "candidate_id": "candidate_123",
-        "drive_id": "drive_456",
-        "code_assessment_id": "assessment_789"
+        "drive_id": "drive_456"
     }
     """
     return create_submission_controller()
@@ -30,17 +31,35 @@ def create_submission():
 def submit_question():
     """
     Submit a single question for evaluation.
+    Called when user clicks "Run Code" button.
+    Auto-creates submission if it doesn't exist.
     
     Payload:
     {
-        "submission_id": "submission_123",
-        "question_id": "question_456",
+        "candidate_id": "candidate_123",
+        "drive_id": "drive_456",
+        "question_id": "question_789",
         "source_code": "def solution():\n    return 42",
         "language": "python",
         "time_taken": 120
     }
     """
     return submit_question_controller()
+
+
+@submission_bp.post("/final-submit")
+def final_submit():
+    """
+    Mark assessment as complete.
+    Called when user clicks "Submit Assessment" button.
+    
+    Payload:
+    {
+        "candidate_id": "candidate_123",
+        "drive_id": "drive_456"
+    }
+    """
+    return final_submit_controller()
 
 
 @submission_bp.get("/<submission_id>")
@@ -81,53 +100,3 @@ def get_statistics(submission_id):
     Example: GET /api/submission/64b8f0c2e1b1f5a3c4d2e9b7/statistics
     """
     return get_submission_statistics(submission_id)
-
-
-# Legacy endpoint for backward compatibility (if needed)
-@submission_bp.post("/run")
-def run_code():
-    """
-    Run code without creating a submission (for testing purposes).
-    
-    Payload:
-    {
-        "code": "def solution():\n    return 42",
-        "language_id": 71,
-        "problem_id": "problem_123",
-        "input": "optional custom input"
-    }
-    
-    Note: This is a legacy endpoint. Use /submit-question for production.
-    """
-    payload = request.get_json(force=True)
-    if not payload or "code" not in payload:
-        return jsonify({"error": "Missing 'code' in request body"}), 400
-
-    code = payload["code"]
-    language_id = payload.get("language_id", 71)  # default: Python 3
-    problem_id = payload.get("problem_id")
-    custom_input = payload.get("input")  # optional
-
-    print("Code:", code)
-    print("Lang:", language_id)
-    print("Prob:", problem_id)
-    print("Custom input:", custom_input)
-
-    # For backward compatibility, import the old run_submission if it exists
-    try:
-        from src.CodingAssessment.Controllers.submission_controller import run_submission_legacy
-        result = run_submission_legacy(
-            code=code, 
-            language_id=language_id, 
-            problem_id=problem_id, 
-            custom_input=custom_input
-        )
-        return jsonify(result)
-    except ImportError:
-        return jsonify({
-            "error": "Legacy endpoint deprecated. Please use /submit-question instead.",
-            "migration_guide": {
-                "step_1": "Create a submission using POST /api/submission/create",
-                "step_2": "Submit questions using POST /api/submission/submit-question"
-            }
-        }), 410
