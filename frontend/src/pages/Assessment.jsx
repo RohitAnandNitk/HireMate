@@ -56,7 +56,19 @@ export default function Assessment() {
       }));
     }
   };
+  // handle the default code when language switch
+  const handleLanguageChange = (newLanguage) => {
+    setLanguage(newLanguage);
 
+    // Update the default code for the current problem when language changes
+    if (selectedProblem) {
+      const defaultCode = getDefaultCode(newLanguage);
+      setProblemCode((prev) => ({
+        ...prev,
+        [selectedProblem._id]: defaultCode,
+      }));
+    }
+  };
   // Timer effect
   useEffect(() => {
     if (timerActive && timeRemaining > 0) {
@@ -192,10 +204,10 @@ export default function Assessment() {
 
   const getDefaultCode = (lang) => {
     const templates = {
-      python: "def solution():\n    # Write your code here\n    pass\n",
-      javascript: "function solution() {\n    // Write your code here\n}\n",
-      java: "public class Solution {\n    public static void main(String[] args) {\n        // Write your code here\n    }\n}\n",
-      cpp: "#include <iostream>\nusing namespace std;\n\nint main() {\n    // Write your code here\n    return 0;\n}\n",
+      python: "# Write your code here\n",
+      javascript: "// Write your code here\n",
+      java: "// Write your code here\n",
+      cpp: "// Write your code here\n",
     };
     return templates[lang] || "";
   };
@@ -567,7 +579,7 @@ export default function Assessment() {
               code={code}
               setCode={setCode}
               language={language}
-              setLanguage={setLanguage}
+              setLanguage={handleLanguageChange}
               onRun={handleRun}
               darkMode={darkMode}
               isRunning={isRunning}
