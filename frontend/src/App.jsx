@@ -37,6 +37,7 @@ import Loader from "./components/Loader";
 
 import Assessment from "./pages/Assessment";
 import Instructions from "./pages/Instructions";
+import AssessmentSubmission from "./components/CodingAssessment/AssessmentSubmission";
 
 function AppContent() {
   const location = useLocation();
@@ -47,6 +48,7 @@ function AppContent() {
     "/interview_start",
     "/assessment/:candidateId",
     "/start-assessment",
+    "/assessment-submission",
   ];
 
   // Check if current route starts with any path in hideChatbotRoutes
@@ -180,6 +182,10 @@ function AppContent() {
         <Route path="/assessment/:driveId" element={<Assessment />} />
         <Route path="/assessment" element={<Assessment />} />
         <Route path="/start-assessment" element={<Instructions />} />
+        <Route
+          path="/assessment-submission"
+          element={<AssessmentSubmission />}
+        />
       </Routes>
 
       {showChatbot && <Chatbot />}

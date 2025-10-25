@@ -7,22 +7,23 @@ export default function Sidebar({
   darkMode,
   problemStatus,
 }) {
-  const cardBg = darkMode ? "#1a1a1a" : "#ffffff";
-  const textColor = darkMode ? "#e0e0e0" : "#1a1a1a";
-  const borderColor = darkMode ? "#2a2a2a" : "#d0d0d0";
-  const hoverBg = darkMode ? "#262626" : "#f0f0f0";
-  const accentColor = darkMode ? "#3a3a3a" : "#e8e8e8";
+  const bgColor = darkMode ? "#1a1a1a" : "#ffffff";
+  const borderColor = darkMode ? "#2a2a2a" : "#e5e5e5";
+  const textColor = darkMode ? "#e0e0e0" : "#000000";
+  const hoverBg = darkMode ? "#262626" : "#fafafa";
+  const selectedBg = darkMode ? "#2a2a2a" : "#fafafa";
 
   const getStatusIcon = (problemId) => {
     const status = problemStatus[problemId];
-    if (!status) return <Circle size={16} />;
+    if (!status)
+      return <Circle size={16} color={darkMode ? "#666666" : "#cccccc"} />;
 
     if (status.result === "Accepted") {
-      return <CheckCircle size={16} color="#4caf50" />;
+      return <CheckCircle size={16} color="#16a34a" />;
     } else if (status.result) {
-      return <XCircle size={16} color="#f44336" />;
+      return <XCircle size={16} color="#dc2626" />;
     }
-    return <Circle size={16} />;
+    return <Circle size={16} color={darkMode ? "#666666" : "#cccccc"} />;
   };
 
   return (
@@ -32,13 +33,13 @@ export default function Sidebar({
         borderRight: `1px solid ${borderColor}`,
         display: "flex",
         flexDirection: "column",
-        backgroundColor: cardBg,
+        backgroundColor: bgColor,
         overflowY: "auto",
       }}
     >
       <div
         style={{
-          padding: "16px",
+          padding: "20px 16px",
           borderBottom: `1px solid ${borderColor}`,
           textAlign: "center",
         }}
@@ -46,11 +47,13 @@ export default function Sidebar({
         <h3
           style={{
             margin: 0,
-            fontSize: "12px",
-            fontWeight: "600",
+            fontSize: "11px",
+            fontWeight: "700",
+            letterSpacing: "1.5px",
+            color: darkMode ? "#999999" : "#666666",
           }}
         >
-          Problems
+          PROBLEMS
         </h3>
       </div>
 
@@ -61,11 +64,11 @@ export default function Sidebar({
             onClick={() => onSelectProblem(problem)}
             title={problem.title}
             style={{
-              padding: "16px",
+              padding: "20px 16px",
               border: "none",
               backgroundColor:
                 selectedProblem?._id === problem._id
-                  ? accentColor
+                  ? selectedBg
                   : "transparent",
               color: textColor,
               textAlign: "center",
@@ -76,20 +79,22 @@ export default function Sidebar({
               transition: "all 0.2s",
               borderLeft:
                 selectedProblem?._id === problem._id
-                  ? `3px solid ${darkMode ? "#fff" : "#000"}`
+                  ? `3px solid ${darkMode ? "#ffffff" : "#000000"}`
                   : "3px solid transparent",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              gap: "8px",
+              gap: "10px",
             }}
             onMouseEnter={(e) => {
-              if (selectedProblem?._id !== problem._id)
-                e.target.style.backgroundColor = hoverBg;
+              if (selectedProblem?._id !== problem._id) {
+                e.currentTarget.style.backgroundColor = hoverBg;
+              }
             }}
             onMouseLeave={(e) => {
-              if (selectedProblem?._id !== problem._id)
-                e.target.style.backgroundColor = "transparent";
+              if (selectedProblem?._id !== problem._id) {
+                e.currentTarget.style.backgroundColor = "transparent";
+              }
             }}
           >
             <span>{index + 1}</span>
@@ -99,9 +104,8 @@ export default function Sidebar({
       ) : (
         <div
           style={{
-            padding: "16px",
-            color: textColor,
-            opacity: 0.7,
+            padding: "20px 16px",
+            color: darkMode ? "#666666" : "#999999",
             textAlign: "center",
             fontSize: "12px",
           }}

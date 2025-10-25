@@ -17,9 +17,9 @@ export default function CodeEditor({
   darkMode,
   isRunning,
 }) {
-  const cardBg = darkMode ? "#1a1a1a" : "#ffffff";
-  const textColor = darkMode ? "#e0e0e0" : "#1a1a1a";
-  const borderColor = darkMode ? "#2a2a2a" : "#d0d0d0";
+  const bgColor = darkMode ? "#1a1a1a" : "#ffffff";
+  const borderColor = darkMode ? "#2a2a2a" : "#e5e5e5";
+  const textColor = darkMode ? "#e0e0e0" : "#000000";
 
   const currentLanguage = LANGUAGES.find((l) => l.name === language);
 
@@ -32,29 +32,30 @@ export default function CodeEditor({
         overflow: "hidden",
       }}
     >
-      {/* Language Selector & Run Button */}
+      {/* Toolbar */}
       <div
         style={{
           padding: "12px 20px",
           borderBottom: `1px solid ${borderColor}`,
           display: "flex",
-          gap: "8px",
+          gap: "12px",
           alignItems: "center",
-          backgroundColor: cardBg,
+          backgroundColor: bgColor,
         }}
       >
-        <label style={{ fontSize: "13px", fontWeight: "500" }}>Language:</label>
         <select
           value={language}
           onChange={(e) => setLanguage(e.target.value)}
           style={{
-            padding: "6px 10px",
-            borderRadius: "4px",
+            padding: "8px 12px",
+            borderRadius: "6px",
             border: `1px solid ${borderColor}`,
-            backgroundColor: cardBg,
+            backgroundColor: bgColor,
             color: textColor,
             fontSize: "13px",
             cursor: "pointer",
+            fontWeight: "600",
+            outline: "none",
           }}
         >
           {LANGUAGES.map((lang) => (
@@ -70,39 +71,41 @@ export default function CodeEditor({
           style={{
             marginLeft: "auto",
             padding: "8px 20px",
-            backgroundColor: darkMode ? "#4caf50" : "#4caf50",
+            backgroundColor: isRunning ? "#16a34a" : "#22c55e",
             color: "#ffffff",
             border: "none",
-            borderRadius: "4px",
+            borderRadius: "6px",
             cursor: isRunning ? "not-allowed" : "pointer",
             fontSize: "13px",
             fontWeight: "600",
             transition: "all 0.2s",
-            opacity: isRunning ? 0.6 : 1,
+            opacity: isRunning ? 0.8 : 1,
             display: "flex",
             alignItems: "center",
-            gap: "6px",
+            gap: "8px",
           }}
           onMouseEnter={(e) => {
             if (!isRunning) {
-              e.target.style.backgroundColor = "#45a049";
+              e.currentTarget.style.backgroundColor = "#16a34a";
             }
           }}
           onMouseLeave={(e) => {
-            e.target.style.backgroundColor = "#4caf50";
+            if (!isRunning) {
+              e.currentTarget.style.backgroundColor = "#22c55e";
+            }
           }}
         >
           {isRunning ? (
             <>
               <Loader2
-                size={14}
+                size={16}
                 style={{ animation: "spin 1s linear infinite" }}
               />
               Running...
             </>
           ) : (
             <>
-              <Play size={14} />
+              <Play size={16} />
               Run Code
             </>
           )}
@@ -125,6 +128,9 @@ export default function CodeEditor({
             automaticLayout: true,
             tabSize: 4,
             wordWrap: "on",
+            lineNumbers: "on",
+            renderLineHighlight: "line",
+            padding: { top: 16, bottom: 16 },
           }}
         />
       </div>

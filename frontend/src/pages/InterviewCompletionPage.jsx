@@ -40,9 +40,6 @@ const InterviewCompletionPage = () => {
 
       try {
         console.log("📊 Sending conversation for evaluation...");
-        console.log("Conversation data:", conversation);
-        console.log("Resume text available:", !!resumeText);
-        console.log("Drive ID:", driveId);
 
         const response = await fetch(`${BASE_URL}/api/interview/evaluate`, {
           method: "POST",
@@ -76,7 +73,6 @@ const InterviewCompletionPage = () => {
       }
     };
 
-    // Start evaluation after a short delay to allow UI to render
     const timer = setTimeout(() => {
       evaluateInterview();
     }, 1000);
@@ -84,7 +80,7 @@ const InterviewCompletionPage = () => {
     return () => clearTimeout(timer);
   }, [conversation, resumeText, driveId, userData]);
 
-  // Update time every second for the completion timestamp
+  // Update time every second
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -115,10 +111,10 @@ const InterviewCompletionPage = () => {
 
   if (!userData) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto"></div>
+          <p className="mt-4 text-black">Loading...</p>
         </div>
       </div>
     );
@@ -128,7 +124,7 @@ const InterviewCompletionPage = () => {
   const EvaluationStatus = () => {
     if (isEvaluating) {
       return (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+        <div className="bg-blue-50 border-2 border-blue-500 rounded-lg p-4 mb-6">
           <div className="flex items-center gap-3">
             <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
             <div>
@@ -143,7 +139,7 @@ const InterviewCompletionPage = () => {
 
     if (evaluationError) {
       return (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+        <div className="bg-red-50 border-2 border-red-500 rounded-lg p-4 mb-6">
           <div className="flex items-center gap-3">
             <AlertCircle className="w-5 h-5 text-red-600" />
             <div>
@@ -159,53 +155,50 @@ const InterviewCompletionPage = () => {
       );
     }
 
-    // if (evaluationComplete && evaluationResult) {
-    //   return (
-    //     <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-    //       <div className="flex items-center gap-3">
-    //         <CheckCircle className="w-5 h-5 text-green-600" />
-    //         <div>
-    //           <h3 className="font-medium text-green-900">
-    //             Evaluation Complete
-    //           </h3>
-    //           <p className="text-sm text-green-700">
-    //             Your interview has been successfully evaluated and submitted to
-    //             our hiring team.
-    //           </p>
-    //           {evaluationResult.decision && (
-    //             <p className="text-xs text-green-600 mt-1 font-medium">
-    //               Initial Assessment: {evaluationResult.decision}
-    //             </p>
-    //           )}
-    //         </div>
-    //       </div>
-    //     </div>
-    //   );
-    // }
+    if (evaluationComplete) {
+      return (
+        <div className="bg-green-50 border-2 border-green-500 rounded-lg p-4 mb-6">
+          <div className="flex items-center gap-3">
+            <CheckCircle className="w-5 h-5 text-green-600" />
+            <div>
+              <h3 className="font-medium text-green-900">
+                Evaluation Complete!
+              </h3>
+              <p className="text-sm text-green-700">
+                Your interview has been successfully evaluated. We'll contact
+                you soon.
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    }
 
     return null;
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
+    <div className="min-h-screen bg-white">
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-white border-4 border-black rounded-full mb-6">
             {isEvaluating ? (
-              <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
-            ) : (
+              <Loader2 className="w-10 h-10 text-black animate-spin" />
+            ) : evaluationComplete ? (
               <CheckCircle className="w-10 h-10 text-green-600" />
+            ) : (
+              <CheckCircle className="w-10 h-10 text-black" />
             )}
           </div>
 
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-black mb-2">
             {isEvaluating
               ? "Processing Your Interview"
               : "Interview Completed Successfully!"}
           </h1>
 
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-700 max-w-2xl mx-auto">
             {isEvaluating
               ? "Please wait while we analyze your interview responses and prepare your evaluation."
               : "Thank you for taking the time to complete your interview. Your responses have been recorded and evaluated."}
@@ -216,40 +209,40 @@ const InterviewCompletionPage = () => {
         <EvaluationStatus />
 
         {/* Main Card */}
-        <div className="bg-white rounded-xl shadow-lg p-8 mb-6">
+        <div className="bg-white border-2 border-black rounded-xl p-8 mb-6">
           {/* Candidate Information */}
-          <div className="border-b border-gray-200 pb-6 mb-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          <div className="border-b-2 border-gray-300 pb-6 mb-6">
+            <h2 className="text-xl font-semibold text-black mb-4">
               Interview Summary
             </h2>
 
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                    <span className="text-blue-600 font-semibold text-lg">
+                <div className="flex items-center gap-3 p-3 border-2 border-black rounded-lg">
+                  <div className="w-10 h-10 bg-white border-2 border-black rounded-full flex items-center justify-center">
+                    <span className="text-black font-semibold text-lg">
                       {userData.name
                         ? userData.name.charAt(0).toUpperCase()
                         : "C"}
                     </span>
                   </div>
                   <div>
-                    <p className="font-medium text-gray-900">
+                    <p className="font-medium text-black">
                       {userData.name || "Candidate"}
                     </p>
-                    <p className="text-sm text-gray-500">Interviewee</p>
+                    <p className="text-sm text-gray-600">Interviewee</p>
                   </div>
                 </div>
 
                 {userData.email && (
-                  <div className="flex items-center gap-3 text-gray-600">
+                  <div className="flex items-center gap-3 text-gray-700 p-3 border border-gray-300 rounded-lg">
                     <Mail className="w-4 h-4" />
                     <span className="text-sm">{userData.email}</span>
                   </div>
                 )}
 
                 {userData.phone && (
-                  <div className="flex items-center gap-3 text-gray-600">
+                  <div className="flex items-center gap-3 text-gray-700 p-3 border border-gray-300 rounded-lg">
                     <Phone className="w-4 h-4" />
                     <span className="text-sm">{userData.phone}</span>
                   </div>
@@ -257,59 +250,56 @@ const InterviewCompletionPage = () => {
               </div>
 
               <div className="space-y-3">
-                <div className="flex items-center gap-3 text-gray-600">
+                <div className="flex items-center gap-3 text-gray-700 p-3 border border-gray-300 rounded-lg">
                   <Calendar className="w-4 h-4" />
                   <div>
                     <p className="text-sm font-medium">Interview Completed</p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-600">
                       {formatDateTime(currentTime)}
                     </p>
                   </div>
                 </div>
 
-                {/* <div className="flex items-center gap-3 text-gray-600">
-                  <Clock className="w-4 h-4" />
-                  <div>
-                    <p className="text-sm font-medium">Session Summary</p>
-                    <p className="text-xs text-gray-500">
-                      {conversation
-                        ? `${conversation.length} messages exchanged`
-                        : "Full session completed"}
-                    </p>
-                  </div>
-                </div> */}
-
                 {driveId && (
-                  <div className="flex items-center gap-3 text-gray-600">
+                  <div className="flex items-center gap-3 text-gray-700 p-3 border border-gray-300 rounded-lg">
                     <FileText className="w-4 h-4" />
                     <div>
                       <p className="text-sm font-medium">Application ID</p>
-                      <p className="text-xs text-gray-500 font-mono">
+                      <p className="text-xs text-gray-600 font-mono">
                         {driveId}
                       </p>
                     </div>
                   </div>
                 )}
+
+                <div className="flex items-center gap-3 text-gray-700 p-3 border-2 border-green-500 bg-green-50 rounded-lg">
+                  <CheckCircle className="w-4 h-4 text-green-600" />
+                  <div>
+                    <p className="text-sm font-medium text-green-700">
+                      Status: Submitted
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Contact Information */}
-          <div className="bg-gray-50 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">
+          <div className="bg-gray-50 border-2 border-gray-300 rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-black mb-3">
               Questions or Concerns?
             </h3>
-            <p className="text-gray-600 mb-4">
+            <p className="text-gray-700 mb-4">
               If you have any questions about your interview or the hiring
               process, please don't hesitate to reach out to our HR team.
             </p>
 
             <div className="flex flex-wrap gap-4 text-sm">
-              <div className="flex items-center gap-2 text-gray-600">
+              <div className="flex items-center gap-2 text-gray-700 px-3 py-2 border border-gray-300 rounded-lg">
                 <Mail className="w-4 h-4" />
                 <span>hr@company.com</span>
               </div>
-              <div className="flex items-center gap-2 text-gray-600">
+              <div className="flex items-center gap-2 text-gray-700 px-3 py-2 border border-gray-300 rounded-lg">
                 <Phone className="w-4 h-4" />
                 <span>+1 (555) 123-4567</span>
               </div>
@@ -318,13 +308,13 @@ const InterviewCompletionPage = () => {
         </div>
 
         {/* Footer Message */}
-        <div className="text-center mt-8 pt-6 border-t border-gray-200">
-          <p className="text-gray-500 text-sm">
+        <div className="text-center mt-8 pt-6 border-t-2 border-gray-300">
+          <p className="text-gray-600 text-sm">
             {isEvaluating
               ? "Please wait while we process your interview. Do not close this page."
               : "Thank you for your interest in joining our team. We appreciate the time you've invested in this process."}
           </p>
-          <p className="text-gray-400 text-xs mt-2">
+          <p className="text-gray-500 text-xs mt-2">
             Interview completed at {formatDateTime(currentTime)}
           </p>
         </div>
