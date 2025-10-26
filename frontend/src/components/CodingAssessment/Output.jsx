@@ -1,6 +1,13 @@
 import { CheckCircle, XCircle, Clock, Info, AlertTriangle } from "lucide-react";
 
 export default function Output({ output, darkMode }) {
+  const bgColor = darkMode ? "#1a1a1a" : "#ffffff";
+  const borderColor = darkMode ? "#2a2a2a" : "#e5e5e5";
+  const textColor = darkMode ? "#e0e0e0" : "#000000";
+  const secondaryColor = darkMode ? "#999999" : "#666666";
+  const cardBg = darkMode ? "#0d0d0d" : "#fafafa";
+  const whiteBg = darkMode ? "#1a1a1a" : "#ffffff";
+
   let parsedOutput = null;
   let isError = false;
   let isSuccess = false;
@@ -32,7 +39,7 @@ export default function Output({ output, darkMode }) {
         flexDirection: "column",
         padding: "16px",
         overflow: "hidden",
-        backgroundColor: "#ffffff",
+        backgroundColor: bgColor,
       }}
     >
       <label
@@ -40,7 +47,7 @@ export default function Output({ output, darkMode }) {
           fontSize: "11px",
           fontWeight: "700",
           marginBottom: "12px",
-          color: "#999999",
+          color: secondaryColor,
           letterSpacing: "1.5px",
         }}
       >
@@ -51,9 +58,9 @@ export default function Output({ output, darkMode }) {
         style={{
           flex: 1,
           overflow: "auto",
-          border: "1px solid #e5e5e5",
+          border: `1px solid ${borderColor}`,
           borderRadius: "6px",
-          backgroundColor: "#fafafa",
+          backgroundColor: cardBg,
         }}
       >
         {!output ? (
@@ -61,7 +68,7 @@ export default function Output({ output, darkMode }) {
             style={{
               padding: "40px 20px",
               textAlign: "center",
-              color: "#999999",
+              color: secondaryColor,
             }}
           >
             <Info size={32} style={{ marginBottom: "12px", opacity: 0.5 }} />
@@ -81,9 +88,15 @@ export default function Output({ output, darkMode }) {
                 borderRadius: "8px",
                 marginBottom: "16px",
                 backgroundColor: isSuccess
-                  ? "#f0fdf4"
+                  ? darkMode
+                    ? "#1a2e1a"
+                    : "#f0fdf4"
                   : isError
-                  ? "#fef2f2"
+                  ? darkMode
+                    ? "#2e1a1a"
+                    : "#fef2f2"
+                  : darkMode
+                  ? "#2e2a1a"
                   : "#fffbeb",
                 border: "none",
               }}
@@ -112,7 +125,7 @@ export default function Output({ output, darkMode }) {
                 <div
                   style={{
                     fontSize: "12px",
-                    color: "#666666",
+                    color: secondaryColor,
                     marginTop: "2px",
                   }}
                 >
@@ -130,7 +143,7 @@ export default function Output({ output, darkMode }) {
                     fontSize: "11px",
                     fontWeight: "700",
                     marginBottom: "12px",
-                    color: "#999999",
+                    color: secondaryColor,
                     letterSpacing: "1.5px",
                   }}
                 >
@@ -150,7 +163,7 @@ export default function Output({ output, darkMode }) {
                         key={idx}
                         style={{
                           padding: "12px",
-                          backgroundColor: "#ffffff",
+                          backgroundColor: whiteBg,
                           borderRadius: "6px",
                           fontSize: "12px",
                           borderLeft: `3px solid ${
@@ -172,27 +185,30 @@ export default function Output({ output, darkMode }) {
                           ) : (
                             <XCircle size={14} color="#dc2626" />
                           )}
-                          <span style={{ color: "#000000" }}>
+                          <span style={{ color: textColor }}>
                             Test Case {result.test_case_number || idx + 1}
                           </span>
                         </div>
                         <div
                           style={{
                             paddingLeft: "22px",
-                            color: "#666666",
+                            color: secondaryColor,
                             lineHeight: "1.6",
                           }}
                         >
                           <div style={{ marginBottom: "4px" }}>
                             <span
-                              style={{ fontSize: "11px", color: "#999999" }}
+                              style={{
+                                fontSize: "11px",
+                                color: darkMode ? "#666666" : "#999999",
+                              }}
                             >
                               INPUT:{" "}
                             </span>
                             <span
                               style={{
                                 fontFamily: "monospace",
-                                color: "#333333",
+                                color: textColor,
                               }}
                             >
                               {result.stdin || "N/A"}
@@ -200,14 +216,17 @@ export default function Output({ output, darkMode }) {
                           </div>
                           <div style={{ marginBottom: "4px" }}>
                             <span
-                              style={{ fontSize: "11px", color: "#999999" }}
+                              style={{
+                                fontSize: "11px",
+                                color: darkMode ? "#666666" : "#999999",
+                              }}
                             >
                               EXPECTED:{" "}
                             </span>
                             <span
                               style={{
                                 fontFamily: "monospace",
-                                color: "#333333",
+                                color: textColor,
                               }}
                             >
                               {result.expected || "N/A"}
@@ -215,7 +234,10 @@ export default function Output({ output, darkMode }) {
                           </div>
                           <div>
                             <span
-                              style={{ fontSize: "11px", color: "#999999" }}
+                              style={{
+                                fontSize: "11px",
+                                color: darkMode ? "#666666" : "#999999",
+                              }}
                             >
                               OUTPUT:{" "}
                             </span>
@@ -234,7 +256,7 @@ export default function Output({ output, darkMode }) {
                               style={{
                                 marginTop: "6px",
                                 fontSize: "10px",
-                                color: "#999999",
+                                color: darkMode ? "#666666" : "#999999",
                               }}
                             >
                               Execution time: {result.time}s
@@ -260,9 +282,15 @@ export default function Output({ output, darkMode }) {
                 borderRadius: "6px",
                 marginBottom: "16px",
                 backgroundColor: isError
-                  ? "#fef2f2"
+                  ? darkMode
+                    ? "#2e1a1a"
+                    : "#fef2f2"
                   : isSuccess
-                  ? "#f0fdf4"
+                  ? darkMode
+                    ? "#1a2e1a"
+                    : "#f0fdf4"
+                  : darkMode
+                  ? "#1a1a2e"
                   : "#f0f9ff",
               }}
             >
@@ -277,7 +305,7 @@ export default function Output({ output, darkMode }) {
                 style={{
                   fontWeight: "600",
                   fontSize: "13px",
-                  color: "#000000",
+                  color: textColor,
                 }}
               >
                 {parsedOutput.status?.description || "Unknown Status"}
@@ -287,7 +315,7 @@ export default function Output({ output, darkMode }) {
                   style={{
                     marginLeft: "auto",
                     fontSize: "11px",
-                    color: "#999999",
+                    color: secondaryColor,
                     display: "flex",
                     alignItems: "center",
                     gap: "4px",
@@ -304,11 +332,11 @@ export default function Output({ output, darkMode }) {
                 style={{
                   margin: 0,
                   padding: "12px",
-                  backgroundColor: "#ffffff",
+                  backgroundColor: whiteBg,
                   borderRadius: "6px",
                   fontSize: "12px",
                   fontFamily: "Monaco, Courier New, monospace",
-                  color: "#000000",
+                  color: textColor,
                   whiteSpace: "pre-wrap",
                   wordWrap: "break-word",
                   lineHeight: "1.6",
@@ -323,7 +351,7 @@ export default function Output({ output, darkMode }) {
                 style={{
                   margin: 0,
                   padding: "12px",
-                  backgroundColor: "#ffffff",
+                  backgroundColor: whiteBg,
                   borderRadius: "6px",
                   fontSize: "12px",
                   fontFamily: "Monaco, Courier New, monospace",
@@ -344,7 +372,7 @@ export default function Output({ output, darkMode }) {
               padding: "16px",
               fontSize: "12px",
               fontFamily: "Monaco, Courier New, monospace",
-              color: "#000000",
+              color: textColor,
               whiteSpace: "pre-wrap",
               wordWrap: "break-word",
               lineHeight: "1.6",

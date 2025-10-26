@@ -28,7 +28,7 @@ export default function CodeEditor({
       style={{
         display: "flex",
         flexDirection: "column",
-        flex: 0.6,
+        height: "100%",
         overflow: "hidden",
       }}
     >
@@ -41,6 +41,7 @@ export default function CodeEditor({
           gap: "12px",
           alignItems: "center",
           backgroundColor: bgColor,
+          flexShrink: 0,
         }}
       >
         <select
@@ -113,7 +114,7 @@ export default function CodeEditor({
       </div>
 
       {/* Editor */}
-      <div style={{ flex: 1, overflow: "hidden" }}>
+      <div style={{ flex: 1, overflow: "hidden", minHeight: 0 }}>
         <Editor
           height="100%"
           theme={darkMode ? "vs-dark" : "vs-light"}
@@ -130,7 +131,7 @@ export default function CodeEditor({
             wordWrap: "on",
             lineNumbers: "on",
             renderLineHighlight: "line",
-            padding: { top: 16, bottom: 16 },
+            padding: { top: 0, bottom: 0 },
           }}
         />
       </div>
