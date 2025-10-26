@@ -1,11 +1,8 @@
 from flask import request, jsonify
 from werkzeug.utils import secure_filename
-import os
+import cloudinary.uploader
 from src.Orchestrator.HiringOrchestrator import create_driveCandidate
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-UPLOAD_FOLDER = os.path.normpath(os.path.join(BASE_DIR, '..', '..', 'uploads', 'resumes'))
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+from src.Config.cloudinary_config import cloudinary
 
 def upload_resumes():
     print("Received request to upload resumes")
@@ -21,20 +18,27 @@ def upload_resumes():
     if not files:
         return jsonify({"error": "No files uploaded"}), 400
 
-    saved_files = []
-    file_paths = []
+    uploaded_urls = []
 
     for file in files:
         filename = secure_filename(file.filename)
-        file_path = os.path.normpath(os.path.join(UPLOAD_FOLDER, filename))
-        print("Saving to:", file_path)
-        file.save(file_path)
-        saved_files.append(filename)
-        file_paths.append(file_path)
+        print(f"Uploading {filename} to Cloudinary...")
 
-    result = create_driveCandidate(file_paths, skills, job_role, drive_id)
+        # Upload PDF/DOC as raw file to Cloudinary
+        result = cloudinary.uploader.upload(
+            file,
+            resource_type="raw",
+            folder="resumes"
+        )
+
+        resume_url = result["secure_url"]
+        uploaded_urls.append(resume_url)
+
+    # Pass URLs instead of file paths
+    result = create_driveCandidate(uploaded_urls, skills, job_role, drive_id)
 
     return jsonify({
         "status": "success",
+        "uploaded_urls": uploaded_urls,
         "response": result
     })

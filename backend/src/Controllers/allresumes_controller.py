@@ -4,7 +4,7 @@ from src.Utils.Database import db  # db should be your Mongo connection instance
 def get_allresumes_controller():
     try:
         # Exclude _id and resume_content
-        resumes = list(db["candidates"].find({}, {"_id": 0, "resume_content": 0}))
+        resumes = list(db["candidates"].find({}, {"_id": 0}))
 
         return jsonify({
             "success": True,
