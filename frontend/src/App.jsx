@@ -45,13 +45,14 @@ function AppContent() {
   // Routes where Chatbot should be hidden
   const hideChatbotRoutes = [
     "/mockinterview",
-    "/interview_start",
-    "/assessment/:candidateId",
+    "/start-interview",
+    "/interview-completion",
+    "/assessment",
     "/start-assessment",
     "/assessment-submission",
   ];
 
-  // Check if current route starts with any path in hideChatbotRoutes
+  // Check if current route starts with any of the hidden paths
   const showChatbot = !hideChatbotRoutes.some((path) =>
     location.pathname.startsWith(path)
   );
@@ -174,7 +175,7 @@ function AppContent() {
           element={<InterviewCompletionPage />}
         />
 
-        {/* Assessment Routes with parameters */}
+        {/* Assessment Routes */}
         <Route
           path="/assessment/:driveId/:candidateId"
           element={<Assessment />}

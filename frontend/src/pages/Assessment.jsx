@@ -8,6 +8,7 @@ import CodeEditor from "../components/CodingAssessment/CodeEditor";
 import Input from "../components/CodingAssessment/Input";
 import Output from "../components/CodingAssessment/Output";
 import { useParams } from "react-router-dom";
+import Loader from "../components/Loader";
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export default function Assessment() {
@@ -424,25 +425,7 @@ export default function Assessment() {
   }
 
   if (loading) {
-    return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-          backgroundColor: darkMode ? "#0d0d0d" : "#ffffff",
-          color: darkMode ? "#e0e0e0" : "#000000",
-        }}
-      >
-        <div style={{ textAlign: "center" }}>
-          <h2 style={{ marginBottom: "12px", fontWeight: "600" }}>
-            Loading assessment...
-          </h2>
-          <p style={{ color: darkMode ? "#999999" : "#666666" }}>Please wait</p>
-        </div>
-      </div>
-    );
+    return <Loader />;
   }
 
   if (error) {
