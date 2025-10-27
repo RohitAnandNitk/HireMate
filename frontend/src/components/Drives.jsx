@@ -14,10 +14,8 @@ const Drives = () => {
   const navigate = useNavigate();
   const [drives, setDrives] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterStatus, setFilterStatus] = useState("all"); // all, ongoing, finished
+  const [filterStatus, setFilterStatus] = useState("all");
   const [loading, setLoading] = useState(true);
-
-  // company id will be fetched dynamically for the HR
   const [companyId, setCompanyId] = useState(null);
 
   // Fetch HR info when component mounts
@@ -48,7 +46,6 @@ const Drives = () => {
         console.log("Role:", hrData.role);
         console.log("=".repeat(50));
 
-        // Update companyId if available in HR info
         if (hrData.company_id) {
           setCompanyId(hrData.company_id);
           console.log("Set companyId to:", hrData.company_id);
@@ -69,7 +66,7 @@ const Drives = () => {
       try {
         setLoading(true);
 
-        if (!companyId) return; // wait until companyId is set
+        if (!companyId) return;
         const response = await fetch(
           `${BASE_URL}/api/drive/company/${companyId}`
         );
@@ -79,13 +76,11 @@ const Drives = () => {
 
         const data = await response.json();
         console.log("All drives : ", data.drives);
-        setDrives(data.drives); // assuming API returns array of drives
+        setDrives(data.drives);
       } catch (err) {
         console.error("Error fetching drives:", err.message);
         toast.error("Could not load drives. Please try again.");
       } finally {
-        // setLoading(false);
-        // Always play loader once on startup (4s)
         const timer = setTimeout(() => setLoading(false), 3000);
         return () => clearTimeout(timer);
       }
@@ -96,23 +91,54 @@ const Drives = () => {
     }
   }, [companyId]);
 
-  // Filter drives based on search and status
-  const filteredDrives = drives.filter((drive) => {
-    const matchesSearch =
-      drive.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      drive.job_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      drive.location.toLowerCase().includes(searchTerm.toLowerCase());
-
+  // Helper function to check if drive is ongoing
+  const isDriveOngoing = (drive) => {
     const ongoingStatuses = [
       "resumeUploaded",
       "resumeShortlisted",
       "emailSent",
-      "InterviewScheduled",
     ];
-    const matchesStatus =
-      filterStatus === "all" ||
-      (filterStatus === "ongoing" && ongoingStatuses.includes(drive.status)) ||
-      drive.status === filterStatus;
+
+    // Check if status is ongoing or if any round is in progress
+    if (ongoingStatuses.includes(drive.status)) return true;
+
+    // Check round statuses
+    const roundStatuses = drive.round_statuses || [];
+    const hasActiveRound = roundStatuses.some(
+      (rs) => rs.status === "in_progress" || rs.status === "pending"
+    );
+
+    return hasActiveRound;
+  };
+
+  // Helper function to check if drive is completed
+  const isDriveCompleted = (drive) => {
+    if (drive.status === "selectionEmailSent" || drive.status === "completed") {
+      return true;
+    }
+
+    // Check if all rounds are completed
+    const roundStatuses = drive.round_statuses || [];
+    if (roundStatuses.length > 0) {
+      return roundStatuses.every((rs) => rs.status === "completed");
+    }
+
+    return false;
+  };
+
+  // Filter drives based on search and status
+  const filteredDrives = drives.filter((drive) => {
+    const matchesSearch =
+      drive.role?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      drive.job_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      drive.location?.toLowerCase().includes(searchTerm.toLowerCase());
+
+    let matchesStatus = true;
+    if (filterStatus === "ongoing") {
+      matchesStatus = isDriveOngoing(drive);
+    } else if (filterStatus === "completed") {
+      matchesStatus = isDriveCompleted(drive);
+    }
 
     return matchesSearch && matchesStatus;
   });
@@ -126,16 +152,9 @@ const Drives = () => {
     navigate(`/process/${driveId}`);
   };
 
-  const ongoingDrives = drives.filter(
-    (drive) =>
-      drive.status === "resumeUploaded" ||
-      drive.status === "resumeShortlisted" ||
-      drive.status === "emailSent" ||
-      drive.status === "InterviewScheduled"
-  );
-  const finishedDrives = drives.filter(
-    (drive) => drive.status === "selectionEmailSent"
-  );
+  // Calculate stats
+  const ongoingDrives = drives.filter((drive) => isDriveOngoing(drive));
+  const completedDrives = drives.filter((drive) => isDriveCompleted(drive));
 
   if (loading) {
     return <Loader />;
@@ -195,7 +214,7 @@ const Drives = () => {
             <div>
               <p className="text-sm text-gray-600">Completed Drives</p>
               <p className="text-2xl font-semibold text-gray-600">
-                {finishedDrives.length}
+                {completedDrives.length}
               </p>
             </div>
             <div className="p-3 bg-gray-100 rounded-full">
@@ -227,20 +246,11 @@ const Drives = () => {
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="px-4 py-2 border border-gray-300  rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
+            className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-500"
           >
             <option value="all">All Status</option>
-            <option
-              value={
-                "resumeUploaded" ||
-                "resumeShortlisted" ||
-                "emailSent" ||
-                "InterviewScheduled"
-              }
-            >
-              Ongoing
-            </option>
-            <option value="selectionEmailSent">Finished</option>
+            <option value="ongoing">Ongoing</option>
+            <option value="completed">Completed</option>
           </select>
         </div>
       </div>

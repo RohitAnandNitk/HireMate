@@ -37,6 +37,7 @@ import Loader from "./components/Loader";
 
 import Assessment from "./pages/Assessment";
 import Instructions from "./pages/Instructions";
+import AssessmentSubmission from "./components/CodingAssessment/AssessmentSubmission";
 
 function AppContent() {
   const location = useLocation();
@@ -44,12 +45,14 @@ function AppContent() {
   // Routes where Chatbot should be hidden
   const hideChatbotRoutes = [
     "/mockinterview",
-    "/interview_start",
+    "/start-interview",
+    "/interview-completion",
     "/assessment",
     "/start-assessment",
+    "/assessment-submission",
   ];
 
-  // Check if current route starts with any path in hideChatbotRoutes
+  // Check if current route starts with any of the hidden paths
   const showChatbot = !hideChatbotRoutes.some((path) =>
     location.pathname.startsWith(path)
   );
@@ -172,8 +175,18 @@ function AppContent() {
           element={<InterviewCompletionPage />}
         />
 
+        {/* Assessment Routes */}
+        <Route
+          path="/assessment/:driveId/:candidateId"
+          element={<Assessment />}
+        />
+        <Route path="/assessment/:driveId" element={<Assessment />} />
         <Route path="/assessment" element={<Assessment />} />
         <Route path="/start-assessment" element={<Instructions />} />
+        <Route
+          path="/assessment-submission"
+          element={<AssessmentSubmission />}
+        />
       </Routes>
 
       {showChatbot && <Chatbot />}
