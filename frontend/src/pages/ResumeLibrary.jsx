@@ -1,119 +1,118 @@
-import React, { useState, useMemo } from "react";
-import { Search, FileText } from "lucide-react";
-
+import React, { useState, useMemo, useEffect } from "react";
+import { Search, FileText, ChevronDown } from "lucide-react";
+import { useUser } from "@clerk/clerk-react";
+import { toast } from "react-hot-toast";
 import Loader from "../components/Loader";
 
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const ResumeLibrary = () => {
+  const { user } = useUser();
   const [candidates, setCandidates] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [jobId, setJobId] = useState("");
+
+  // New states for drives
+  const [companyId, setCompanyId] = useState("");
+  const [drives, setDrives] = useState([]);
+  const [selectedDriveId, setSelectedDriveId] = useState("");
 
   const candidatesPerPage = 5;
 
-  // Fetch candidates based on job ID
-  const fetchCandidates = async (jobIdValue) => {
-    if (!jobIdValue.trim()) {
-      setCandidates([]);
-      return;
+  // Fetch HR info and company ID
+  useEffect(() => {
+    const fetchHRInfo = async () => {
+      try {
+        const email = user?.emailAddresses[0]?.emailAddress;
+        if (!email) return;
+
+        const response = await fetch(
+          `${BASE_URL}/api/drive/hr-info?email=${encodeURIComponent(email)}`
+        );
+
+        if (!response.ok) throw new Error("Failed to fetch HR info");
+
+        const hrData = await response.json();
+        if (hrData.company_id) {
+          setCompanyId(hrData.company_id);
+        }
+      } catch (err) {
+        console.error("Error fetching HR info:", err.message);
+        toast.error("Could not load HR information.");
+      }
+    };
+
+    if (user) {
+      fetchHRInfo();
     }
+  }, [user]);
 
-    setLoading(true);
-    setError(null);
+  // Fetch all drives for the company
+  useEffect(() => {
+    const fetchDrives = async () => {
+      try {
+        if (!companyId) return;
 
-    try {
-      // Step 1: Get drive_id from job_id
-      const jobResponse = await fetch(
-        `${BASE_URL}/api/drive/job?job_id=${jobIdValue}`
-      );
-      if (!jobResponse.ok) throw new Error("Failed to fetch job data");
+        const response = await fetch(
+          `${BASE_URL}/api/drive/company/${companyId}`
+        );
 
-      const jobData = await jobResponse.json();
-      const driveId = jobData.drive_ids?.[0];
+        if (!response.ok) throw new Error("Failed to fetch drives");
 
-      if (!driveId) {
-        throw new Error("No drive ID found for this job");
+        const data = await response.json();
+        setDrives(data.drives || []);
+
+        // Auto-select first drive if available
+        if (data.drives && data.drives.length > 0) {
+          setSelectedDriveId(data.drives[0]._id);
+        }
+      } catch (err) {
+        console.error("Error fetching drives:", err.message);
+        toast.error("Could not load drives.");
       }
+    };
 
-      // Step 2: Get candidate_ids from drive_id
-      const candidatesResponse = await fetch(
-        `${BASE_URL}/api/drive/${driveId}/candidates`
-      );
-      if (!candidatesResponse.ok) throw new Error("Failed to fetch candidates");
+    if (companyId) {
+      fetchDrives();
+    }
+  }, [companyId]);
 
-      const candidatesData = await candidatesResponse.json();
-
-      // Handle different response formats
-      let candidateIds = [];
-      if (Array.isArray(candidatesData)) {
-        candidateIds = candidatesData;
-      } else if (
-        candidatesData.candidates &&
-        Array.isArray(candidatesData.candidates)
-      ) {
-        candidateIds = candidatesData.candidates;
-      } else if (candidatesData.data && Array.isArray(candidatesData.data)) {
-        candidateIds = candidatesData.data;
-      }
-
-      if (candidateIds.length === 0) {
+  // Fetch candidates when drive is selected
+  useEffect(() => {
+    const fetchCandidates = async () => {
+      if (!selectedDriveId) {
         setCandidates([]);
-        setCurrentPage(1);
+        setLoading(false);
         return;
       }
 
-      // Step 3: Fetch candidate details (name and email) for each candidate_id
-      const candidateDetailsPromises = candidateIds.map(async (candidate) => {
-        try {
-          // Extract candidate_id flexibly
-          const candidateId =
-            candidate.candidate_id ||
-            candidate._id ||
-            candidate.id ||
-            candidate;
+      setLoading(true);
+      setError(null);
 
-          if (!candidateId) {
-            throw new Error("No candidate_id found");
-          }
+      try {
+        const response = await fetch(
+          `${BASE_URL}/api/resume/${selectedDriveId}/candidates`
+        );
 
-          const response = await fetch(
-            `${BASE_URL}/api/user/candidate?candidate_id=${candidateId}`
-          );
-          if (!response.ok)
-            throw new Error(`Failed to fetch candidate ${candidateId}`);
+        if (!response.ok) throw new Error("Failed to fetch candidates");
 
-          const data = await response.json();
-          const candidateInfo = data.candidate || data.data || data;
+        const data = await response.json();
+        console.log("all candidates", data);
+        setCandidates(data.candidates || []);
+        setCurrentPage(1);
+      } catch (err) {
+        setError(err.message);
+        setCandidates([]);
+        toast.error("Could not load candidates.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-          return {
-            name: candidateInfo?.name || "N/A",
-            email: candidateInfo?.email || "N/A",
-            id: candidateInfo?._id || candidateId,
-          };
-        } catch (err) {
-          console.error(`Error fetching candidate:`, err);
-          return {
-            name: "Error loading",
-            email: "Error loading",
-            id: candidate.candidate_id || "unknown",
-          };
-        }
-      });
-
-      const candidateDetails = await Promise.all(candidateDetailsPromises);
-      setCandidates(candidateDetails);
-      setCurrentPage(1);
-    } catch (err) {
-      setError(err.message);
-      setCandidates([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+    fetchCandidates();
+  }, [selectedDriveId]);
 
   // Filter candidates based on search term
   const filteredCandidates = useMemo(() => {
@@ -144,7 +143,7 @@ const ResumeLibrary = () => {
       .toUpperCase();
   };
 
-  if (loading) return <Loader />;
+  if (loading && !drives.length) return <Loader />;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -160,6 +159,23 @@ const ResumeLibrary = () => {
 
       {/* Filters */}
       <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        {/* Drive Selector */}
+        <div className="relative flex-1 max-w-md">
+          <select
+            value={selectedDriveId}
+            onChange={(e) => setSelectedDriveId(e.target.value)}
+            className="w-full px-4 py-3 rounded-lg border border-gray-300 bg-white focus:ring-1 focus:ring-gray-400 focus:border-gray-400 text-sm transition-colors appearance-none"
+          >
+            <option value="">Select a drive...</option>
+            {drives.map((drive) => (
+              <option key={drive._id} value={drive._id}>
+                {drive.title || drive.name || `Drive ${drive._id}`}
+              </option>
+            ))}
+          </select>
+          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+        </div>
+
         {/* Search */}
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -174,29 +190,17 @@ const ResumeLibrary = () => {
             className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 bg-white focus:ring-1 focus:ring-gray-400 focus:border-gray-400 text-sm transition-colors"
           />
         </div>
-
-        {/* Job ID Input */}
-        <div className="flex gap-2 flex-1 max-w-md">
-          <input
-            type="text"
-            placeholder="Enter Job ID..."
-            value={jobId}
-            onChange={(e) => setJobId(e.target.value)}
-            onKeyPress={(e) => {
-              if (e.key === "Enter") {
-                fetchCandidates(jobId);
-              }
-            }}
-            className="flex-1 px-3 py-3 rounded-lg border border-gray-300 bg-white focus:ring-1 focus:ring-gray-400 focus:border-gray-400 text-sm transition-colors"
-          />
-          <button
-            onClick={() => fetchCandidates(jobId)}
-            className="px-6 py-3 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
-          >
-            Search
-          </button>
-        </div>
       </div>
+
+      {/* Candidate Count */}
+      {selectedDriveId && !loading && (
+        <div className="max-w-6xl mx-auto px-6 pb-4">
+          <p className="text-sm text-gray-600">
+            Showing {filteredCandidates.length} candidate
+            {filteredCandidates.length !== 1 ? "s" : ""}
+          </p>
+        </div>
+      )}
 
       {/* Error Message */}
       {error && (
@@ -209,78 +213,98 @@ const ResumeLibrary = () => {
 
       {/* Candidate Cards */}
       <div className="max-w-6xl mx-auto px-6 pb-12">
-        <div className="grid gap-4">
-          {currentCandidates.map((candidate, idx) => (
-            <div
-              key={candidate.id || idx}
-              className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-sm transition-shadow"
-            >
-              <div className="flex items-start gap-4">
-                {/* Avatar */}
-                <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 font-medium text-sm flex-shrink-0">
-                  {getInitials(candidate.name)}
-                </div>
+        {loading ? (
+          <Loader />
+        ) : (
+          <>
+            <div className="grid gap-4">
+              {currentCandidates.map((candidate, idx) => (
+                <div
+                  key={candidate.id || idx}
+                  className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-sm transition-shadow"
+                >
+                  <div className="flex items-start gap-4">
+                    {/* Avatar */}
+                    <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 font-medium text-sm flex-shrink-0">
+                      {getInitials(candidate.name)}
+                    </div>
 
-                {/* Content */}
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-lg font-medium text-gray-900 mb-1">
-                    {candidate.name}
-                  </h3>
-                  <p className="text-gray-600 text-sm">{candidate.email}</p>
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg font-medium text-gray-900 mb-1">
+                        {candidate.name}
+                      </h3>
+                      <p className="text-gray-600 text-sm mb-2">
+                        {candidate.email}
+                      </p>
+                      {candidate.resume_url && (
+                        <a
+                          href={candidate.resume_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm text-blue-600 hover:text-blue-700 hover:underline"
+                        >
+                          View Resume
+                        </a>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        {/* Empty State */}
-        {filteredCandidates.length === 0 && !loading && (
-          <div className="text-center py-16">
-            <FileText className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              {jobId
-                ? "No candidates found"
-                : "Enter a Job ID to view candidates"}
-            </h3>
-            <p className="text-gray-500">
-              {jobId
-                ? "Try adjusting your search."
-                : "Search for candidates by entering a Job ID above."}
-            </p>
-          </div>
-        )}
+            {/* Empty State */}
+            {filteredCandidates.length === 0 && (
+              <div className="text-center py-16">
+                <FileText className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  {selectedDriveId
+                    ? "No candidates found"
+                    : "Select a drive to view candidates"}
+                </h3>
+                <p className="text-gray-500">
+                  {selectedDriveId
+                    ? "Try adjusting your search or select a different drive."
+                    : "Choose a drive from the dropdown above to see its candidates."}
+                </p>
+              </div>
+            )}
 
-        {/* Pagination */}
-        {filteredCandidates.length > 0 && (
-          <div className="flex justify-center items-center gap-2 mt-8">
-            <button
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage((p) => p - 1)}
-              className="px-3 py-1 border rounded disabled:opacity-50"
-            >
-              Prev
-            </button>
+            {/* Pagination */}
+            {filteredCandidates.length > 0 && (
+              <div className="flex justify-center items-center gap-2 mt-8">
+                <button
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage((p) => p - 1)}
+                  className="px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                >
+                  Prev
+                </button>
 
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentPage(i + 1)}
-                className={`px-3 py-1 border rounded ${
-                  currentPage === i + 1 ? "bg-gray-200 font-medium" : ""
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
+                {Array.from({ length: totalPages }, (_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentPage(i + 1)}
+                    className={`px-3 py-1 border rounded transition-colors ${
+                      currentPage === i + 1
+                        ? "bg-gray-900 text-white font-medium"
+                        : "hover:bg-gray-50"
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
 
-            <button
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage((p) => p + 1)}
-              className="px-3 py-1 border rounded disabled:opacity-50"
-            >
-              Next
-            </button>
-          </div>
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage((p) => p + 1)}
+                  className="px-3 py-1 border rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
