@@ -5,6 +5,7 @@ def create_drive_candidate(
     drive_id, 
     rounds_status=None,
     resume_shortlisted="no",
+    resume_score=None,
     email_sent="no",
     selected="no", 
     feedback="NA",
@@ -13,11 +14,13 @@ def create_drive_candidate(
     """
     Create a drive candidate document with dynamic round tracking.
     rounds_status will track each round's completion status for the candidate.
+    resume_score stores the score assigned to the resume after shortlisting.
     """
     return {
         "candidate_id": candidate_id,
         "drive_id": drive_id,
         "resume_shortlisted": resume_shortlisted,
+        "resume_score": resume_score,  # Score assigned after resume shortlisting (e.g., 0-100, or custom range)
         "email_sent": email_sent,
         "rounds_status": rounds_status or [],  # [{"round_number": 1, "round_type": "Technical", "scheduled": "no", "completed": "no", "result": "pending", "feedback": ""}]
         "current_round": 0,  # Which round the candidate is currently in

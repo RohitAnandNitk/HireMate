@@ -17,7 +17,7 @@ class ResumeShortlistingAgent:
         """
         Takes extracted candidate info, keywords list, and job role.
         Returns shortlisted and not_shortlisted lists.
-        Also updates the shortlist status in the database.
+        Also updates the shortlist status and resume score in the database.
         """
         print("ShortlistingAgent called with candidates")
         shortlisted = []
@@ -51,17 +51,13 @@ class ResumeShortlistingAgent:
         Do not return any explanations or additional text.
         **Must** return ONLY a valid JSON object:
         {{
-            "shortlisted": "yes" or "no"
+            "shortlisted": "yes" or "no",
+            "score": <number between 0 and 100>
         }}
 
-        even do not return like this :
-         ```json
-            {{
-                "shortlisted": "yes" or "not"
-            }}
-        ```
-
+        Do NOT wrap the response in code blocks or markdown. Return ONLY the raw JSON object.
         """
+        
         print("here..........")
         for candidate in candidates:
 
@@ -73,7 +69,8 @@ class ResumeShortlistingAgent:
 
             human_prompt = (
                 f"Here is the candidate's resume content:\n{resume_content}\n\n"
-                "Based on this resume, determine if the candidate is a suitable match for the job role and required skills."
+                "Based on this resume, determine if the candidate is a suitable match for the job role and required skills. "
+                "Provide the match score and shortlist decision."
             )
 
             messages = self.prompt_builder.build(system_prompt, human_prompt)
@@ -87,19 +84,21 @@ class ResumeShortlistingAgent:
                 continue
 
             shortlist_status = llm_output.get("shortlisted", "").lower()
+            resume_score = llm_output.get("score", 0)  # Extract the score
+            
             result = {
                 "resume": candidate_data.get("resume_content", ""),
                 "name": candidate_data.get("name", ""),
-                "email": candidate_data.get("email", "")
+                "email": candidate_data.get("email", ""),
+                "score": resume_score
             }
 
-            # Update the shortlist status in the database
-            # here we have to update the drivecandidate collection
-            # assuming candidate has unique email
+            # Update the shortlist status and resume score in the database
             db.drive_candidates.update_one(
                 {"_id": candidate.get("_id")},
                 {"$set": {
                     "resume_shortlisted": "yes" if shortlist_status == "yes" else "no",
+                    "resume_score": resume_score,  # Store the resume score
                     "updated_at": datetime.utcnow()
                 }}
             )
