@@ -8,15 +8,17 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 const ShortlistedResumes = () => {
   const [candidates, setCandidates] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [jobId, setJobId] = useState("");
 
   const candidatesPerPage = 5;
+  console.log(BASE_URL)
 
   // Fetch shortlisted candidates for a given Job ID
   const fetchShortlistedCandidates = async (jobIdValue) => {
+    console.log("🔍 fetchShortlistedCandidates called with:", jobIdValue);
     if (!jobIdValue.trim()) {
       setCandidates([]);
       return;
@@ -44,6 +46,7 @@ const ShortlistedResumes = () => {
 
       // Step 2: Fetch candidate details for each candidate_id
       const candidateDetailsPromises = candidateIds.map(async (candidateId) => {
+        console.log(candidateId)
         try {
           const res = await fetch(
             `${BASE_URL}/api/user/candidate?candidate_id=${candidateId}`
